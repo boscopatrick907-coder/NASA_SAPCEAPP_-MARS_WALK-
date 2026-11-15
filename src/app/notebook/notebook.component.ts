@@ -18,10 +18,16 @@ export class NotebookComponent {
   readonly image = this.missionService.image;
   readonly route = this.missionService.route;
 
+  // expose service readiness status
+  readonly dataStatus = this.missionService.dataStatus;
+
   // Local component draft state (retained on failure)
   readonly draftText = signal<string>('');
   readonly attachStartLocation = signal<boolean>(false);
   readonly feedback = signal<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  // enable submit only when service is ready and draft is non‑empty
+  readonly canSubmit = computed(() => this.dataStatus() === 'ready' && !this.isDraftEmpty());
 
   readonly isDraftEmpty = computed(() => {
     return this.draftText().trim().length === 0;
@@ -43,6 +49,11 @@ export class NotebookComponent {
   }
 
   onSubmit(): void {
+    // Guard against submitting while the mission data is still loading
+    if (this.dataStatus() !== 'ready') {
+      this.setFeedback('Mission data is still loading, please wait.', 'error');
+      return;
+    }
     const raw = this.draftText();
     const trimmed = raw.trim();
 

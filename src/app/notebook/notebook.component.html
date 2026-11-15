@@ -40,7 +40,10 @@
           />
           <span>Attach Route Start Position</span>
         </label>
-        @if (hasStartPoint()) {
+        @if (dataStatus() !== 'ready') {
+      <div class="loading-notice">Mission data is still loading, please wait.</div>
+    }
+
           <span class="pos-preview font-mono">
             ({{ route().start!.x.toFixed(0) }}, {{ route().start!.y.toFixed(0) }})
           </span>
@@ -53,7 +56,7 @@
         <button
           type="submit"
           class="submit-btn"
-          [disabled]="isDraftEmpty()"
+          [disabled]="!canSubmit()"
           aria-label="Save observation note to mission log"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-icon">
