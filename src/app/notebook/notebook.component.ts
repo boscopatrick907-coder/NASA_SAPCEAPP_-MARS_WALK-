@@ -43,8 +43,8 @@ export class NotebookComponent {
 
   toggleAttachStart(): void {
     if (this.hasStartPoint()) {
-      // Enable attaching the start location to the next observation
-      this.attachStartLocation.set(true);
+      // Toggle attaching the start location to the next observation
+      this.attachStartLocation.update(v => !v);
     }
   }
 

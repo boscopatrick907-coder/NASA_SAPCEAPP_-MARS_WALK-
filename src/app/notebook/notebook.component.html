@@ -40,16 +40,27 @@
           />
           <span>Attach Route Start Position</span>
         </label>
+        <!-- Loading notice displayed when mission data is not ready -->
         @if (dataStatus() !== 'ready') {
-      <div class="loading-notice">Mission data is still loading, please wait.</div>
-    }
+          <div class="loading-notice">Mission data is still loading, please wait.</div>
+        </div>
+        <!-- Start point preview -->
+        @if (hasStartPoint()) {
+          <span class="pos-preview font-mono">
+            ({{ route().start!.x.toFixed(0) }}, {{ route().start!.y.toFixed(0) }})
+          </span>
+        </div> @else {
+          <span class="pos-preview text-muted">(No start point placed on map)</span>
+        </div>
+
+    </div>
 
           <span class="pos-preview font-mono">
             ({{ route().start!.x.toFixed(0) }}, {{ route().start!.y.toFixed(0) }})
           </span>
-        } @else {
+        </div> @else {
           <span class="pos-preview text-muted">(No start point placed on map)</span>
-        }
+        </div>
       </div>
 
       <div class="form-actions">
@@ -71,7 +82,7 @@
           <span class="fb-icon" aria-hidden="true">{{ fb.type === 'success' ? '✓' : '⚠' }}</span>
           <span class="fb-text">{{ fb.message }}</span>
         </div>
-      }
+      </div>
     </form>
   </section>
 
@@ -108,14 +119,14 @@
                 <span class="entry-location font-mono">
                   Location: ({{ pos.x.toFixed(1) }}, {{ pos.y.toFixed(1) }})
                 </span>
-              } @else {
+              </div> @else {
                 <span class="entry-location text-muted">Unlocated Field Note</span>
-              }
+              </div>
             </div>
           </article>
-        }
+        </div>
       </div>
-    } @else {
+    </div> @else {
       <div class="empty-notebook">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon">
           <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
@@ -123,6 +134,6 @@
         <p>No observations recorded yet for this mission session.</p>
         <span class="empty-hint">Use the form above to document boxwork morphology, rock textures, and site observations.</span>
       </div>
-    }
+    </div>
   </section>
 </div>

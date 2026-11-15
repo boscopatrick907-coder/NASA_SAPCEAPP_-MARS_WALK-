@@ -7,7 +7,7 @@ import { testImage } from '../core/fixtures.spec-helper';
 import { NotebookComponent } from './notebook.component';
 import { signal } from '@angular/core';
 
-/*** Real-service based tests (original) ***/
+/*** Real-service based tests ***/
 
 describe('NotebookComponent', () => {
   let fixture: ComponentFixture<NotebookComponent>;
@@ -26,13 +26,17 @@ describe('NotebookComponent', () => {
     service = TestBed.inject(MissionService);
     http = TestBed.inject(HttpTestingController);
     const initialized = service.initialize();
-    http.expectOne((request) => request.url.endsWith('/data/manifest.json')).flush({
-      ...testImage(),
-      width: 1000,
-      height: 1000,
-    });
+    http
+      .expectOne((request) => request.url.endsWith('/data/manifest.json'))
+      .flush({
+        ...testImage(),
+        width: 1000,
+        height: 1000,
+      });
     await Promise.resolve();
-    http.expectOne((request) => request.url.endsWith('/data/markers.json')).flush([]);
+    http
+      .expectOne((request) => request.url.endsWith('/data/markers.json'))
+      .flush([]);
     await initialized;
     fixture.detectChanges();
   });
@@ -63,35 +67,30 @@ describe('NotebookComponent', () => {
   });
 
   it('saves valid observation, clears draft text, and updates list', () => {
-    component.setDraftText('Discovered cross-stratified sulfate ridges');
+    component.setDraftText('Discovered cross‑stratified sulfate ridges');
     fixture.detectChanges();
 
     component.onSubmit();
     fixture.detectChanges();
 
-    expect(component.draftText()).toBe(''); // Cleared upon success
+    expect(component.draftText()).toBe(''); // cleared on success
     expect(component.feedback()?.type).toBe('success');
     expect(service.observations()).toHaveLength(1);
-    expect(service.observations()[0].text).toBe('Discovered cross-stratified sulfate ridges');
+    expect(service.observations()[0].text).toBe('Discovered cross‑stratified sulfate ridges');
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Discovered cross-stratified sulfate ridges');
+    expect(compiled.textContent).toContain('Discovered cross‑stratified sulfate ridges');
   });
 
   it('preserves draft text in editor if storage fails', () => {
     component.setDraftText('Valuable geological observation that must not be lost');
     fixture.detectChanges();
 
-    // Mock service returning failure
-    vi.spyOn(service, 'addObservation').mockReturnValue({
-      ok: false,
-      error: 'Simulated quota exceeded error',
-    });
+    vi.spyOn(service, 'addObservation').mockReturnValue({ ok: false, error: 'Simulated quota exceeded error' });
 
     component.onSubmit();
     fixture.detectChanges();
 
-    // The draft text MUST remain in the component state
     expect(component.draftText()).toBe('Valuable geological observation that must not be lost');
     expect(component.feedback()?.type).toBe('error');
     expect(component.feedback()?.message).toContain('Simulated quota exceeded');
@@ -111,6 +110,18 @@ describe('NotebookComponent', () => {
 
     expect(service.observations()[0].position).toEqual({ x: 340, y: 520 });
   });
+
+  it('allows location checkbox to be unchecked after being checked', () => {
+    service.setMode('start');
+    service.applyMapPoint({ x: 100, y: 200 });
+    fixture.detectChanges();
+
+    component.toggleAttachStart(); // enable
+    expect(component.attachStartLocation()).toBe(true);
+
+    component.toggleAttachStart(); // disable
+    expect(component.attachStartLocation()).toBe(false);
+  });
 });
 
 /*** Loading‑aware tests using a mock MissionService ***/
@@ -120,12 +131,11 @@ describe('NotebookComponent (loading‑aware)', () => {
   let component: NotebookComponent;
   let mockService: any;
 
-  // Simple mock service exposing the signals the component uses
   class MockMissionService {
     readonly dataStatus = signal<'loading' | 'ready'>('loading');
-    readonly observations = signal([]);
+    readonly observations = signal<any[]>([]);
     readonly image = signal(null);
-    readonly route = signal({ start: null, destination: null, waypoints: [] });
+    readonly route = signal<any>({ start: null, destination: null, waypoints: [] });
     addObservation = vi.fn(() => ({ ok: true }));
     setMode = () => {};
     applyMapPoint = () => {};
@@ -177,5 +187,14 @@ describe('NotebookComponent (loading‑aware)', () => {
     expect(mockService.addObservation).toHaveBeenCalledWith('Ready note', null);
     expect(component.draftText()).toBe('');
     expect(component.feedback()?.type).toBe('success');
+  });
+
+  it('allows location checkbox to be unchecked after being checked (mock service)', () => {
+    // Simulate a start point in the mock route
+    mockService.route.set({ start: { x: 100, y: 200 }, destination: null, waypoints: [] });
+    component.toggleAttachStart(); // enable
+    expect(component.attachStartLocation()).toBe(true);
+    component.toggleAttachStart(); // disable
+    expect(component.attachStartLocation()).toBe(false);
   });
 });
