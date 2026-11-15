@@ -17,13 +17,20 @@ app-shell {
   margin: 1rem;
   padding: 1.25rem;
   border: 1px solid var(--border-subtle);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-lg);
   background: var(--bg-card);
+  box-shadow: var(--shadow-card);
   color: var(--text-primary);
 }
 
 .transfer-panel h2 {
   margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.transfer-panel p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
 .transfer-actions {
@@ -40,7 +47,7 @@ app-shell {
   min-height: 44px;
   padding: 0.5rem 0.9rem;
   border: 1px solid var(--border-subtle);
-  border-radius: 0.4rem;
+  border-radius: var(--radius-sm);
   background: var(--bg-surface);
   color: var(--text-primary);
   font: inherit;
@@ -48,6 +55,13 @@ app-shell {
 
 .transfer-actions button {
   cursor: pointer;
+  font-weight: 600;
+}
+
+.transfer-actions button:hover:not(:disabled),
+.transfer-actions label:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-focus);
 }
 
 .transfer-actions button:disabled {

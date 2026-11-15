@@ -192,13 +192,15 @@ button {
   padding: 0 18px;
   background: var(--bg);
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--fg);
   font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 0 14px var(--mars-accent-glow);
 }
 button:hover:not(:disabled) {
   background: var(--hv);
+  box-shadow: 0 0 20px var(--mars-accent-glow);
 }
 button:disabled {
   opacity: 0.45;

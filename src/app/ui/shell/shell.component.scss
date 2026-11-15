@@ -152,11 +152,15 @@ app-map {
   height: 48px;
   border-radius: 2px;
   background: $b;
+  transition:
+    height 0.15s var(--ease),
+    background-color 0.15s var(--ease);
 }
 .side-panel {
-  background: $s;
+  background: var(--bg-surface);
   border-left: 1px solid $b;
-  transition: width 0.15s;
+  box-shadow: -6px 0 18px rgba(0, 0, 0, 0.12);
+  transition: width 0.2s var(--ease);
   overflow: hidden;
   height: 100%;
   min-width: 0;
@@ -169,10 +173,14 @@ app-map {
 }
 .panel-tabs {
   display: flex;
-  background: $c;
+  background: var(--bg-card);
   border-bottom: 1px solid $b;
   overflow-x: auto;
   flex-shrink: 0;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 .tab-btn {
   flex: 1;
@@ -184,6 +192,7 @@ app-map {
   white-space: nowrap;
   font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.02em;
   color: $u;
   background: 0;
   &:hover {
@@ -191,9 +200,9 @@ app-map {
     background: var(--bg-card-hover);
   }
   &.active {
-    color: var(--tab-fg);
-    border-bottom-color: var(--tab-fg);
-    background: $s;
+    color: var(--science-cyan);
+    border-bottom-color: var(--science-cyan);
+    background: var(--science-cyan-bg);
   }
 }
 .tab-content {
