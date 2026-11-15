@@ -15,6 +15,23 @@ import { MissionService } from '../core/mission.service';
 import { routePoints } from '../core/route';
 import type { ImageManifest, Point, ScienceMarker } from '../core/models';
 
+export interface DisplayRoutePoint {
+  id: string;
+  role: 'start' | 'waypoint' | 'destination';
+  label: string;
+  x: number;
+  y: number;
+  formattedCoordinates: string;
+}
+
+export interface RouteEndpointsStatus {
+  complete: boolean;
+  hasStart: boolean;
+  hasDestination: boolean;
+  statusText: string;
+  missingText: string | null;
+}
+
 type ImageDisplayState = 'loading' | 'ready' | 'error';
 const FOCUS_ROUTE_MAX_ZOOM = 2;
 const VIEWPORT_PADDING: L.PointExpression = [32, 32];
@@ -73,12 +90,125 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   readonly canFocusRoute = computed(
     () => this.canResetView() && routePoints(this.mission.route()).length >= 2,
   );
+  readonly canPlaceMapPoint = computed(
+    () => this.canResetView() && this.mission.mode() !== 'inspect',
+  );
+  readonly mapPointActionLabel = computed(() => {
+    const mode = this.mission.mode();
+    if (mode === 'start') return 'Set start at map center';
+    if (mode === 'destination') return 'Set destination at map center';
+    return 'Add waypoint at map center';
+  });
   readonly canRetryImage = computed(
     () =>
       this.mission.dataStatus() === 'ready' &&
       this.mission.image() !== null &&
       this.imageDisplayState() === 'error',
   );
+  readonly showScienceMarkerEmptyState = computed(() => {
+    const image = this.mission.image();
+    if (
+      this.mission.dataStatus() !== 'ready' ||
+      !image ||
+      this.imageDisplayState() !== 'ready' ||
+      !this.mission.layers().markers
+    ) {
+      return false;
+    }
+    return !this.mission.markers().some((marker) => isDisplayable(marker, image));
+  });
+
+  readonly activeMode = computed(() => this.mission.mode());
+  readonly activeModeLabel = computed(() => {
+    switch (this.mission.mode()) {
+      case 'inspect':
+        return 'Inspect (pan/zoom)';
+      case 'start':
+        return 'Set Start';
+      case 'waypoint':
+        return 'Add Waypoint';
+      case 'destination':
+        return 'Set Destination';
+    }
+  });
+
+  readonly routeEndpointsStatus = computed<RouteEndpointsStatus>(() => {
+    const route = this.mission.route();
+    const hasStart = route.start !== null;
+    const hasDestination = route.destination !== null;
+    const complete = hasStart && hasDestination;
+    let statusText: string;
+    if (!hasStart && !hasDestination) {
+      statusText = 'Missing Start and Destination endpoints';
+    } else if (!hasStart) {
+      statusText = 'Missing Start endpoint';
+    } else if (!hasDestination) {
+      statusText = 'Missing Destination endpoint';
+    } else {
+      statusText = 'Required endpoints set (Start & Destination)';
+    }
+    return {
+      complete,
+      hasStart,
+      hasDestination,
+      statusText,
+      missingText: complete ? null : statusText,
+    };
+  });
+
+  readonly isScaleUnavailable = computed(() => {
+    const image = this.mission.image();
+    return !image?.calibration?.verified;
+  });
+
+  readonly scaleNotice = computed(() => {
+    const image = this.mission.image();
+    if (!image) return 'No image manifest loaded; scale is unavailable.';
+    if (!image.calibration?.verified) {
+      return 'Metric scale is unverified for this image; ground distances are unavailable. Coordinates are reported in bottom-left image pixels.';
+    }
+    return `Metric scale verified: ${image.calibration.metersPerPixel} m/px.`;
+  });
+
+  readonly existingRoutePoints = computed<DisplayRoutePoint[]>(() => {
+    const route = this.mission.route();
+    const points: DisplayRoutePoint[] = [];
+    if (route.start) {
+      points.push({
+        id: 'start',
+        role: 'start',
+        label: 'Start',
+        x: route.start.x,
+        y: route.start.y,
+        formattedCoordinates: `(${this.formatCoord(route.start.x)}, ${this.formatCoord(route.start.y)} px)`,
+      });
+    }
+    route.waypoints.forEach((wp, index) => {
+      points.push({
+        id: `waypoint-${index}`,
+        role: 'waypoint',
+        label: `Waypoint ${index + 1}`,
+        x: wp.x,
+        y: wp.y,
+        formattedCoordinates: `(${this.formatCoord(wp.x)}, ${this.formatCoord(wp.y)} px)`,
+      });
+    });
+    if (route.destination) {
+      points.push({
+        id: 'destination',
+        role: 'destination',
+        label: 'Destination',
+        x: route.destination.x,
+        y: route.destination.y,
+        formattedCoordinates: `(${this.formatCoord(route.destination.x)}, ${this.formatCoord(route.destination.y)} px)`,
+      });
+    }
+    return points;
+  });
+
+  formatCoord(value: number): string {
+    return Number.isInteger(value) ? value.toString() : value.toFixed(1);
+  }
 
   private readonly document = inject(DOCUMENT);
   private map?: L.Map;
@@ -160,6 +290,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.map?.zoomOut();
   }
 
+  placeRoutePointAtMapCenter(): void {
+    const image = this.mission.image();
+    if (!this.canPlaceMapPoint() || !this.map || !image) return;
+    const center = this.map.getCenter();
+    this.mission.applyMapPoint({
+      x: Math.min(image.width, Math.max(0, center.lng)),
+      y: Math.min(image.height, Math.max(0, center.lat)),
+    });
+  }
+
   resetView(): void {
     const image = this.mission.image();
     if (!this.canResetView() || !this.map || !image) return;
@@ -194,6 +334,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       zoomSnap: 0.25,
       minZoom: -4,
       maxZoom: 4,
+      dragging: true,
+      touchZoom: true,
+      scrollWheelZoom: true,
+      keyboard: true,
     });
     this.routeLayer = L.layerGroup().addTo(this.map);
     this.markerLayer = L.layerGroup().addTo(this.map);

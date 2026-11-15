@@ -1,5 +1,5 @@
 <section class="map-panel" aria-label="Mars image map">
-  <div class="map-toolbar" aria-label="Map layers">
+  <div class="map-toolbar" role="group" aria-label="Map controls">
     <label>
       <input
         type="checkbox"
@@ -20,22 +20,78 @@
     <span class="unavailable-layer" title="No coverage product is supplied"
       >Coverage unavailable</span
     >
-    <div class="map-view-actions" aria-label="Map view actions">
+    <div class="map-mode-indicator" role="status" aria-label="Active route mode">
+      <span class="mode-label">Mode:</span>
+      <span class="mode-value" [attr.data-mode]="mission.mode()">{{ activeModeLabel() }}</span>
+    </div>
+    <div class="map-view-actions" role="group" aria-label="Map view actions">
       <button type="button" [disabled]="!canResetView()" (click)="resetView()">Reset View</button>
       <button type="button" [disabled]="!canFocusRoute()" (click)="focusRoute()">
         Focus Route
       </button>
     </div>
+    @if (mission.mode() !== 'inspect') {
+      <div class="map-route-actions" role="group" aria-label="Keyboard route drawing">
+        <button type="button" (click)="placeRoutePointAtMapCenter()" [disabled]="!canPlaceMapPoint()">
+          {{ mapPointActionLabel() }}
+        </button>
+      </div>
+    }
   </div>
+
+  <section class="route-geometry-panel" aria-label="Route geometry review">
+    <div class="route-geometry-header">
+      <span class="geometry-heading">Route Geometry</span>
+      <span
+        class="endpoint-status-badge"
+        [class.endpoint-complete]="routeEndpointsStatus().complete"
+        [class.endpoint-incomplete]="!routeEndpointsStatus().complete"
+        role="status"
+      >
+        {{ routeEndpointsStatus().statusText }}
+      </span>
+    </div>
+
+    @if (isScaleUnavailable()) {
+      <p class="scale-unverified-notice" role="note">
+        <span class="notice-prefix">Notice:</span>
+        {{ scaleNotice() }}
+      </p>
+    }
+
+    <div class="route-points-readout">
+      <span class="readout-title">Point coordinates (bottom-left pixels):</span>
+      @if (existingRoutePoints().length === 0) {
+        <span class="readout-empty">No route points placed yet.</span>
+      } @else {
+        <ul class="route-points-list" aria-label="Existing route points in bottom-left pixels">
+          @for (pt of existingRoutePoints(); track pt.id) {
+            <li class="route-point-badge" [attr.data-role]="pt.role">
+              <span class="point-role">{{ pt.label }}</span>
+              <span class="point-coords">{{ pt.formattedCoordinates }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </section>
 
   <div class="map-frame">
     <div
       #mapContainer
       class="map-container"
       role="application"
-      aria-label="Pan and zoom image map"
+      aria-label="Mars image map. Drag or use arrow keys to pan; pinch or use plus and minus to zoom. In route mode, tap or use the map-center button to place a point."
     ></div>
-    <div class="map-zoom-controls" aria-label="Map zoom controls">
+    @if (showScienceMarkerEmptyState()) {
+      <aside class="science-marker-empty-state" role="status">
+        <strong>No science records are positioned on this image.</strong>
+        <span>
+          The records are still available in the Science Context panel under Confidence &amp; Data.
+        </span>
+      </aside>
+    }
+    <div class="map-zoom-controls" role="group" aria-label="Map zoom controls">
       <button type="button" aria-label="Zoom in" (click)="zoomIn()">+</button>
       <button type="button" aria-label="Zoom out" (click)="zoomOut()">−</button>
     </div>

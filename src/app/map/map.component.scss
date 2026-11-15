@@ -1,7 +1,7 @@
 :host {
   display: block;
   min-width: 0;
-  color: #e9eef5;
+  color: var(--text-primary);
 }
 
 .map-panel {
@@ -13,11 +13,11 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem 1rem;
+  gap: 0.5rem 0.75rem;
   padding: 0.65rem 0.8rem;
-  border: 1px solid #394353;
+  border: 1px solid var(--border-subtle);
   border-radius: 0.55rem;
-  background: #151b25;
+  background: var(--bg-surface);
   font-size: 0.9rem;
 }
 
@@ -25,16 +25,179 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
+  min-height: var(--touch-target-min);
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.4rem;
+  background: var(--bg-card);
+  color: var(--text-primary);
   cursor: pointer;
 }
 
 .map-toolbar input {
-  accent-color: #65d7ad;
+  width: 1.125rem;
+  height: 1.125rem;
+  accent-color: var(--science-cyan);
 }
 
 .unavailable-layer {
-  color: #9ba7b7;
+  color: var(--text-secondary);
   font-size: 0.82rem;
+}
+
+.map-mode-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: var(--touch-target-min);
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.4rem;
+  background: var(--bg-card);
+  font-size: 0.85rem;
+}
+
+.map-mode-indicator .mode-label {
+  color: var(--text-secondary);
+}
+
+.map-mode-indicator .mode-value {
+  color: var(--science-cyan);
+  font-weight: 600;
+}
+
+.map-mode-indicator .mode-value[data-mode='start'] {
+  color: var(--success-green);
+}
+
+.map-mode-indicator .mode-value[data-mode='waypoint'] {
+  color: var(--warning-amber);
+}
+
+.map-mode-indicator .mode-value[data-mode='destination'] {
+  color: var(--mars-accent);
+}
+
+.route-geometry-panel {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.55rem;
+  background: var(--bg-surface);
+  font-size: 0.85rem;
+}
+
+.route-geometry-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.geometry-heading {
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.endpoint-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.endpoint-status-badge.endpoint-incomplete {
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
+  color: var(--warning-text);
+}
+
+.endpoint-status-badge.endpoint-complete {
+  background: var(--success-bg);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: var(--success-green);
+}
+
+.scale-unverified-notice {
+  margin: 0;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.4rem;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.scale-unverified-notice .notice-prefix {
+  font-weight: 600;
+  color: var(--warning-amber);
+  margin-right: 0.25rem;
+}
+
+.route-points-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  font-size: 0.82rem;
+}
+
+.readout-title {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.readout-empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.route-points-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.route-point-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.45rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.35rem;
+  background: var(--bg-card);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.route-point-badge .point-role {
+  font-weight: 600;
+}
+
+.route-point-badge[data-role='start'] .point-role {
+  color: #69e4b1;
+}
+
+.route-point-badge[data-role='waypoint'] .point-role {
+  color: #f4a340;
+}
+
+.route-point-badge[data-role='destination'] .point-role {
+  color: #ff7e79;
+}
+
+.route-point-badge .point-coords {
+  color: var(--text-primary);
 }
 
 .map-view-actions {
@@ -44,33 +207,32 @@
   margin-left: auto;
 }
 
-.map-view-actions button {
-  min-width: 44px;
-  min-height: 44px;
-  padding: 0.55rem 0.85rem;
-  border: 1px solid #65748a;
-  border-radius: 0.45rem;
-  color: #f1f5fa;
-  background: #202a38;
-  font: inherit;
+.map-view-actions button,
+.map-route-actions button,
+.retry-image {
+  min-height: var(--touch-target-min);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.4rem;
+  color: var(--text-primary);
+  background: var(--bg-card);
   font-weight: 600;
   cursor: pointer;
 }
 
-.map-view-actions button:hover:not(:disabled) {
-  background: #2a394b;
+.map-view-actions button:hover:not(:disabled),
+.map-route-actions button:hover:not(:disabled),
+.retry-image:hover {
+  background: var(--bg-card-hover);
 }
 
-.map-view-actions button:disabled {
-  color: #8995a5;
-  background: #171d27;
+.map-view-actions button:disabled,
+.map-route-actions button:disabled,
+.retry-image:disabled {
+  color: var(--text-muted);
+  background: var(--bg-surface);
   cursor: not-allowed;
   opacity: 0.75;
-}
-
-.map-view-actions button:focus-visible {
-  outline: 2px solid #8bc8ff;
-  outline-offset: 2px;
 }
 
 .map-frame {
@@ -78,16 +240,19 @@
   min-height: 420px;
   height: min(68vh, 760px);
   overflow: hidden;
-  border: 1px solid #394353;
+  border: 1px solid var(--border-subtle);
   border-radius: 0.7rem;
-  background: #0d1219;
 }
 
 .map-container {
   width: 100%;
   height: 100%;
   min-height: inherit;
-  background: #111923;
+}
+
+.map-container.leaflet-container {
+  background: var(--map-bg);
+  color: var(--text-primary);
 }
 
 .map-zoom-controls {
@@ -96,26 +261,37 @@
   top: 0.75rem;
   right: 0.75rem;
   display: grid;
-  gap: 0.35rem;
+  gap: 0.5rem;
 }
 
 .map-zoom-controls button {
-  width: 2.4rem;
-  height: 2.4rem;
-  border: 1px solid #536174;
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  padding: 0;
+  border: 1px solid var(--border-subtle);
   border-radius: 0.4rem;
-  color: #f1f5fa;
-  background: #151b25;
+  color: var(--text-primary);
+  background: var(--bg-surface);
   font-size: 1.35rem;
   line-height: 1;
   cursor: pointer;
 }
 
-.map-zoom-controls button:focus-visible,
-.close-details:focus-visible,
-.map-toolbar input:focus-visible {
-  outline: 2px solid #8bc8ff;
-  outline-offset: 2px;
+.science-marker-empty-state {
+  position: absolute;
+  z-index: 500;
+  right: 4rem;
+  bottom: 0.75rem;
+  display: grid;
+  gap: 0.25rem;
+  max-width: min(28rem, calc(100% - 5rem));
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 0.45rem;
+  color: var(--text-primary);
+  background: var(--hud-bg);
+  font-size: 0.88rem;
+  line-height: 1.4;
 }
 
 .map-state {
@@ -125,13 +301,13 @@
   display: grid;
   place-content: center;
   padding: 1.5rem;
-  color: #e9eef5;
-  background: rgb(13 18 25 / 88%);
+  color: var(--text-primary);
+  background: var(--hud-bg);
   text-align: center;
 }
 
 .map-state-error {
-  color: #ffd1cd;
+  color: var(--error-red);
 }
 
 .map-state-error p {
@@ -139,34 +315,16 @@
 }
 
 .retry-image {
-  min-width: 44px;
-  min-height: 44px;
   margin: 0 auto;
-  padding: 0.55rem 1rem;
-  border: 1px solid #8bc8ff;
-  border-radius: 0.45rem;
-  color: #f1f5fa;
-  background: #202a38;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.retry-image:hover {
-  background: #2a394b;
-}
-
-.retry-image:focus-visible {
-  outline: 2px solid #8bc8ff;
-  outline-offset: 2px;
 }
 
 .image-provenance,
 .marker-details {
   padding: 0.9rem 1rem;
-  border: 1px solid #394353;
+  border: 1px solid var(--border-subtle);
   border-radius: 0.55rem;
-  background: #151b25;
+  background: var(--bg-surface);
+  color: var(--text-primary);
   line-height: 1.5;
 }
 
@@ -179,12 +337,11 @@
 .marker-details ul {
   margin: 0.55rem 0 0;
   padding-left: 1.25rem;
-  color: #c1cbd8;
+  color: var(--text-secondary);
 }
 
 a {
-  color: #8bc8ff;
-  text-underline-offset: 0.15em;
+  color: var(--science-cyan);
 }
 
 .marker-details {
@@ -204,7 +361,7 @@ a {
 }
 
 .marker-details dt {
-  color: #aebacc;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -218,66 +375,55 @@ a {
   position: absolute;
   top: 0.6rem;
   right: 0.7rem;
-  width: 2rem;
-  height: 2rem;
-  border: 1px solid #536174;
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  border: 1px solid var(--border-subtle);
   border-radius: 50%;
-  color: inherit;
+  color: var(--text-primary);
   background: transparent;
   font-size: 1.25rem;
   cursor: pointer;
 }
 
-:host ::ng-deep .leaflet-container {
-  position: relative;
-  overflow: hidden;
-  color: #1b2734;
-  background: #111923;
-  font: inherit;
-}
-
-:host ::ng-deep .leaflet-pane,
-:host ::ng-deep .leaflet-control-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-:host ::ng-deep .leaflet-map-pane {
-  z-index: 400;
-}
-
-:host ::ng-deep .leaflet-tile-pane {
-  z-index: 200;
-}
-
-:host ::ng-deep .leaflet-overlay-pane {
-  z-index: 400;
-}
-
-:host ::ng-deep .leaflet-image-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  max-width: none !important;
-  max-height: none !important;
-}
-
-:host ::ng-deep .leaflet-pane > svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  overflow: visible;
-}
-
-:host ::ng-deep .leaflet-interactive {
-  cursor: pointer;
+a:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 2px;
 }
 
 @media (max-width: 600px) {
+  .map-toolbar {
+    gap: 0.375rem 0.5rem;
+    padding: 0.5rem;
+  }
+
+  .map-view-actions {
+    margin-left: 0;
+  }
+
+  .route-geometry-panel {
+    padding: 0.5rem;
+    gap: 0.375rem;
+  }
+
+  .route-geometry-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .science-marker-empty-state {
+    top: -0.5rem;
+    bottom: auto;
+    padding: 0.5rem 0.65rem;
+    gap: 0.125rem;
+    font-size: 0.8125rem;
+    line-height: 1.3;
+  }
+
   .map-frame {
     min-height: 360px;
     height: 58vh;
+    overflow: visible;
   }
 
   .marker-details dl {

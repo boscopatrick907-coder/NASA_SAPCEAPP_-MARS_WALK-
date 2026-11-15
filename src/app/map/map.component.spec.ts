@@ -26,6 +26,7 @@ const leaflet = vi.hoisted(() => {
     addLayer: vi.fn((layer: any) => mapLayers.add(layer)),
     removeLayer: vi.fn((layer: any) => mapLayers.delete(layer)),
     setView: vi.fn(),
+    getCenter: vi.fn(() => ({ lat: 521, lng: 1024 })),
     fitBounds: vi.fn(),
     invalidateSize: vi.fn(),
     zoomIn: vi.fn(),
@@ -167,6 +168,13 @@ const marker = (imageRef: string): ScienceMarker => ({
   limitations: ['Synthetic test record; not mission data.'],
 });
 
+const unpositionedMarker = (imageRef: string, id: string): ScienceMarker => ({
+  ...marker(imageRef),
+  id,
+  position: null,
+  positionStatus: 'unavailable',
+});
+
 describe('map coordinate helpers', () => {
   it('uses manifest width and height for CRS.Simple bounds', () => {
     expect(imageBounds(image())).toEqual([
@@ -221,6 +229,7 @@ describe('MapComponent', () => {
     leaflet.mapInstance.addLayer.mockClear();
     leaflet.mapInstance.removeLayer.mockClear();
     leaflet.mapInstance.fitBounds.mockClear();
+    leaflet.mapInstance.getCenter.mockReturnValue({ lat: 521, lng: 1024 });
     leaflet.mapInstance.remove.mockClear();
     leaflet.map.mockClear();
 
@@ -295,6 +304,21 @@ describe('MapComponent', () => {
     expect(applyMapPoint).toHaveBeenCalledWith({ x: 35, y: 20 });
   });
 
+  it('enables native map keyboard, drag, pinch and wheel interactions', () => {
+    expect(leaflet.map).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        keyboard: true,
+        dragging: true,
+        touchZoom: true,
+        scrollWheelZoom: true,
+      }),
+    );
+    expect(fixture.nativeElement.querySelector('.map-container').getAttribute('aria-label')).toContain(
+      'arrow keys to pan',
+    );
+  });
+
   it.each(['loading', 'unavailable', 'error'] as const)(
     'does not dispatch clicks when mission data becomes %s before rendering',
     (status) => {
@@ -333,6 +357,38 @@ describe('MapComponent', () => {
     fixture.nativeElement.querySelector('[aria-label="Zoom out"]').click();
     expect(leaflet.mapInstance.zoomIn).toHaveBeenCalledOnce();
     expect(leaflet.mapInstance.zoomOut).toHaveBeenCalledOnce();
+  });
+
+  it('provides keyboard route placement at the current viewport center in image coordinates', () => {
+    state.mode.set('waypoint');
+    fixture.detectChanges();
+
+    const button = fixture.nativeElement.querySelector('.map-route-actions button');
+    expect(button.textContent).toContain('Add waypoint at map center');
+    button.click();
+
+    expect(applyMapPoint).toHaveBeenCalledWith({ x: 1024, y: 521 });
+  });
+
+  it('clamps keyboard route placement to the active image bounds', () => {
+    state.mode.set('start');
+    leaflet.mapInstance.getCenter.mockReturnValue({ lat: 1100, lng: -20 });
+    fixture.detectChanges();
+
+    fixture.nativeElement.querySelector('.map-route-actions button').click();
+
+    expect(applyMapPoint).toHaveBeenCalledWith({ x: 0, y: 1042 });
+  });
+
+  it('keeps the keyboard drawing control absent in inspect mode and disabled before image readiness', () => {
+    expect(fixture.nativeElement.querySelector('.map-route-actions')).toBeNull();
+
+    state.mode.set('destination');
+    component.imageDisplayState.set('loading');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.map-route-actions button').disabled).toBe(true);
+    expect(component.canPlaceMapPoint()).toBe(false);
   });
 
   it('resets the viewport to the active image without changing mission state', () => {
@@ -506,6 +562,58 @@ describe('MapComponent', () => {
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('Synthetic test finding.');
     expect(fixture.nativeElement.textContent).toContain('illustrative');
+  });
+
+  it('explains that contextual records remain available when none are positioned on the active image', () => {
+    const records = [
+      unpositionedMarker(image().imageRef, 'context-record-1'),
+      unpositionedMarker(image().imageRef, 'context-record-2'),
+      unpositionedMarker(image().imageRef, 'context-record-3'),
+    ];
+    state.markers.set(records);
+    const markerSnapshot = state.markers();
+    const routeSnapshot = state.route();
+    const observationSnapshot = state.observations();
+    fixture.detectChanges();
+
+    const emptyState = fixture.nativeElement.querySelector('.science-marker-empty-state');
+    expect(emptyState?.textContent).toContain('No science records are positioned on this image.');
+    expect(emptyState?.textContent).toContain('Science Context panel under Confidence & Data.');
+    expect(state.markers()).toBe(markerSnapshot);
+    expect(state.route()).toBe(routeSnapshot);
+    expect(state.observations()).toBe(observationSnapshot);
+    expect(selectMarker).not.toHaveBeenCalled();
+  });
+
+  it('hides the empty state when a positioned marker belongs to the active image', () => {
+    state.markers.set([marker(image().imageRef)]);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.science-marker-empty-state')).toBeNull();
+    expect(
+      leaflet.circles.some(
+        (layer: any) => layer.point?.[0] === 20 && layer.point?.[1] === 35,
+      ),
+    ).toBe(true);
+  });
+
+  it('shows the empty state when positioned records belong to a different image', () => {
+    state.markers.set([marker('another-image-v1')]);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.science-marker-empty-state')?.textContent).toContain(
+      'No science records are positioned on this image.',
+    );
+    expect(leaflet.circles).toHaveLength(0);
+  });
+
+  it('hides the empty state when the marker layer is turned off', () => {
+    state.markers.set([unpositionedMarker(image().imageRef, 'context-record')]);
+    state.layers.update((layers) => ({ ...layers, markers: false }));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.science-marker-empty-state')).toBeNull();
+    expect(leaflet.mapInstance.removeLayer).toHaveBeenCalledWith(leaflet.groups[1]);
   });
 
   it('toggles imagery and markers independently through shared layer state', () => {
@@ -1019,5 +1127,275 @@ describe('MapComponent', () => {
     expect(leaflet.mapInstance.off).toHaveBeenCalledWith('click', click);
     expect(leaflet.mapInstance.remove).toHaveBeenCalledOnce();
     expect(resizeDisconnect).toHaveBeenCalledOnce();
+  });
+
+  describe('Route Geometry Review', () => {
+    it.each([
+      ['inspect', 'Inspect (pan/zoom)'],
+      ['start', 'Set Start'],
+      ['waypoint', 'Add Waypoint'],
+      ['destination', 'Set Destination'],
+    ] as const)('clearly shows the active %s mode in the toolbar indicator', (mode, expectedLabel) => {
+      state.mode.set(mode);
+      fixture.detectChanges();
+
+      const indicator = fixture.nativeElement.querySelector('.map-mode-indicator');
+      expect(indicator).not.toBeNull();
+      const valueEl = indicator.querySelector('.mode-value');
+      expect(valueEl.getAttribute('data-mode')).toBe(mode);
+      expect(valueEl.textContent?.trim()).toBe(expectedLabel);
+    });
+
+    it('identifies missing required endpoints when neither is set', () => {
+      state.route.set({ start: null, destination: null, waypoints: [] });
+      fixture.detectChanges();
+
+      const badge = fixture.nativeElement.querySelector('.endpoint-status-badge');
+      expect(badge.classList.contains('endpoint-incomplete')).toBe(true);
+      expect(badge.textContent).toContain('Missing Start and Destination endpoints');
+      expect(component.routeEndpointsStatus().complete).toBe(false);
+      expect(component.routeEndpointsStatus().hasStart).toBe(false);
+      expect(component.routeEndpointsStatus().hasDestination).toBe(false);
+    });
+
+    it('identifies missing destination when start is set', () => {
+      state.route.set({ start: { x: 100, y: 200 }, destination: null, waypoints: [] });
+      fixture.detectChanges();
+
+      const badge = fixture.nativeElement.querySelector('.endpoint-status-badge');
+      expect(badge.classList.contains('endpoint-incomplete')).toBe(true);
+      expect(badge.textContent).toContain('Missing Destination endpoint');
+      expect(component.routeEndpointsStatus().complete).toBe(false);
+      expect(component.routeEndpointsStatus().hasStart).toBe(true);
+      expect(component.routeEndpointsStatus().hasDestination).toBe(false);
+    });
+
+    it('identifies missing start when destination is set', () => {
+      state.route.set({ start: null, destination: { x: 500, y: 600 }, waypoints: [] });
+      fixture.detectChanges();
+
+      const badge = fixture.nativeElement.querySelector('.endpoint-status-badge');
+      expect(badge.classList.contains('endpoint-incomplete')).toBe(true);
+      expect(badge.textContent).toContain('Missing Start endpoint');
+      expect(component.routeEndpointsStatus().complete).toBe(false);
+      expect(component.routeEndpointsStatus().hasStart).toBe(false);
+      expect(component.routeEndpointsStatus().hasDestination).toBe(true);
+    });
+
+    it('identifies required endpoints as complete when both start and destination are set', () => {
+      state.route.set({
+        start: { x: 100, y: 200 },
+        destination: { x: 500, y: 600 },
+        waypoints: [{ x: 300, y: 400 }],
+      });
+      fixture.detectChanges();
+
+      const badge = fixture.nativeElement.querySelector('.endpoint-status-badge');
+      expect(badge.classList.contains('endpoint-complete')).toBe(true);
+      expect(badge.textContent).toContain('Required endpoints set (Start & Destination)');
+      expect(component.routeEndpointsStatus().complete).toBe(true);
+      expect(component.routeEndpointsStatus().hasStart).toBe(true);
+      expect(component.routeEndpointsStatus().hasDestination).toBe(true);
+    });
+
+    it('explains when metric scale is unavailable without inventing distance or scale bar', () => {
+      state.image.set(image()); // calibration.verified is false
+      fixture.detectChanges();
+
+      expect(component.isScaleUnavailable()).toBe(true);
+      const notice = fixture.nativeElement.querySelector('.scale-unverified-notice');
+      expect(notice).not.toBeNull();
+      expect(notice.textContent).toContain(
+        'Metric scale is unverified for this image; ground distances are unavailable. Coordinates are reported in bottom-left image pixels.',
+      );
+      // Ensure no custom scale bar element is rendered
+      expect(fixture.nativeElement.querySelector('.leaflet-control-scale')).toBeNull();
+    });
+
+    it('hides the unverified scale notice when calibration is verified', () => {
+      state.image.set({
+        ...image(),
+        calibration: {
+          verified: true,
+          metersPerPixel: 0.25,
+          sourceUrl: 'https://example.test/cal',
+          method: 'HiRISE scale',
+        },
+      });
+      fixture.detectChanges();
+
+      expect(component.isScaleUnavailable()).toBe(false);
+      expect(fixture.nativeElement.querySelector('.scale-unverified-notice')).toBeNull();
+    });
+
+    it('displays empty readout when no route points exist', () => {
+      state.route.set({ start: null, destination: null, waypoints: [] });
+      fixture.detectChanges();
+
+      expect(component.existingRoutePoints()).toHaveLength(0);
+      const emptyEl = fixture.nativeElement.querySelector('.readout-empty');
+      expect(emptyEl?.textContent).toContain('No route points placed yet.');
+      expect(fixture.nativeElement.querySelector('.route-points-list')).toBeNull();
+    });
+
+    it('displays existing point coordinates in readable bottom-left pixel units', () => {
+      state.route.set({
+        start: { x: 150.4, y: 320.6 },
+        waypoints: [{ x: 400, y: 550 }],
+        destination: { x: 800.25, y: 920.75 },
+      });
+      fixture.detectChanges();
+
+      const points = component.existingRoutePoints();
+      expect(points).toHaveLength(3);
+      expect(points[0]).toEqual({
+        id: 'start',
+        role: 'start',
+        label: 'Start',
+        x: 150.4,
+        y: 320.6,
+        formattedCoordinates: '(150.4, 320.6 px)',
+      });
+      expect(points[1]).toEqual({
+        id: 'waypoint-0',
+        role: 'waypoint',
+        label: 'Waypoint 1',
+        x: 400,
+        y: 550,
+        formattedCoordinates: '(400, 550 px)',
+      });
+      expect(points[2]).toEqual({
+        id: 'destination',
+        role: 'destination',
+        label: 'Destination',
+        x: 800.25,
+        y: 920.75,
+        formattedCoordinates: '(800.3, 920.8 px)',
+      });
+
+      const listItems = fixture.nativeElement.querySelectorAll('.route-point-badge');
+      expect(listItems).toHaveLength(3);
+      expect(listItems[0].textContent).toContain('Start');
+      expect(listItems[0].textContent).toContain('(150.4, 320.6 px)');
+      expect(listItems[1].textContent).toContain('Waypoint 1');
+      expect(listItems[1].textContent).toContain('(400, 550 px)');
+      expect(listItems[2].textContent).toContain('Destination');
+      expect(listItems[2].textContent).toContain('(800.3, 920.8 px)');
+    });
+
+    it('preserves full coordinate precision in mission state without truncating', () => {
+      state.mode.set('start');
+      fixture.detectChanges();
+
+      const clickHandler = leaflet.handlers.get('click');
+      clickHandler?.({ latlng: { lat: 314.159265, lng: 271.828182 } });
+
+      expect(applyMapPoint).toHaveBeenCalledWith({
+        x: 271.828182,
+        y: 314.159265,
+      });
+    });
+
+    describe('focusRoute review verification', () => {
+      it('does nothing when route has no points', () => {
+        state.route.set({ start: null, destination: null, waypoints: [] });
+        fixture.detectChanges();
+
+        expect(component.canFocusRoute()).toBe(false);
+        component.focusRoute();
+        expect(leaflet.mapInstance.fitBounds).not.toHaveBeenCalled();
+      });
+
+      it('does nothing when route has only one point', () => {
+        state.route.set({ start: { x: 100, y: 200 }, destination: null, waypoints: [] });
+        fixture.detectChanges();
+
+        expect(component.canFocusRoute()).toBe(false);
+        component.focusRoute();
+        expect(leaflet.mapInstance.fitBounds).not.toHaveBeenCalled();
+      });
+
+      it('safely focuses coincident endpoints with zoom capped at 2', () => {
+        state.route.set({
+          start: { x: 500, y: 300 },
+          destination: { x: 500, y: 300 },
+          waypoints: [],
+        });
+        fixture.detectChanges();
+
+        expect(component.canFocusRoute()).toBe(true);
+        component.focusRoute();
+
+        expect(leaflet.latLngBounds).toHaveBeenCalledWith([
+          [300, 500],
+          [300, 500],
+        ]);
+        expect(leaflet.mapInstance.fitBounds).toHaveBeenCalledWith(
+          expect.anything(),
+          expect.objectContaining({
+            padding: [32, 32],
+            maxZoom: 2,
+          }),
+        );
+      });
+
+      it('safely focuses boundary points across entire raster extent', () => {
+        state.route.set({
+          start: { x: 0, y: 0 },
+          destination: { x: 2048, y: 1042 },
+          waypoints: [],
+        });
+        fixture.detectChanges();
+
+        expect(component.canFocusRoute()).toBe(true);
+        component.focusRoute();
+
+        expect(leaflet.latLngBounds).toHaveBeenCalledWith([
+          [0, 0],
+          [1042, 2048],
+        ]);
+        expect(leaflet.mapInstance.fitBounds).toHaveBeenCalledWith(
+          expect.anything(),
+          expect.objectContaining({
+            padding: [32, 32],
+            maxZoom: 2,
+          }),
+        );
+      });
+    });
+
+    describe('Inspect mode safety', () => {
+      it('does not add route points during zoom-in or zoom-out in inspect mode', () => {
+        state.mode.set('inspect');
+        fixture.detectChanges();
+
+        component.zoomIn();
+        component.zoomOut();
+
+        expect(leaflet.mapInstance.zoomIn).toHaveBeenCalled();
+        expect(leaflet.mapInstance.zoomOut).toHaveBeenCalled();
+        expect(applyMapPoint).not.toHaveBeenCalled();
+      });
+
+      it('does not add route points during viewport reset or navigation in inspect mode', () => {
+        state.mode.set('inspect');
+        fixture.detectChanges();
+
+        component.resetView();
+
+        expect(leaflet.mapInstance.fitBounds).toHaveBeenCalled();
+        expect(applyMapPoint).not.toHaveBeenCalled();
+      });
+
+      it('does not allow map-center route placement in inspect mode', () => {
+        state.mode.set('inspect');
+        fixture.detectChanges();
+
+        expect(component.canPlaceMapPoint()).toBe(false);
+        component.placeRoutePointAtMapCenter();
+
+        expect(applyMapPoint).not.toHaveBeenCalled();
+      });
+    });
   });
 });
