@@ -1,6 +1,19 @@
 # Environmental source investigation and illustrative converter
 
-Updated 15 November 2026. Gaddielle supplied the prototype; coordinator corrections address temperature accounting and fixture wording. **No source-verified environmental measurements or runtime schema are approved.**
+Updated 15 November 2026. Gaddielle supplied the earlier prototype; coordinator corrections address its temperature accounting and fixture wording. Enzo has now added one source-traceable REMS product and reproducible excerpt. **This source contribution is not runtime-approved, and no change to the coordinator-owned environmental schema or runtime JSON is made here.**
+
+## Enzo source-verified REMS product — Sol 4803
+
+One real Curiosity REMS MODRDR product was retrieved from the official PDS Atmospheres PDS4 bundle on 2026-11-15, with its original PDS3 label and converted PDS4 label. The source metadata, six retained files, exact download URLs, byte sizes and locally calculated SHA-256 fingerprints are recorded in [the dataset manifest](../../data/environment/rems-sol-4803/manifest.json); the extraction and field meanings are documented in [the dataset README](../../data/environment/rems-sol-4803/README.md).
+
+- Dataset/product: `MSL-M-REMS-5-MODRDR-V1.0`, Release `0042`, Sol `4803`, `RME_823829944RMD48030000000_______P1`, product version `V1.0`.
+- Label bounds: `2026-02-08T14:49:47.371Z`–`2026-02-09T13:30:33.153Z`. The source table declares 30,801 records × 372 bytes (including CRLF), matching the downloaded 11,457,972-byte TAB exactly.
+- The output `observations.csv` contains 33 sampled source rows. It preserves the original timestamp/LMST/LTST, ambient temperature (K), pressure (Pa), raw confidence/configuration codes, source row numbers and direct source URLs. A same-sol ADR product supplies exact-timestamp-joined rover position X/Y/Z in meters relative to the landing site in the MSL_TOPO frame; these local coordinates were not transformed to latitude/longitude.
+- The extraction selects the first valid source row in each occupied 1,800-second elapsed timestamp bin. It performs no interpolation, unit conversion, averaging or confidence-code filtering. Tests compare each CSV value to its original MODRDR or ADR row and check product identity, table dimensions, field mappings, byte sizes and local hashes.
+- The PDS labels show upstream source/calibration IDs. The PDS release detail says Release 0042 covers Sols 4710–4843; the PDS dataset description identifies MODRDR as corrected/modeled rover environmental data. See the [official archive](https://atmos.nmsu.edu/data_and_services/atmospheres_data/MARS/curiosity/rems.html), [Sol 4803 product directory](https://atmos.nmsu.edu/PDS/data/PDS4/msl_rems_bundle/data_calibrated/SOL_04710_04843/SOL04803/), [PDS dataset record](https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=MSL-M-REMS-5-MODRDR-V1.0), and [Release 0042 detail](https://pds.nasa.gov/datasearch/subscription-service/data_product_information.cfm?dsid=MSL-M-REMS-5-MODRDR-V1.0&releaseid=0042).
+- The archive directory publishes the source files and sizes but no checksums; the recorded SHA-256 values are local post-download fingerprints, not NASA-published checksum assertions.
+- This is a historical rover-local sol with sparse measurement windows. The full table has 30,801 rows over about 22 hours 41 minutes, with long gaps; the 33-row excerpt itself has gaps up to about 81 minutes. The rover positions have not been transformed to the user's approximate boxwork coordinate (4.843° S, 137.298° E), so no co-location is claimed. This is not live weather, forecast, continuous site coverage, a ground-temperature product, or a safety/terrain assessment.
+- No application interface, runtime schema or `public/data/environment.json` was changed. Source acceptance, scientific quality review and any mapping into the coordinator-owned runtime contract remain separate gates.
 
 ## 1. Source discovery and evidence boundary
 
@@ -8,9 +21,9 @@ Updated 15 November 2026. Gaddielle supplied the prototype; coordinator correcti
 - RAD archive discovery: https://pds-ppi.igpp.ucla.edu/mission/MSL/MSL/RAD
 - PDS search: https://pds.nasa.gov/
 
-These are discovery references, not exact product citations or extraction evidence. REMS and RAD are different instruments; their units, intervals, detector definitions, quality flags and missing-value rules must be established separately from original product labels. Original product IDs/downloads/labels, raw hashes and row mappings have not been supplied for the fixture. No sample location, solar season, observation time, detector or quiet-Sun condition is verified. No numerical instrument background ranges are asserted by this prototype.
+These are discovery references, not exact product citations or extraction evidence for the earlier illustrative fixture. REMS and RAD are different instruments; their units, intervals, detector definitions, quality flags and missing-value rules must be established separately from original product labels. Original product IDs/downloads/labels, raw hashes and row mappings have not been supplied for that fixture. No sample location, solar season, observation time, detector or quiet-Sun condition is verified there. No numerical instrument background ranges are asserted by that prototype.
 
-Next actual data delivery: one bounded original REMS pressure/temperature product with label/documentation, stable download/product/version, byte size/SHA-256, documented units/time/quality and a reproducible extraction mapping. RAD can follow independently if traceable. Keep historical rover context distinct from conditions on a drawn route. Do not infer human dose, terrain, safety or real-time conditions.
+Next review: independently review the Sol 4803 source/product semantics and agree any mapping to the existing coordinator-owned runtime contract before anyone publishes derived runtime data. Additional REMS sols and RAD products are separate bounded deliveries requiring their own original sources and extraction verification. Keep historical rover context distinct from conditions on a drawn route. Do not infer human dose, terrain, safety or real-time conditions.
 
 ## 2. Illustrative test fixture and conversion conventions
 

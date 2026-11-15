@@ -1,0 +1,102 @@
+{
+  "mission": "Mars Science Laboratory (Curiosity)",
+  "instrument": "Rover Environmental Monitoring Station (REMS)",
+  "dataset_id": "MSL-M-REMS-5-MODRDR-V1.0",
+  "planet_day_number": 4803,
+  "release_id": "0042",
+  "product_version_id": "V1.0",
+  "product_id": "RME_823829944RMD48030000000_______P1",
+  "product_creation_time_utc": "2026-06-25T01:24:29.932Z",
+  "start_time_utc": "2026-02-08T14:49:47.371Z",
+  "stop_time_utc": "2026-02-09T13:30:33.153Z",
+  "spacecraft_clock_start_count": "823830009",
+  "spacecraft_clock_stop_count": "823911654",
+  "declared_table_records": 30801,
+  "declared_columns": 40,
+  "declared_record_bytes": 372,
+  "source_product_ids": [
+    "RME_823829944ESE48030000000ACQ____M1",
+    "RME_823829944ESE48030000000ENG____M1",
+    "RME_823829944ESE48030000000GTSGAINM1"
+  ],
+  "calibration_source_ids": [
+    "ATS_CAL_20141014.TXT",
+    "GTS_CAL_20131018.TXT",
+    "HS_CAL_20260623.TXT",
+    "PS_CAL_20260623.TXT",
+    "UVS_CAL_20120804.TXT",
+    "WS_CAL_20140603.TXT"
+  ],
+  "location_product_id": "RME_823829944ADR48030000000_______P1",
+  "location_frame": "ROVER_POSITION_X/Y/Z in meters relative to the landing site in the MSL_TOPO frame; X is local north, Z is outward normal, Y completes the right-handed frame.",
+  "location_note": "This local frame has not been transformed to latitude/longitude. It does not establish that a sample is at the user's approximate boxwork coordinate (4.843 S, 137.298 E).",
+  "retrieved_utc_date": "2026-11-15",
+  "source_base_url": "https://atmos.nmsu.edu/PDS/data/PDS4/msl_rems_bundle/data_calibrated/SOL_04710_04843/SOL04803/",
+  "files": [
+    {
+      "name": "RME_823829944RMD48030000000_______P1.TAB",
+      "role": "REMS MODRDR observation table",
+      "bytes": 11457972,
+      "sha256": "7AD08F256C3FEB3FB42F8AF780A53FA58F7DEF41210AC721A4898232BFC2E04F",
+      "url": "https://atmos.nmsu.edu/PDS/data/PDS4/msl_rems_bundle/data_calibrated/SOL_04710_04843/SOL04803/RME_823829944RMD48030000000_______P1.TAB"
+    },
+    {
+      "name": "RME_823829944RMD48030000000_______P1.LBL",
+      "role": "Original PDS3 product label for the REMS MODRDR table",
+      "bytes": 3032,
+      "sha256": "8A7CBD6919BDE3A9C19F64C387E8D0048DA850678D320B743F41138216B6E225",
+      "url": "https://atmos.nmsu.edu/PDS/data/PDS4/msl_rems_bundle/data_calibrated/SOL_04710_04843/SOL04803/RME_823829944RMD48030000000_______P1.LBL"
+    },
+    {
+      "name": "RME_823829944RMD48030000000_______P1.xml",
+      "role": "PDS4 product label with per-field definitions and units",
+      "bytes": 28158,
+      "sha256": "7EA3EB51CFD528E9A7A47E45932F4DC56B1EE8986FE50EDB4B9E7A558670BD46",
+      "url": "https://atmos.nmsu.edu/PDS/data/PDS4/msl_rems_bundle/data_calibrated/SOL_04710_04843/SOL04803/RME_823829944RMD48030000000_______P1.xml"
+    },
+    {
+      "name": "RME_823829944ADR48030000000_______P1.TAB",
+      "role": "Same-sol ADR table containing rover geometry records used for exact timestamp location joins",
+      "bytes": 4681904,
+      "sha256": "604AA256460EE78C337F326D24469452295C9B801085679CA992026FEF7CB2A0",
+      "url": "https://atmos.nmsu.edu/PDS/data/PDS4/msl_rems_bundle/data_calibrated/SOL_04710_04843/SOL04803/RME_823829944ADR48030000000_______P1.TAB"
+    },
+    {
+      "name": "RME_823829944ADR48030000000_______P1.LBL",
+      "role": "Original PDS3 ADR label describing the geometry table and coordinate frame",
+      "bytes": 3110,
+      "sha256": "F8C2DA725FCE77476C78597D731ED1765B849A74D15F2ABE06AB427462239B1B",
+      "url": "https://atmos.nmsu.edu/PDS/data/PDS4/msl_rems_bundle/data_calibrated/SOL_04710_04843/SOL04803/RME_823829944ADR48030000000_______P1.LBL"
+    },
+    {
+      "name": "RME_823829944ADR48030000000_______P1.xml",
+      "role": "PDS4 ADR product label with rover position field definitions and units",
+      "bytes": 17150,
+      "sha256": "3A6E540737AA8E40E591A753F47C158E85E0B5FA687768262289B096020A507C",
+      "url": "https://atmos.nmsu.edu/PDS/data/PDS4/msl_rems_bundle/data_calibrated/SOL_04710_04843/SOL04803/RME_823829944ADR48030000000_______P1.xml"
+    }
+  ],
+  "extraction": {
+    "output": "observations.csv",
+    "source_modrdr_fields": {
+      "TIMESTAMP": 1,
+      "LMST": 2,
+      "LTST": 3,
+      "AMBIENT_TEMP": 16,
+      "AMBIENT_TEMP_CONFIDENCE_LEVEL": 17,
+      "PS_CONFIGURATION": 37,
+      "PRESSURE": 38,
+      "PRESSURE_UNCERTAINTY": 39,
+      "PS_CONFIDENCE_LEVEL": 40
+    },
+    "source_adr_geometry_fields": {
+      "TIMESTAMP": 1,
+      "ROVER_POSITION_X": 6,
+      "ROVER_POSITION_Y": 7,
+      "ROVER_POSITION_Z": 8
+    },
+    "selection": "First source row with finite, non-sentinel pressure and ambient temperature in each occupied 1800-second elapsed-TIMESTAMP bin, measured from the first MODRDR table row. No interpolation, conversion, averaging, or confidence-based exclusion. Join ADR geometry by exact source TIMESTAMP.",
+    "generated_row_count": 33
+  },
+  "hash_note": "SHA-256 values are fingerprints calculated locally after retrieval. The PDS directory listing provides file sizes but did not provide archive-published checksums; these hashes are not represented as NASA-published checksums."
+}
