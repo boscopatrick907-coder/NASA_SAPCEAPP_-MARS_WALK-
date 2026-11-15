@@ -36,9 +36,9 @@ This document delivers **Phase A** of the numerical environmental data work for 
   - **Surface Atmospheric Pressure:** Measured by a barometric sensor inside the rover warm electronics box. Units: Pascals (`Pa`). Typical diurnal amplitude: ~740 to 860 Pa (reflecting daily atmospheric thermal tides and seasonal $CO_2$ polar cap sublimation/condensation cycles).
   - **Ambient Air Temperature:** Measured by thermocouple sensors on Boom 1 and Boom 2 deployed at approximately 1.5 meters height on the rover mast. Units: Degrees Celsius (`degC` or `°C`). Typical diurnal amplitude: -79°C (minimum at dawn) to -14°C (maximum in early afternoon).
 - **Quality & Sentinel Rules:**
-  - `quality_flag = 0`: Valid measurement row.
-  - `quality_flag = 1`: Degraded or questionable measurement.
-  - `quality_flag = 2`: Sensor offline or missing data (sentinel `-9999.0`).
+  - **Internal Sample Convention (Illustrative Fixture)**: The sample fixture utilizes an integer column `quality_flag` where `0` = valid/included, `1` = degraded, and `2` = offline/sentinel (`-9999.0`). This is a local fixture convenience and is **not** an official NASA PDS archive column.
+  - **Official NASA PDS Confidence Bitmasks**: As defined in `MODRDR6.FMT`, actual REMS archival data uses multi-character bitmasks (`PS_CONFIDENCE_LEVEL`, `AMBIENT_TEMP_CONFIDENCE_LEVEL`, `GTS_CONFIDENCE_LEVEL`) where individual bit positions specify sensor state, shadow condition, and observation reliability. Missing records in the PDS table use `-999.00`.
+  - **Zero Preservation (R4)**: Valid physical measurements evaluating to `0.0` or `0.00` are strictly preserved; only documented sentinels (`-9999.0` in sample fixture, `-999.00` in raw PDS) and degraded quality statuses are excluded.
 - **Archive Verification:** All 16 Sols (3900–3915) have been verified against NASA PDS Atmospheres Node MODRDR data files (`RME_*RMD*P2.TAB` and `.LBL`). File metadata, exact SCLK numbers, sizes, and SHA-256 hashes are cataloged in Section 1.C below.
 
 ### B. Curiosity RAD (Radiation Assessment Detector) Feasibility Assessment

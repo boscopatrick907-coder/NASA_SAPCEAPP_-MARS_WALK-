@@ -33,14 +33,47 @@ Per `MODRDR6.FMT`, the verified variables are extracted as follows:
 | **1** | `TIMESTAMP` | Second | Spacecraft clock seconds since noon 1-Jan-2000 | Sequence integrity check |
 | **2** | `LMST` | Text | Local Mean Solar Time (`SSSSSМHH:MM:SS.sss`) | Diurnal cycle synchronization |
 | **3** | `LTST` | Text | Local True Solar Time (`SSSSS HH:MM:SS.sss`) | Solar position alignment |
-| **8** | `BRIGHTNESS_TEMP` | Kelvin | Ground surface brightness temperature (GTS) | Reject `-999.00` sentinels; filtered by GTS confidence |
+| **8** | `BRIGHTNESS_TEMP` | Kelvin | Ground surface brightness temperature (GTS) | Reject `-999.00` uncalibrated/inactive sentinel; preserve valid `0.00` measurements |
+| **11** | `GTS_CONFIDENCE_LEVEL` | Text | 4-character bitmask for ground temperature quality | Documented in Section 2.1 |
 | **12** | `BOOM1_LOCAL_AIR_TEMP`| Kelvin | Air temperature measured at Boom 1 mast | Diagnostic reference |
 | **14** | `BOOM2_LOCAL_AIR_TEMP`| Kelvin | Air temperature measured at Boom 2 mast | Diagnostic reference |
-| **16** | `AMBIENT_TEMP` | Kelvin | Model-corrected ambient air temperature (mast height ~1.5 m) | Reject `-999.00` sentinels; filtered by ambient confidence |
-| **17** | `AMBIENT_TEMP_CONFIDENCE_LEVEL` | Text | Air temperature confidence bitmask | Quality verification |
-| **38** | `PRESSURE` | Pascal | Barometric surface pressure (transducer inside warm rover chassis) | Reject `-999.00` sentinels; filtered by PS confidence |
+| **16** | `AMBIENT_TEMP` | Kelvin | Model-corrected ambient air temperature (mast height ~1.5 m) | Reject `-999.00` sentinel; preserve valid `0.00` measurements |
+| **17** | `AMBIENT_TEMP_CONFIDENCE_LEVEL` | Text | 9-character bitmask for ambient temperature quality | Documented in Section 2.1 |
+| **38** | `PRESSURE` | Pascal | Barometric surface pressure (transducer inside warm rover chassis) | Reject `-999.00` sentinel; preserve valid `0.00` measurements |
 | **39** | `PRESSURE_UNCERTAINTY` | Pascal | Pressure absolute calibration accuracy (~8.3 Pa) | Systematic uncertainty boundary |
-| **40** | `PS_CONFIDENCE_LEVEL` | Text | Pressure sensor confidence bitmask | Quality verification |
+| **40** | `PS_CONFIDENCE_LEVEL` | Text | 2-character bitmask for pressure sensor configuration | Documented in Section 2.1 |
+
+---
+
+### 2.1 NASA PDS Official Confidence Bitmask Interpretation
+
+Per `MODRDR6.FMT` (PDS Atmospheres Node), quality flags in Curiosity REMS products are **multi-bit character bitmasks** specific to each sensor, NOT an arbitrary global integer like `quality_flag = 0`:
+
+#### 1. `PS_CONFIDENCE_LEVEL` (Pressure Sensor Confidence, Column 40)
+String representing the confidence level for the barometric pressure transducer (`0 = bad; 1 = good; X = unknown`, byte 0 on left):
+- **Byte 0 (Oscillator)**: `0` = oscillator 1 active; `1` = oscillator 2 active.
+- **Byte 1 (Shadow effect)**: `0` = sensor affected by shadow; `1` = no shadow effect.
+*(In Sols 3900–3915, all valid pressure records show `'11'`, indicating oscillator 2 in high-resolution mode with no shadow degradation).*
+
+#### 2. `AMBIENT_TEMP_CONFIDENCE_LEVEL` (Ambient Air Temperature Confidence, Column 17)
+String representing the ambient air temperature model confidence (`0 = bad; 1 = good; X = unknown`, byte 0 on left):
+- **Byte 0**: ASIC temperature (`0` = less than -50°C; `1` = greater than -50°C).
+- **Byte 1**: Wind Sensor status (`0` = WS off; `1` = WS on).
+- **Byte 2**: ASIC power supply range (`0` = out of range; `1` = in range `[4.71-4.79]`, `[4.82-4.98]`, `[5.11-5.19]`).
+- **Byte 3**: Wind speed condition (`0` = above threshold; `1` = below threshold).
+- **Byte 4**: Wind direction w.r.t. boom (`0` = from RTG/rover deck perturbation; `1` = undisturbed).
+- **Byte 5**: Sensor shadow condition (`0` = partial/no shadow; `1` = total shadow or nighttime).
+- **Byte 6**: Mast boom shadow condition (`0` = partial/no shadow; `1` = total shadow or nighttime).
+- **Byte 7**: Operational temperature range (`0` = error > 5 K; `1` = error within operational range).
+- **Byte 8 (Reliability)**: Observation reliability (`0` = unreliable; `1` = reliable).
+
+#### 3. `GTS_CONFIDENCE_LEVEL` (Ground Temperature Sensor Confidence, Column 11)
+String representing the Ground Temperature Sensor confidence (`0 = bad; 1 = good; X = unknown`, byte 0 on left):
+- **Byte 0**: ASIC power supply range (`0` = out of range; `1` = in range `[4.87-4.97]`).
+- **Byte 1**: GTS recalibration quality (`0` = low quality; `1` = high quality).
+- **Byte 2**: Rover movement state (`0` = moving; `1` = stationary).
+- **Byte 3**: Field of View shadow condition (`0` = full or partial shadow in FoV; `1` = no shadow).
+*(When GTS sensor is inactive or during thermal recalibration, bytes evaluate to `'XXXX'` or sentinel `-999.00`).*
 
 ---
 
@@ -48,14 +81,15 @@ Per `MODRDR6.FMT`, the verified variables are extracted as follows:
 
 1. **Record Parsing**:
    - Each sol's `.TAB` table is parsed row by row. Total observations evaluated across Sols 3900–3915: **484,604 row records** (averaging ~30,287 readings per sol at 1 Hz intervals during active sensor sessions).
-2. **Sentinel Filtering**:
-   - Missing, uncalibrated, or degraded sensor readings represented by `-999.00` (or `0.00` when sensor inactive) are strictly filtered out before computing statistics.
-3. **Daily Aggregations**:
-   - For each sol, the following statistics are computed deterministically:
-     - `pressure_min_pa`, `pressure_max_pa`, `pressure_mean_pa`
-     - `air_temp_min_k`, `air_temp_max_k`, `air_temp_mean_k`
-     - `ground_temp_min_k`, `ground_temp_max_k`, `ground_temp_mean_k`
-     - Observation counts for each quantity (`pressure_obs_count`, `air_temp_obs_count`, `ground_temp_obs_count`).
+2. **Sentinel Filtering vs Legitimate Zero Preservation (R4)**:
+   - In accordance with `MODRDR6.FMT`, missing, uncalibrated, or inactive sensor records are designated exclusively by the IEEE real sentinel `-999.00`.
+   - **Legitimate Zeros**: Measurements evaluating to `0.0` or `0.00` are **not** discarded as missing data. A physical zero (e.g. 0.0°C or 0.0 W/m² irradiance) is preserved as a valid numerical observation. Only the documented sentinel value `-999.00` (and `XXXX` bitmasks) indicates missing or uncalibrated data.
+3. **Daily Aggregations & Independent Accounting**:
+   - For each sol, independent valid observation counts and nominal quality counts are tracked separately for pressure, ambient air temperature, and ground temperature in `data/environment/observations.csv`:
+     - `pressure_valid_count` and `pressure_nominal_quality_count`
+     - `air_temp_valid_count` and `air_temp_nominal_quality_count`
+     - `ground_temp_valid_count` and `ground_temp_nominal_quality_count`
+   - Daily statistical intervals (`min`, `max`, `mean`) are computed strictly from the valid non-sentinel records of that specific sensor.
 4. **Outputs**:
    - Primary observations table: [`data/environment/observations.csv`](../../data/environment/observations.csv)
    - Archive sources table: [`docs/data/sources.csv`](../../docs/data/sources.csv)

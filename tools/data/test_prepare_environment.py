@@ -363,5 +363,70 @@ class PrepareEnvironmentTests(unittest.TestCase):
             self.assertEqual(r["perQuantityAudit"]["sentinelExcluded"], 1)
 
 
+    def test_zero_pressure_and_temp_preserved_as_valid(self):
+        """R4: Physical 0.0 values (e.g. 0.0 degC) are preserved and not discarded as sentinels."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            csv_path = Path(temp_dir) / "zeros.csv"
+            csv_path.write_text(
+                "sol,ls_deg,pressure_min_pa,pressure_max_pa,pressure_mean_pa,temp_air_min_c,temp_air_max_c,temp_air_mean_c,rad_dose_rate_ugy_day,quality_flag\n"
+                "100,10.0,700.0,800.0,750.0,-5.0,0.0,-2.5,0.0,0\n",
+                encoding="utf-8",
+            )
+            out_file = Path(temp_dir) / "out.json"
+            res = self.run_cli(csv_path, out_file)
+            self.assertEqual(res.returncode, 0, res.stderr)
+
+            data = json.loads(out_file.read_text(encoding="utf-8"))
+            q_by_id = {q["id"]: q for q in data["quantities"]}
+            t = q_by_id["ambient-air-temperature"]
+            self.assertEqual(t["max"], 0.0)
+            self.assertEqual(t["sampleCount"], 1)
+            self.assertEqual(t["perQuantityAudit"]["sentinelExcluded"], 0)
+
+            r = q_by_id["surface-radiation-dose-rate"]
+            self.assertEqual(r["mean"], 0.0)
+            self.assertEqual(r["sampleCount"], 1)
+            self.assertEqual(r["perQuantityAudit"]["sentinelExcluded"], 0)
+
+    def test_rems_confidence_bitmask_parsing_logic(self):
+        """R4: Verify exact bitmask logic matches PDS MODRDR6.FMT definitions."""
+        from tools.data.extract_rems_observations import parse_rems_confidence_levels, is_valid_measurement
+
+        # Nominal bitmasks:
+        # PS: "11" -> byte 1 == '1' (no shadow)
+        # AMBIENT: "001XX1111" -> byte 8 == '1' (observation reliable)
+        # GTS: "0111" -> byte 1 == '1' (high recalibration quality)
+        nominal = parse_rems_confidence_levels("0111", "001XX1111", "11")
+        self.assertTrue(nominal["ps_nominal"])
+        self.assertTrue(nominal["amb_reliable"])
+        self.assertTrue(nominal["gts_nominal"])
+
+        # Degraded/Unreliable bitmasks:
+        # PS with shadow effect: "10" (byte 1 == '0')
+        # AMBIENT unreliable: "001XX1110" (byte 8 == '0')
+        # GTS uncalibrated/sensor offline: "XXXX"
+        degraded = parse_rems_confidence_levels("XXXX", "001XX1110", "10")
+        self.assertFalse(degraded["ps_nominal"])
+        self.assertFalse(degraded["amb_reliable"])
+        self.assertFalse(degraded["gts_nominal"])
+
+        # Legitimate 0.0 vs -999.00 sentinel
+        self.assertTrue(is_valid_measurement(0.0))
+        self.assertTrue(is_valid_measurement(0.00))
+        self.assertFalse(is_valid_measurement(-999.00))
+        self.assertFalse(is_valid_measurement(-999.0))
+        self.assertFalse(is_valid_measurement(-5.0))  # Unphysical Kelvin temperature
+
+    def test_pds_confidence_bitmask_documentation_present(self):
+        """R4: Official PDS MODRDR confidence bitmasks are documented and verified in processing.md."""
+        proc_doc = Path("docs/data/processing.md")
+        self.assertTrue(proc_doc.exists())
+        text = proc_doc.read_text(encoding="utf-8")
+        self.assertIn("PS_CONFIDENCE_LEVEL", text)
+        self.assertIn("AMBIENT_TEMP_CONFIDENCE_LEVEL", text)
+        self.assertIn("GTS_CONFIDENCE_LEVEL", text)
+        self.assertIn("MODRDR6.FMT", text)
+
+
 if __name__ == "__main__":
     unittest.main()
