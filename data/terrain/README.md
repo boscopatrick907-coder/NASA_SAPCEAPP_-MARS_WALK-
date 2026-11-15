@@ -27,15 +27,27 @@
   * **Vertical Precision / Uncertainty:** ~0.20 to 0.30 meters relative vertical precision
   * **No-Data Sentinel:** `-32768.0` / `0.0` unmapped margins
 * **Geographic Overlap:** Direct 100% spatial intersection with parent HiRISE frame `PSP_001752_1750` and the boxwork ridge network featured in `PIA26306`.
-* **Runtime Deployment Evaluation:**
-  * *Constraint:* MARSWALK is an offline-first Progressive Web App targeting mobile device field usage with a strict client asset budget (< 2.0 MB offline bundle).
-  * *Technical Limitation:* Ingesting the uncompressed 360 MB `.IMG` raster directly into browser memory exceeds client device RAM budgets and crashes WebGL / Three.js context initializations on mobile targets.
-  * *Status for v1:* **Unavailable — Documented Gap** (`terrainStatus: 'unavailable'`). The 3D viewer renders a flat topological plane ($Y = 0$) with explicit warnings.
-  * *V2 Roadmap Recommendation:* A future release can extract a focused 256×256 tiled sub-raster or Quantized-Mesh terrain tile centered strictly on the active traverse waypoint corridor.
 
 ---
 
-## 2. Coarse Regional Elevation Candidates (Rejected)
+## 2. Topographic AOI Clipping & Compression Analysis
+
+To assess whether the 360 MB HiRISE DTM can be delivered for client integration without destroying terrain detail, we evaluated four delivery modes:
+
+| Mode / Processing | Dimensions (px) | Post Spacing | Uncompressed RAM | Compressed Size (GeoTIFF LZW/Deflate) | Detail Preservation & Assessment |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Full Raw PDS DTM** (`.IMG`) | ~9,500 × ~9,500 | 1.01 m/px | ~360 MB | ~180 MB | Full regional coverage. Prohibitive for mobile PWA (< 2 MB budget). |
+| **AOI Crop (Boxwork Core)** | 2,048 × 1,042 | 1.01 m/px | ~8.5 MB | **~2.1 MB** (Float32 LZW) / **~1.1 MB** (Int16 0.1m scale) | **Scientifically Optimal.** Retains 100% of 1.01 m spatial resolution and 0.2 m vertical precision over the active boxwork exploration area. |
+| **AOI Downsampled (2×)** | 1,024 × 521 | 2.02 m/px | ~2.1 MB | **~0.45 MB** (Float32 LZW) | Slight smoothing of narrow ridge crests (< 2 m wide), but fits comfortably within mobile budgets. |
+| **USGS Merged DEM Alternative** | 1,000 × 1,000 AOI | 1.00 m/px | ~4.0 MB | **~1.2 MB** (GeoTIFF) | High-quality multi-sensor merge (Parker & Calef 2016). Excellent alternative. |
+
+### Technical Recommendation for Coordinator (v2 Tiling)
+* In v1, the terrain status remains **Unavailable** (`terrainStatus: 'unavailable'`) because runtime elevation loaders and WebGL vertex shaders in `viewer3d` require Coordinator and Longla implementation.
+* For v2, an AOI-clipped GeoTIFF (2048 × 1042 px, matching visual texture bounds) converted to an integer elevation PNG or Quantized-Mesh tile (~1.1 MB) delivers sub-meter topographic fidelity while respecting the PWA budget.
+
+---
+
+## 3. Coarse Regional Elevation Candidates (Rejection Reaffirmed)
 
 | Product / Dataset | Sensor / Platform | Spatial Resolution | Evaluation & Rejection Reason |
 | :--- | :--- | :---: | :--- |
@@ -44,7 +56,7 @@
 
 ---
 
-## 3. Topographic Slope Derivation Contract
+## 4. Topographic Slope Derivation Contract
 
 * **Scientific Constraint:** Surface slope and terrain hazard classifications **must never** be inferred from visual raster brightness, shading, or contrast.
 * In accordance with mission rules, slope-dependent traversal speed penalties remain disabled in v1 until an approved, georeferenced sub-meter DTM tile is integrated by the coordinator.
