@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { MissionService } from '../core/mission.service';
 import type { ScienceMarker } from '../core/models';
 
@@ -36,6 +36,39 @@ export class ScienceContextComponent {
   readonly searchQuery = signal('');
   readonly evidenceFilter = signal<EvidenceFilter>('all');
   readonly positionFilter = signal<PositionFilter>('all');
+  readonly isCompareMode = signal(false);
+  readonly comparisonIds = signal<readonly string[]>([]);
+  readonly comparisonAnnouncement = signal('');
+
+  private readonly pruneRemovedComparisons = effect(() => {
+    if (this.mission.dataStatus() !== 'ready') {
+      return;
+    }
+
+    const comparedIds = this.comparisonIds();
+    const availableIds = new Set(this.mission.markers().map((record) => record.id));
+    const removedIds = comparedIds.filter((id) => !availableIds.has(id));
+    if (removedIds.length === 0) {
+      return;
+    }
+
+    this.comparisonIds.set(comparedIds.filter((id) => availableIds.has(id)));
+    this.comparisonAnnouncement.set(
+      removedIds.length === 1
+        ? 'A compared science record was removed because it is no longer present in the loaded source.'
+        : `${removedIds.length} compared science records were removed because they are no longer present in the loaded source.`,
+    );
+  });
+
+  readonly comparedRecords = computed<readonly ScienceMarker[]>(() => {
+    const recordsById = new Map(this.mission.markers().map((record) => [record.id, record]));
+    return this.comparisonIds().flatMap((id) => {
+      const record = recordsById.get(id);
+      return record ? [record] : [];
+    });
+  });
+
+  readonly comparisonIsFull = computed(() => this.comparisonIds().length >= 2);
 
   readonly selectedRecord = computed<ScienceMarker | null>(
     () => this.mission.markers().find((m) => m.id === this.mission.selectedMarkerId()) ?? null,
@@ -159,6 +192,67 @@ export class ScienceContextComponent {
 
   clearSelection(): void {
     this.mission.selectMarker(null);
+  }
+
+  toggleCompareMode(): void {
+    this.isCompareMode.update((enabled) => !enabled);
+  }
+
+  isCompared(id: string): boolean {
+    return this.comparisonIds().includes(id);
+  }
+
+  isComparisonRecordHidden(record: ScienceMarker): boolean {
+    return !this.filteredMarkers().some((visibleRecord) => visibleRecord.id === record.id);
+  }
+
+  addToComparison(id: string): void {
+    if (this.mission.dataStatus() !== 'ready') {
+      return;
+    }
+
+    const record = this.mission.markers().find((candidate) => candidate.id === id);
+    if (!record) {
+      this.comparisonAnnouncement.set('That science record is no longer available to compare.');
+      return;
+    }
+
+    const currentIds = this.comparisonIds();
+    if (currentIds.includes(id)) {
+      this.comparisonAnnouncement.set(`${record.name} is already in the evidence comparison.`);
+      return;
+    }
+    if (currentIds.length >= 2) {
+      this.comparisonAnnouncement.set(
+        'The evidence comparison already has two records. Remove one before adding another.',
+      );
+      return;
+    }
+
+    this.comparisonIds.set([...currentIds, id]);
+    this.comparisonAnnouncement.set(
+      `Added ${record.name} to evidence comparison. ${currentIds.length + 1} of 2 records selected.`,
+    );
+  }
+
+  removeFromComparison(id: string): void {
+    const currentIds = this.comparisonIds();
+    if (!currentIds.includes(id)) {
+      return;
+    }
+
+    const name =
+      this.mission.markers().find((record) => record.id === id)?.name ?? 'Science record';
+    this.comparisonIds.set(currentIds.filter((comparedId) => comparedId !== id));
+    this.comparisonAnnouncement.set(`Removed ${name} from evidence comparison.`);
+  }
+
+  clearComparison(): void {
+    if (this.comparisonIds().length === 0) {
+      return;
+    }
+    this.comparisonIds.set([]);
+    this.comparisonAnnouncement.set('Evidence comparison cleared.');
   }
 
   navigateToPreviousRecord(): void {

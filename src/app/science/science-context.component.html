@@ -30,6 +30,10 @@
     }
   </div>
 
+  <p class="comparison-announcement" role="status" aria-live="polite">
+    {{ comparisonAnnouncement() }}
+  </p>
+
   @if (mission.dataStatus() === 'loading') {
     <p class="science-state box" role="status">Loading contextual science records…</p>
   } @else if (mission.dataStatus() === 'unavailable') {
@@ -98,6 +102,14 @@
           </p>
           <button
             type="button"
+            class="clear-selection-button"
+            [attr.aria-pressed]="isCompareMode()"
+            (click)="toggleCompareMode()"
+          >
+            {{ isCompareMode() ? 'Close evidence comparison' : 'Compare evidence' }}
+          </button>
+          <button
+            type="button"
             class="clear-filters"
             [disabled]="!hasActiveFilters()"
             (click)="clearFilters()"
@@ -107,6 +119,122 @@
         </div>
       </div>
 
+      @if (isCompareMode()) {
+        <section
+          class="science-record-details box stack"
+          [attr.aria-labelledby]="'science-comparison-title-' + instanceId"
+        >
+          <div class="details-header flex-row">
+            <h3 [id]="'science-comparison-title-' + instanceId">Compare science evidence</h3>
+            <button
+              type="button"
+              class="clear-selection-button"
+              aria-label="Clear evidence comparison"
+              [disabled]="comparisonIds().length === 0"
+              (click)="clearComparison()"
+            >
+              Clear comparison
+            </button>
+          </div>
+          <p class="science-context-note">
+            Compare scientific context only. These records may describe different locations and are
+            not two route destinations.
+          </p>
+          <p class="results-count" role="status">
+            {{ comparisonIds().length }} of 2 evidence records selected.
+          </p>
+          @if (comparisonIsFull()) {
+            <p class="hidden-notice box" role="status">
+              The comparison is full. Remove a record before adding another.
+            </p>
+          }
+          @if (comparedRecords().length === 0) {
+            <p class="science-no-selection box" role="status">
+              Choose up to two records from the list below to compare their original evidence.
+              Comparison does not change the selected record or mission route.
+            </p>
+          } @else {
+            <div class="stack" aria-label="Compared science records">
+              @for (record of comparedRecords(); track record.id) {
+                <article
+                  class="science-record-details box stack"
+                  [attr.aria-label]="'Compared science record: ' + record.name"
+                >
+                  @if (isComparisonRecordHidden(record)) {
+                    <div class="hidden-notice box" role="status">
+                      This compared record is hidden by the current search or filters. It remains in
+                      the comparison until you remove it.
+                    </div>
+                  }
+
+                  <div class="details-header flex-row">
+                    <h4>{{ record.name }}</h4>
+                    <button
+                      type="button"
+                      class="clear-selection-button"
+                      [attr.aria-label]="'Remove ' + record.name + ' from evidence comparison'"
+                      (click)="removeFromComparison(record.id)"
+                    >
+                      Remove from comparison
+                    </button>
+                  </div>
+
+                  <p class="record-finding">{{ record.finding }}</p>
+
+                  <dl class="record-metadata stack">
+                    <div class="metadata-row">
+                      <dt>Record-level evidence category</dt>
+                      <dd>{{ record.evidenceType }}</dd>
+                    </div>
+                    <div class="metadata-row">
+                      <dt>Instrument</dt>
+                      <dd>{{ record.instrument || 'Unavailable' }}</dd>
+                    </div>
+                    <div class="metadata-row">
+                      <dt>Observation date</dt>
+                      <dd>{{ record.date || 'Unavailable' }}</dd>
+                    </div>
+                    <div class="metadata-row">
+                      <dt>Position status</dt>
+                      <dd>{{ formatPositionStatus(record) }}</dd>
+                    </div>
+                    <div class="metadata-row">
+                      <dt>Source</dt>
+                      <dd>
+                        @if (safeExternalUrl(record.source.url); as sourceUrl) {
+                          <a [href]="sourceUrl" target="_blank" rel="noopener noreferrer">{{
+                            record.source.title
+                          }}</a>
+                          <span class="source-credit"> — {{ record.source.credit }}</span>
+                          <small class="connectivity-note"
+                            >External source link requires network connectivity.</small
+                          >
+                        } @else {
+                          <span>{{ record.source.title }}</span>
+                          <span class="source-credit"> — {{ record.source.credit }}</span>
+                        }
+                      </dd>
+                    </div>
+                  </dl>
+
+                  <div class="record-limitations">
+                    <h4>Limitations</h4>
+                    @if (record.limitations.length > 0) {
+                      <ul class="limitations-list">
+                        @for (limitation of record.limitations; track $index) {
+                          <li>{{ limitation }}</li>
+                        }
+                      </ul>
+                    } @else {
+                      <p class="limitations-empty">No limitations recorded.</p>
+                    }
+                  </div>
+                </article>
+              }
+            </div>
+          }
+        </section>
+      }
       @if (filteredMarkers().length === 0) {
         <div class="no-matches box flex-row" role="status">
           <p>No science records match the current search or filters.</p>
@@ -131,6 +259,25 @@
                   <span class="record-position-badge pill">{{ formatPositionBadge(record) }}</span>
                 </span>
               </button>
+              @if (isCompareMode()) {
+                <button
+                  type="button"
+                  class="clear-filters"
+                  [attr.aria-label]="
+                    isCompared(record.id)
+                      ? 'Remove ' + record.name + ' from evidence comparison'
+                      : 'Add ' + record.name + ' to evidence comparison'
+                  "
+                  [disabled]="!isCompared(record.id) && comparisonIsFull()"
+                  (click)="
+                    isCompared(record.id)
+                      ? removeFromComparison(record.id)
+                      : addToComparison(record.id)
+                  "
+                >
+                  {{ isCompared(record.id) ? 'Remove from comparison' : 'Add to comparison' }}
+                </button>
+              }
             </li>
           }
         </ul>

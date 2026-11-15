@@ -425,6 +425,215 @@ describe('ScienceContextComponent', () => {
     expect(missionMock.image!()?.imageRef).toBe(initialImageRef);
   });
 
+  it('adds at most two records to a comparison without selecting records or changing mission state', () => {
+    state.selectedMarkerId.set('synthetic-rec-2');
+    fixture.detectChanges();
+    const initialRoute = structuredClone(state.route());
+    const initialMode = state.mode();
+    const initialLayers = structuredClone(state.layers());
+    const initialObservations = structuredClone(state.observations());
+    const initialSelectedId = state.selectedMarkerId();
+    const setItem = vi.spyOn(Storage.prototype, 'setItem');
+    const getItem = vi.spyOn(Storage.prototype, 'getItem');
+    const removeItem = vi.spyOn(Storage.prototype, 'removeItem');
+    const root = fixture.nativeElement as HTMLElement;
+
+    const modeButton = Array.from(root.querySelectorAll('button')).find((button) =>
+      button.textContent?.includes('Compare evidence'),
+    ) as HTMLButtonElement;
+    expect(modeButton.type).toBe('button');
+    expect(modeButton.getAttribute('aria-pressed')).toBe('false');
+    modeButton.click();
+    fixture.detectChanges();
+    expect(modeButton.getAttribute('aria-pressed')).toBe('true');
+
+    const addFirst = root.querySelector(
+      'button[aria-label="Add Synthetic Sulfate Zone to evidence comparison"]',
+    ) as HTMLButtonElement;
+    expect(addFirst.type).toBe('button');
+    addFirst.focus();
+    expect(document.activeElement).toBe(addFirst);
+    addFirst.click();
+    fixture.detectChanges();
+
+    const addSecond = root.querySelector(
+      'button[aria-label="Add Synthetic Boxwork Fracture Pattern to evidence comparison"]',
+    ) as HTMLButtonElement;
+    addSecond.click();
+    fixture.detectChanges();
+
+    expect(component.comparisonIds()).toEqual(['synthetic-rec-1', 'synthetic-rec-2']);
+    const compared = root.querySelectorAll(
+      'article[aria-label^="Compared science record:"]',
+    ) as NodeListOf<HTMLElement>;
+    expect(compared).toHaveLength(2);
+    expect(compared[0].textContent).toContain(
+      'Synthetic elevated sulfate signature detected across fracture fill.',
+    );
+    expect(compared[0].textContent).toContain('measured');
+    expect(compared[0].textContent).toContain('APXS');
+    expect(compared[0].textContent).toContain('2024-06-01');
+    expect(compared[0].textContent).toContain('Synthetic APXS Report');
+    expect(compared[0].textContent).toContain('Synthetic Lab A');
+    expect(compared[0].textContent).toContain('Point measurement outside high-res AOI.');
+    expect(compared[0].textContent).toContain('No DEM elevation tie.');
+    expect(compared[0].textContent).toContain('regional context only');
+    const sourceLink = compared[0].querySelector('a') as HTMLAnchorElement;
+    expect(sourceLink.getAttribute('href')).toBe('https://example.test/apxs');
+    expect(sourceLink.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(compared[1].textContent).toContain(
+      'Synthetic polygonal ridge network interpreted as mineral-filled fractures.',
+    );
+    expect(compared[1].textContent).toContain('interpreted');
+    expect(compared[1].textContent).toContain('HiRISE');
+    expect(compared[1].textContent).toContain('2023-11-20');
+    expect(compared[1].textContent).toContain('Synthetic Orbital Survey');
+    expect(compared[1].textContent).toContain('Synthetic Lab B');
+    expect(compared[1].textContent).toContain(
+      'Orbital resolution limits small-scale obstacle inference.',
+    );
+    expect(root.textContent).toContain('not two route destinations');
+
+    const addThird = root.querySelector(
+      'button[aria-label="Add Synthetic Clay Transition to evidence comparison"]',
+    ) as HTMLButtonElement;
+    expect(addThird.disabled).toBe(true);
+    component.addToComparison('synthetic-rec-3');
+    expect(component.comparisonIds()).toEqual(['synthetic-rec-1', 'synthetic-rec-2']);
+    expect(component.comparisonAnnouncement()).toContain('already has two records');
+
+    component.addToComparison('synthetic-rec-1');
+    expect(component.comparisonIds()).toEqual(['synthetic-rec-1', 'synthetic-rec-2']);
+    expect(component.comparisonAnnouncement()).toContain('already in the evidence comparison');
+    expect(selectMarker).not.toHaveBeenCalled();
+    expect(state.selectedMarkerId()).toBe(initialSelectedId);
+    expect(state.route()).toEqual(initialRoute);
+    expect(state.mode()).toBe(initialMode);
+    expect(state.layers()).toEqual(initialLayers);
+    expect(state.observations()).toEqual(initialObservations);
+    expect(setItem).not.toHaveBeenCalled();
+    expect(getItem).not.toHaveBeenCalled();
+    expect(removeItem).not.toHaveBeenCalled();
+    setItem.mockRestore();
+    getItem.mockRestore();
+    removeItem.mockRestore();
+  });
+
+  it('retains filtered-out comparisons, supports remove and clear, and preserves current filters', () => {
+    const root = fixture.nativeElement as HTMLElement;
+    component.toggleCompareMode();
+    component.addToComparison('synthetic-rec-1');
+    component.addToComparison('synthetic-rec-2');
+    fixture.detectChanges();
+
+    const searchInput = setSearchInput('boxwork');
+    const compared = root.querySelectorAll(
+      'article[aria-label^="Compared science record:"]',
+    ) as NodeListOf<HTMLElement>;
+    expect(compared).toHaveLength(2);
+    expect(compared[0].textContent).toContain('hidden by the current search or filters');
+    expect(compared[0].textContent).toContain('Synthetic Sulfate Zone');
+    expect(compared[1].textContent).toContain('Synthetic Boxwork Fracture Pattern');
+    expect(component.comparisonIds()).toEqual(['synthetic-rec-1', 'synthetic-rec-2']);
+
+    const removeFirst = root.querySelector(
+      'button[aria-label="Remove Synthetic Sulfate Zone from evidence comparison"]',
+    ) as HTMLButtonElement;
+    expect(removeFirst.type).toBe('button');
+    removeFirst.click();
+    fixture.detectChanges();
+    expect(component.comparisonIds()).toEqual(['synthetic-rec-2']);
+
+    component.addToComparison('synthetic-rec-3');
+    fixture.detectChanges();
+    expect(component.comparisonIds()).toEqual(['synthetic-rec-2', 'synthetic-rec-3']);
+    const clear = root.querySelector(
+      'button[aria-label="Clear evidence comparison"]',
+    ) as HTMLButtonElement;
+    expect(clear.disabled).toBe(false);
+    clear.click();
+    fixture.detectChanges();
+    expect(component.comparisonIds()).toEqual([]);
+    expect(component.comparedRecords()).toEqual([]);
+    expect(component.comparisonAnnouncement()).toBe('Evidence comparison cleared.');
+    expect(searchInput.value).toBe('boxwork');
+    expect(component.searchQuery()).toBe('boxwork');
+  });
+
+  it('removes source-deleted comparison entries and announces removal without replacing them', () => {
+    component.toggleCompareMode();
+    component.addToComparison('synthetic-rec-1');
+    component.addToComparison('synthetic-rec-2');
+    fixture.detectChanges();
+
+    state.markers.set([
+      ...threeUnlocatedRecords().filter((record) => record.id !== 'synthetic-rec-1'),
+    ]);
+    fixture.detectChanges();
+
+    expect(component.comparisonIds()).toEqual(['synthetic-rec-2']);
+    expect(component.comparedRecords().map((record) => record.id)).toEqual(['synthetic-rec-2']);
+    expect(component.comparisonAnnouncement()).toContain(
+      'A compared science record was removed because it is no longer present in the loaded source.',
+    );
+    expect(component.comparisonIds()).not.toContain('synthetic-rec-3');
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelectorAll(
+        'article[aria-label^="Compared science record:"]',
+      ),
+    ).toHaveLength(1);
+
+    state.markers.set([]);
+    fixture.detectChanges();
+    expect(component.comparisonIds()).toEqual([]);
+    expect(
+      (fixture.nativeElement as HTMLElement).querySelector('.comparison-announcement')?.textContent,
+    ).toContain('A compared science record was removed because it is no longer present');
+  });
+
+  it('renders comparison text literally and rejects unsafe source URLs', () => {
+    const xssPayload = '<script>alert("xss")</script><b>untrusted</b>';
+    const record = makeRecord({
+      id: 'xss-comparison',
+      name: `Name ${xssPayload}`,
+      finding: `Finding ${xssPayload}`,
+      source: {
+        title: `Source ${xssPayload}`,
+        url: 'javascript:alert("xss")',
+        credit: `Credit ${xssPayload}`,
+      },
+      limitations: [`Limitation ${xssPayload}`],
+    });
+    state.markers.set([record]);
+    fixture.detectChanges();
+    component.toggleCompareMode();
+    component.addToComparison(record.id);
+    fixture.detectChanges();
+
+    const root = fixture.nativeElement as HTMLElement;
+    const compared = root.querySelector(
+      'article[aria-label^="Compared science record:"]',
+    ) as HTMLElement;
+    expect(compared).not.toBeNull();
+    expect(compared.querySelectorAll('script, b')).toHaveLength(0);
+    expect(compared.querySelector('a')).toBeNull();
+    expect(compared.textContent).toContain(`Finding ${xssPayload}`);
+    expect(compared.textContent).toContain(`Source ${xssPayload}`);
+    expect(compared.textContent).toContain(`Credit ${xssPayload}`);
+    expect(compared.textContent).toContain(`Limitation ${xssPayload}`);
+
+    const controls = Array.from(root.querySelectorAll('button')) as HTMLButtonElement[];
+    expect(controls.length).toBeGreaterThan(0);
+    controls.forEach((button) => expect(button.type).toBe('button'));
+    expect(
+      controls.find(
+        (button) =>
+          button.getAttribute('aria-label') ===
+          `Remove Name ${xssPayload} from evidence comparison`,
+      ),
+    ).toBeDefined();
+  });
+
   it('displays "Unavailable" when instrument and date are null', () => {
     state.markers.set([
       makeRecord({
