@@ -43,6 +43,29 @@ The webmanifest parsed successfully. It declares MARSWALK name and short name, E
 
 No physical-device acceptance, current-host iOS launcher discovery, or installed offline mission recovery is claimed by this report.
 
+## Follow-up verification — Willy 2 assignment
+
+Run on 15 November 2026 in the original PWA worktree, branch `feature/willy-pwa-install-assets`, at commit `9b4093daf2f32b7b2ad9412d0ac4601dac5208e6`. Existing staged `docs/qa/PWA_INSTALL_ASSETS.md` and the existing stash were preserved. No application source, generated asset, worker, build, or hosting configuration was changed for this follow-up; the only intended file change is this QA report.
+
+| Check | Revision / platform | Command or action | Actual result | Remaining limitation |
+|---|---|---|---|---|
+| Root production build | `9b4093d`, Windows, Node 24.21.0 / npm 11.19.0 | `npm.cmd run build` | **PASS**; Angular build and full offline pack generated; 18 files, 1,655,461 bytes, pack version prefix `2821c139b35b`. | Existing Leaflet CommonJS optimization warning. |
+| `/marswalk/` production build | `9b4093d`, Windows | `npm.cmd run build -- --base-href /marswalk/` | **PASS**; full offline pack generated; 18 files, 1,655,470 bytes, pack version prefix `70091eb3af62`. | Existing Leaflet CommonJS optimization warning. |
+| Root-served production app | `9b4093d`, local Edge isolated profile | Served root build at `http://127.0.0.1:4173/`; loaded app, prepared offline pack, then disconnected in the browser. | **PASS**; service worker controlled the app, real raster/science content loaded, offline pack reported 18/18 verified. | Browser workflow evidence only; not a physical installed app. |
+| Offline mission workflow | Same local root build and browser session | While offline, created start/waypoint/destination, saved route, saved a note, exported JSON; closed browser and stopped local server; reopened the same profile and recovered route/note. | **PASS**; route and note persisted in local mission storage and appeared after reopening while the app origin/server was unavailable. Exported `marswalk-mission.json` contained the same image reference, route and note. | Export verified as a browser download; no physical-device transfer/recovery test. |
+| Root build assets | `9b4093d`, local HTTP | GET `/`, manifest, each PNG icon, data manifest, offline pack, worker and raster path on `127.0.0.1:4173`. | **PASS**; all requested resources returned HTTP 200 with expected content types. | No archived network trace. |
+| Subpath build assets | `9b4093d`, local HTTP under `/marswalk/` | `npm.cmd run build -- --base-href /marswalk/`; serve output only under `/marswalk/`; GET page, manifest, all icons, data manifest, pack, worker and the `assetPath` read from that manifest. | **PASS**; every subpath URL returned HTTP 200, including raster `data/imagery/PIA26306_derived_2048.jpg`; root `/manifest.webmanifest` returned 404. No root fallback was used. | No archived network trace. |
+| Service-worker tests | `9b4093d`, Windows | `npm.cmd run test:pwa` | **PASS**; 11 tests passed, 0 failed. | — |
+| Angular application tests | `9b4093d`, Windows | `npm.cmd test` (first sandbox attempt was denied workspace reads; rerun with workspace access) | **PASS**; 16 test files and 144 tests passed, 0 failed. The jsdom run printed two `HTMLCanvasElement.getContext()` not implemented warnings; they did not fail tests. | Canvas-dependent rendering is not exercised by those jsdom tests. |
+| Public HTTPS asset check | Deployed host `https://marswalk-jet.vercel.app/`; project notes identify served revision as `b6669fb` (host response does not expose a commit) | HTTP GET page, manifest, all three icons, worker, offline pack and data manifests. | **PASS for requested HTTP resources**; all returned HTTP 200 with expected response types. The served HTML is an older deployment without `apple-touch-icon`. | No public-browser interaction completed in this run; this is not evidence of current candidate deployment or installation. |
+| Browser installation prompt / physical install | Public deployment / physical Android or iOS | No physical device available; headless Edge's initial public-profile tab remained on Edge sync setup, so no actual public-origin install flow was verified in this follow-up. | **NOT VERIFIED**; no installation, launcher appearance, or standalone launch is claimed. | Repeat on the current reviewed HTTPS candidate and an actual Android Chrome or iOS Safari device. |
+
+### Follow-up workflow details
+
+The offline workflow used a fresh isolated Edge profile and the actual production root build. The application showed `Data Ready`; after explicit offline-pack preparation it showed `Offline pack verified` and `18 / 18 files verified`. With the browser network disabled, mission route creation, `Save Route`, `Save Observation`, and the JSON export controls all completed. The browser was closed and the local server stopped before reopening the same profile; the service worker served the app and the saved route and note were recoverable. This verifies browser storage and worker recovery against an unavailable origin, not physical-device installation.
+
+The live HTTPS deployment's asset endpoints were reachable, but its revision is older than this worktree and its HTML lacks the `apple-touch-icon` link. This is an observed release gap; Patrick owns deployment. No hosting changes or deployment were made. The earlier historical table's pending physical-device items remain pending.
+
 ## Execution details added after independent review
 
 ### Initial Git state
@@ -73,4 +96,57 @@ The root request loop used `Invoke-WebRequest` against `http://127.0.0.1:4173/`,
 
 ### Archived logs
 
-Build and HTTP results were observed in the interactive command output and summarized in this report. **No build logs, HTTP transcripts, screenshots or network traces were archived as files.**
+Build and HTTP results were observed in the interactive command output and summarized in this report. Earlier runs did not archive artifacts.
+
+## Designated Public Candidate Acceptance Verification — 15 November 2026
+
+**Target Origin:** `https://marswalk-m3n37k8ne-boys-band.vercel.app/` (Designated candidate from `PROJECT_HANDOFF.md`, source revision `cf0ffb7`)  
+**Pack Version:** `4bb8ec987ae0320abd399e40660e75194763ed1622d4df7a4268902faafc2e81` (1,656,553 bytes, 19 cached entries)  
+**Test Platform:** Windows 11 Pro 64-bit · Microsoft Edge 140.0.3485.81 (headless, dedicated profile `scratch/preview-acceptance-profile`, CDP automation)  
+**Physical Device Status:** **UNVERIFIED** (tested on desktop Chromium persistent profile with emulated hard offline and full process restart; no physical Android or iOS device claimed).
+
+### End-to-End Acceptance Results
+
+| Step | Action / Workflow | Result | Evidence / Observed State |
+|---|---|---|---|
+| 1. Raster Load | Navigate to candidate URL online; await metadata and raster decode. | **PASS** | Title `Marswalk`, `mapState: null`, raster layer complete (`PIA26306_derived_2048.jpg`). Screenshot: `preview-acceptance-1-raster-ready.png`. |
+| 2. Draw Route | Route Planner: place Start `(141, 571)`, Waypoint `(340, 642)`, Destination `(561, 747)`. | **PASS** | `tableRows: 3`, sequence table populated, Start, Waypoint and Destination points visually confirmed. Screenshot: `preview-acceptance-2-route-drawn.png`. |
+| 3. Unique Observation | Notebook: enter unique note text with attached start position and submit. | **PASS** | Note recorded: `"REHEARSAL-ACCEPTANCE-NOTE-ALPHA: Detailed boxwork ridge sample observed at Gale Crater lower slope. Unique hash verification test."` at `(140.6, 571.0)`. |
+| 4. Save Route | Route Planner: click "Save Route". | **PASS** | Status alert: `"Route saved locally for active raster."` Written to `localStorage` key `marswalk:v1:hirise-mro-pia26306-boxwork-2048x1042-v1` (613 bytes). |
+| 5. Online Export | Mission Transfer: click "Export mission". | **PASS** | Downloaded `marswalk-mission.json` (3,803 bytes); contains active `imageRef`, 3 route points, and 1 observation. Archived: `scratch/preview-export-online.json`. |
+| 6. Prepare Offline Pack | PWA Panel: click "Prepare offline" and await ready state. | **PASS** | Panel status: `"Install & offline · Connection available · Pack verified"`. CacheStorage key `marswalk-pack:...:4bb8ec987ae0...` verified with 19 assets. Screenshot: `preview-acceptance-3-pack-ready.png`. |
+| 7. Terminate Browser | Cleanly close browser session via CDP `Browser.close()`. | **PASS** | Process terminated cleanly; profile database buffers flushed to disk; profile preserved in `scratch/preview-acceptance-profile`. |
+| 8. Disconnected Reopen | Re-launch Edge with same profile, set `Network.emulateNetworkConditions({ offline: true })`, reload. | **PASS** | Application loaded disconnected from service worker cache; status `"Install & offline · Disconnected · Pack verified"`; `navigator.onLine = false`. Screenshot: `preview-acceptance-4-offline-recovered.png`. |
+| 9. Explicit Load Route | Route Planner: click "Load Route" while offline. | **PASS** | Feedback: `"Route loaded successfully."` Recovered Start `(141, 571)`, Waypoints `1`, Destination `(561, 747)`. Route sequence restored. |
+| 10. Verify Notebook & Offline Export | Notebook: verify saved note. Mission Transfer: export mission while offline. | **PASS** | Notebook displayed unique note `"REHEARSAL-ACCEPTANCE-NOTE-ALPHA..."` with exact coordinates. Offline export downloaded; `notesMatch = true`, `routeMatch = true`. Screenshot: `preview-acceptance-5-offline-completed.png`. |
+
+### Export Comparison & Data Loss Verification
+
+- **Online Export (`preview-export-online.json`):**
+  ```json
+  {
+    "schemaVersion": 1,
+    "imageRef": "hirise-mro-pia26306-boxwork-2048x1042-v1",
+    "route": {
+      "start": { "x": 140.56, "y": 571.04 },
+      "destination": { "x": 561.40, "y": 747.04 },
+      "waypoints": [{ "x": 340.23, "y": 642.04 }]
+    },
+    "observations": [{
+      "id": "e20b3f8b-c73e-462f-981c-8e8113bc30f6",
+      "imageRef": "hirise-mro-pia26306-boxwork-2048x1042-v1",
+      "createdAt": "2026-11-15T14:44:03.112Z",
+      "text": "REHEARSAL-ACCEPTANCE-NOTE-ALPHA: Detailed boxwork ridge sample observed at Gale Crater lower slope. Unique hash verification test.",
+      "position": { "x": 140.56, "y": 571.04 }
+    }]
+  }
+  ```
+- **Offline Recovered Export (`preview-export-offline.json`):**
+  Matches online export byte-for-byte in route points and observations array (`notesMatch: true`, `routeMatch: true`).
+- **Data Loss Assessment:** **ZERO DATA LOSS.** All route points and scientific field notes persisted across complete browser shutdown and offline recovery.
+
+### Final Verification Verdict
+
+- **Automated Workflow Acceptance:** **PASS**
+- **Physical Device Standalone Installation:** **UNVERIFIED / PENDING** (requires physical Android Chrome or iOS Safari device).
+
