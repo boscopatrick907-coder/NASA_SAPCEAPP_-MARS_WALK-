@@ -1,10 +1,7 @@
-# NASA Planetary Data System (PDS) — MSL Curiosity REMS & RAD Archival Observation Sample
-# Product Reference: MSL REMS Daily Weather Summaries (PDS Atmospheres Node) & MSL RAD Calibrated RDR (PDS PPI Node)
-# Mission: Mars Science Laboratory (Curiosity Rover)
-# Area: Mount Sharp Foothills, Gale Crater, Mars (Traverse corridor Sols 3900-3915, Mars Year 37)
-# Sentinel / Invalid Flag: -9999 indicates missing, uncalibrated, or degraded measurement
-# Quality Flags: 0 = Valid/Verified, 1 = Degraded/Questionable, 2 = Missing/Sensor Inactive
-# Redistribution: Public domain NASA / JPL-Caltech / CAB / SwRI data
+# Illustrative test-only fixture, NOT extracted or verified NASA observations.
+# Sol/season/location fields are illustrative; no original products or labels are established.
+# Fixture conventions only: -9999 = missing; quality 0 = include, 1/2 = exclude.
+# REMS and RAD archive links in the audit are discovery references, not row provenance.
 sol,ls_deg,pressure_min_pa,pressure_max_pa,pressure_mean_pa,temp_air_min_c,temp_air_max_c,temp_air_mean_c,rad_dose_rate_ugy_day,quality_flag
 3900,145.0,774.2,841.5,807.8,-76.5,-18.4,-47.4,211.5,0
 3901,145.5,775.1,842.3,808.7,-76.8,-18.2,-47.5,212.0,0

@@ -11,7 +11,6 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = REPO_ROOT / "tools/data/prepare_environment.py"
 SAMPLE_CSV = REPO_ROOT / "tools/data/samples/curiosity_rems_rad_sample.csv"
 
-
 class PrepareEnvironmentTests(unittest.TestCase):
     def run_cli(self, source, output, check=False):
         cmd = [
@@ -182,10 +181,7 @@ class PrepareEnvironmentTests(unittest.TestCase):
             self.assertEqual(out_file.read_bytes(), sentinel_bytes)
             self.assertEqual(out_file.stat().st_mtime_ns, mtime_before)
 
-    # -----------------------------------------------------------------------
     # R2: Source/output alias guard regressions
-    # -----------------------------------------------------------------------
-
     def test_output_aliasing_source_fails_and_preserves_source(self):
         """R2: Passing identical source and output path exits 1 and preserves source bytes."""
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -215,10 +211,7 @@ class PrepareEnvironmentTests(unittest.TestCase):
             self.assertIn("aliases source input", res.stderr)
             self.assertEqual(src_csv.read_bytes(), original_bytes)
 
-    # -----------------------------------------------------------------------
     # R3: Finite number and consistent range regressions
-    # -----------------------------------------------------------------------
-
     def test_nan_input_rejected_and_preserves_destination(self):
         """R3: NaN float in CSV is rejected with exit 1 and does not replace destination."""
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -273,6 +266,7 @@ class PrepareEnvironmentTests(unittest.TestCase):
             out_file = Path(temp_dir) / "out.json"
             sentinel_bytes = b'{"sentinel": true}\n'
             out_file.write_bytes(sentinel_bytes)
+            mtime_before = out_file.stat().st_mtime_ns
 
             res = self.run_cli(csv_path, out_file)
             self.assertEqual(res.returncode, 1)
@@ -292,17 +286,16 @@ class PrepareEnvironmentTests(unittest.TestCase):
             out_file = Path(temp_dir) / "out.json"
             sentinel_bytes = b'{"sentinel": true}\n'
             out_file.write_bytes(sentinel_bytes)
+            mtime_before = out_file.stat().st_mtime_ns
 
             res = self.run_cli(csv_path, out_file)
             self.assertEqual(res.returncode, 1)
             self.assertIn("Inconsistent pressure interval", res.stderr)
             self.assertNotIn("Traceback", res.stderr)
             self.assertEqual(out_file.read_bytes(), sentinel_bytes)
+            self.assertEqual(out_file.stat().st_mtime_ns, mtime_before)
 
-    # -----------------------------------------------------------------------
     # R4: Independent quantity quality/counts and legitimate zero regressions
-    # -----------------------------------------------------------------------
-
     def test_legitimate_zero_radiation_preserved(self):
         """R4: A valid measurement of 0.0 radiation is preserved and not treated as sentinel."""
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -330,9 +323,9 @@ class PrepareEnvironmentTests(unittest.TestCase):
             csv_path = Path(temp_dir) / "independent.csv"
             csv_path.write_text(
                 "sol,ls_deg,pressure_min_pa,pressure_max_pa,pressure_mean_pa,temp_air_min_c,temp_air_max_c,temp_air_mean_c,rad_dose_rate_ugy_day,quality_flag\n"
-                # Sol 100: valid pressure/temp, sentinel radiation (-9999.0)
+                "# Sol 100: valid pressure/temp, sentinel radiation (-9999.0)\n"
                 "100,10.0,750.0,800.0,775.0,-70.0,-20.0,-45.0,-9999.0,0\n"
-                # Sol 101: sentinel pressure (-9999.0), valid temp and valid radiation (210.0)
+                "# Sol 101: sentinel pressure (-9999.0), valid temp and valid radiation (210.0)\n"
                 "101,10.5,-9999.0,-9999.0,-9999.0,-72.0,-22.0,-47.0,210.0,0\n",
                 encoding="utf-8",
             )
@@ -361,7 +354,6 @@ class PrepareEnvironmentTests(unittest.TestCase):
             self.assertEqual(r["mean"], 210.0)
             self.assertEqual(r["perQuantityAudit"]["includedSolCount"], 1)
             self.assertEqual(r["perQuantityAudit"]["sentinelExcluded"], 1)
-
 
     def test_zero_pressure_and_temp_preserved_as_valid(self):
         """R4: Physical 0.0 values (e.g. 0.0 degC) are preserved and not discarded as sentinels."""
@@ -427,6 +419,31 @@ class PrepareEnvironmentTests(unittest.TestCase):
         self.assertIn("GTS_CONFIDENCE_LEVEL", text)
         self.assertIn("MODRDR6.FMT", text)
 
+    def test_temperature_intervals_do_not_silently_drop_non_sentinels(self):
+        header = "sol,ls_deg,pressure_min_pa,pressure_max_pa,pressure_mean_pa,temp_air_min_c,temp_air_max_c,temp_air_mean_c,rad_dose_rate_ugy_day,quality_flag\n"
+        for minimum, mean, maximum in [(-250, -240, -230), (-250, -190, -180)]:
+            with self.subTest(interval=(minimum, mean, maximum)), tempfile.TemporaryDirectory() as folder:
+                source, output = Path(folder) / "source.csv", Path(folder) / "output.json"
+                source.write_text(header + f"100,10,750,800,775,{minimum},{maximum},{mean},0,0\n")
+                result = self.run_cli(source, output)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                quantity = json.loads(output.read_text())["quantities"][1]
+                self.assertEqual((quantity["min"], quantity["mean"], quantity["max"]), (minimum, mean, maximum))
+                self.assertEqual(quantity["sampleCount"], 1)
+                self.assertEqual(quantity["perQuantityAudit"]["sentinelExcluded"], 0)
+
+    def test_below_absolute_zero_rejected_without_replacing_destination(self):
+        with tempfile.TemporaryDirectory() as folder:
+            source, output = Path(folder) / "source.csv", Path(folder) / "output.json"
+            source.write_text("sol,ls_deg,pressure_min_pa,pressure_max_pa,pressure_mean_pa,temp_air_min_c,temp_air_max_c,temp_air_mean_c,rad_dose_rate_ugy_day,quality_flag\n100,10,750,800,775,-280,-230,-250,0,0\n")
+            output.write_bytes(b"existing destination")
+            before = output.stat().st_mtime_ns
+            result = self.run_cli(source, output)
+            self.assertEqual(result.returncode, 1)
+            self.assertIn("absolute zero", result.stderr)
+            self.assertNotIn("Traceback", result.stderr)
+            self.assertEqual(output.read_bytes(), b"existing destination")
+            self.assertEqual(output.stat().st_mtime_ns, before)
 
 if __name__ == "__main__":
     unittest.main()

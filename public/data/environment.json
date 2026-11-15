@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "reviewStatus": "pending",
+  "scope": "historical-rover-context",
+  "instrument": "REMS",
+  "sourceUrl": "https://pds-atmospheres.nmsu.edu/data_and_services/atmospheres_data/MARS/curiosity/rems.html",
+  "reviewNote": "Gaddielle supplied REMS product references and extracted summaries. Numerical values are withheld while original-product integrity, finite values, per-quantity quality selection and reproducibility are reviewed. This is a review-status record, not an approved environmental dataset.",
+  "readings": []
+}
