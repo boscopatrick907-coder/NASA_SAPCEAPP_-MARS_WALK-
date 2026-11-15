@@ -62,7 +62,7 @@ button,
 .planner-state,
 .next-step-banner {
   border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 .card-title {
   display: flex;
@@ -111,7 +111,7 @@ button:disabled {
   cursor: not-allowed;
 }
 button:focus-visible {
-  outline: 2px solid var(--border-focus);
+  outline: 3px solid var(--border-focus);
   outline-offset: 2px;
 }
 .mode-btn {
@@ -244,4 +244,14 @@ p {
 .next-step-banner {
   padding: 8px 12px;
   font-weight: 500;
+}
+
+/* ui-final: numbers read as measurements; active mode is not colour-only. */
+.status-val,
+.points-table td {
+  font-family: var(--font-numeric);
+  font-variant-numeric: tabular-nums;
+}
+.mode-btn.active {
+  font-weight: 700;
 }

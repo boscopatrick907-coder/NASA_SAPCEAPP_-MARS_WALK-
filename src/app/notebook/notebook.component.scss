@@ -61,7 +61,7 @@ article,
 .notebook-state,
 .next-step-banner {
   border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 textarea,
 .location-attachment,
@@ -147,7 +147,7 @@ textarea:focus {
   border-color: var(--border-focus);
 }
 :focus-visible {
-  outline: 2px solid var(--border-focus);
+  outline: 3px solid var(--border-focus);
   outline-offset: 2px;
 }
 .field-meta,
@@ -192,7 +192,7 @@ button {
   padding: 0 18px;
   background: var(--bg);
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   color: var(--fg);
   font-weight: 600;
   cursor: pointer;
@@ -264,4 +264,12 @@ article:hover {
 }
 .font-mono {
   font-family: var(--font-mono);
+}
+
+/* ui-final: counts and coordinates in the numeric face. */
+.log-count-badge,
+.char-counter,
+.entry-location {
+  font-family: var(--font-numeric);
+  font-variant-numeric: tabular-nums;
 }

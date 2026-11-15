@@ -44,7 +44,7 @@ $u: var(--text-secondary);
   flex: 1;
   min-width: 0;
   height: 100%;
-  background: var(--map-bg);
+  background: var(--bg-space);
 }
 .map-container,
 .tab-content {
@@ -70,6 +70,7 @@ app-map {
   min-width: 0;
 }
 .workspace-footer {
+  flex-wrap: nowrap !important;
   justify-content: space-between;
   min-height: 40px;
   padding: var(--space-1) var(--space-3);

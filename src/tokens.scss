@@ -1,0 +1,191 @@
+/*
+ * MARSWALK design tokens: the single source for colour, spacing, radius, shadow, glass,
+ * type and motion. Components read these custom properties; no component should hard-code
+ * a palette value that exists here.
+ *
+ * Fonts are self-hosted (Latin subset, variable weight) under SIL Open Font License 1.1:
+ * Inter (rsms/inter) and Space Grotesk (Florian Karsten), from @fontsource-variable 5.3.0.
+ * Licences: src/assets/fonts/OFL-*.txt. Both fall back to system fonts if not yet cached.
+ */
+
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('./assets/fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+}
+
+@font-face {
+  font-family: 'Space Grotesk Variable';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('./assets/fonts/space-grotesk-latin-wght-normal.woff2') format('woff2-variations');
+}
+
+/* ---------- Theme-independent scale ---------- */
+:root {
+  /* 8px grid, with 4px for hairline adjustments. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+
+  /* Type: Inter for reading, Space Grotesk for headings and numbers. */
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-heading: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
+  --font-numeric: 'Space Grotesk Variable', 'Inter Variable', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace;
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 16px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 28px;
+  --leading-tight: 1.2;
+  --leading-body: 1.55;
+
+  /* Controls and touch. */
+  --touch-target-min: 44px;
+  --control-h: 40px;
+
+  /* Motion: only to explain a change of state. */
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+  --dur-slow: 250ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* Safe areas for notched Android and iOS devices. */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
+@media (pointer: coarse) {
+  :root {
+    --control-h: 44px;
+  }
+}
+
+/* ---------- Dark: warm deep space ---------- */
+:root,
+[data-theme='dark'] {
+  --bg-space: #0f0d0c;
+  --bg-surface: #171412;
+  --bg-card: #1f1b18;
+  --bg-card-hover: #29231f;
+  --border-subtle: #342c27;
+  --border-control: #7d6c60;
+  --border-focus: #7ab8ff;
+
+  --text-primary: #f5efe8;
+  --text-secondary: #cdbfb2;
+  --text-muted: #a8998b;
+
+  --mars-accent: #ff8a4c;
+  --mars-accent-hover: #ffa06c;
+  --mars-accent-bg: rgba(255, 138, 76, 0.14);
+  --mars-accent-text: #ff9a63;
+  --on-accent: #1a0f08;
+  --link: #8cc8ff;
+
+  --science-cyan: #5cc8e0;
+  --science-cyan-bg: rgba(92, 200, 224, 0.12);
+
+  --warning-amber: #f5b74a;
+  --warning-bg: rgba(245, 183, 74, 0.12);
+  --warning-border: rgba(245, 183, 74, 0.4);
+  --warning-text: #f5b74a;
+
+  --error-red: #ff7a6e;
+  --error-bg: rgba(255, 122, 110, 0.14);
+
+  --success-green: #5fd3a0;
+  --success-bg: rgba(95, 211, 160, 0.14);
+
+  --map-bg: #0b0a09;
+  --map-placeholder-gradient: radial-gradient(circle at center, #1f1b18 0%, #0b0a09 100%);
+  --hud-bg: rgba(23, 20, 18, 0.78);
+
+  --glass-bg: rgba(31, 27, 24, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-blur: 14px;
+  --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.45);
+  --route-glow: rgba(255, 138, 76, 0.75);
+}
+
+/* ---------- Light: cream base, muted rust accent ---------- */
+[data-theme='light'] {
+  --bg-space: #f6f1e9;
+  --bg-surface: #fffdf9;
+  --bg-card: #fbf7f0;
+  --bg-card-hover: #f3ece1;
+  --border-subtle: #e7dccd;
+  --border-control: #9a8a7c;
+  --border-focus: #2563eb;
+
+  --text-primary: #1f1a17;
+  --text-secondary: #4a4038;
+  --text-muted: #675a4f;
+
+  --mars-accent: #ff8a4c;
+  --mars-accent-hover: #f47a3a;
+  --mars-accent-bg: rgba(255, 138, 76, 0.14);
+  --mars-accent-text: #a8431a;
+  --on-accent: #1f1a17;
+  --link: #1d4ed8;
+
+  --science-cyan: #0e6a82;
+  --science-cyan-bg: rgba(14, 106, 130, 0.1);
+
+  --warning-amber: #b86e0a;
+  --warning-bg: #fdf1dc;
+  --warning-border: rgba(184, 110, 10, 0.45);
+  --warning-text: #8a4b06;
+
+  --error-red: #c0362c;
+  --error-bg: rgba(192, 54, 44, 0.08);
+
+  --success-green: #1f7a52;
+  --success-bg: rgba(31, 122, 82, 0.1);
+
+  /* The orbital image keeps a dark viewer frame in both themes. */
+  --map-bg: #1a1714;
+  --map-placeholder-gradient: radial-gradient(circle at center, #2a2521 0%, #1a1714 100%);
+  --hud-bg: rgba(255, 253, 249, 0.82);
+
+  --glass-bg: rgba(255, 253, 249, 0.74);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-blur: 14px;
+  --shadow-panel: 0 1px 2px rgba(31, 26, 23, 0.06), 0 1px 1px rgba(31, 26, 23, 0.04);
+  --shadow-float: 0 10px 30px rgba(31, 26, 23, 0.14);
+  --route-glow: rgba(255, 138, 76, 0.85);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

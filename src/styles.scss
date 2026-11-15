@@ -1,105 +1,5 @@
+@use 'tokens';
 @import 'leaflet/dist/leaflet.css';
-
-:root,
-[data-theme='dark'] {
-  --bg-space: #0b0e14;
-  --bg-surface: #121821;
-  --bg-card: #18202b;
-  --bg-card-hover: #212b39;
-  --border-subtle: #2a3647;
-  --border-control: #64748b;
-  --border-focus: #60a5fa;
-
-  --text-primary: #f1f5f9;
-  --text-secondary: #a3b1c4;
-  --text-muted: #8a9ab0;
-  --mars-accent-text: #f07a69;
-  --on-accent: #0b0e14;
-
-  --mars-accent: #e05a47;
-  --mars-accent-hover: #ea6b59;
-  --mars-accent-bg: rgba(224, 90, 71, 0.15);
-
-  --science-cyan: #06b6d4;
-  --science-cyan-bg: rgba(6, 182, 212, 0.15);
-
-  --warning-amber: #f59e0b;
-  --warning-bg: rgba(245, 158, 11, 0.12);
-  --warning-border: rgba(245, 158, 11, 0.35);
-  --warning-text: #fbbf24;
-
-  --error-red: #ef4444;
-  --error-bg: rgba(239, 68, 68, 0.15);
-
-  --success-green: #10b981;
-  --success-bg: rgba(16, 185, 129, 0.15);
-
-  --map-bg: #07090d;
-  --map-placeholder-gradient: radial-gradient(circle at center, #151b26 0%, #07090d 100%);
-  --hud-bg: rgba(20, 26, 35, 0.75);
-
-  --touch-target-min: 44px;
-  --control-h: 36px;
-
-  /* Shared scale: spacing, radius, type. */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 24px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --text-xs: 11.5px;
-  --text-sm: 12.5px;
-  --text-base: 14px;
-  --text-md: 15px;
-  --text-lg: 17px;
-  --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.35);
-
-  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-heading: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace;
-}
-
-[data-theme='light'] {
-  --bg-space: #eef2f6;
-  --bg-surface: #ffffff;
-  --bg-card: #f8fafc;
-  --bg-card-hover: #e8edf3;
-  --border-subtle: #d5dde7;
-  --border-control: #8592a6;
-  --border-focus: #2563eb;
-
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
-  --text-muted: #526075;
-  --mars-accent-text: #9a3412;
-  --on-accent: #ffffff;
-  --shadow-panel: 0 1px 2px rgba(15, 23, 42, 0.08);
-
-  --mars-accent: #c2410c;
-  --mars-accent-hover: #9a3412;
-  --mars-accent-bg: rgba(194, 65, 12, 0.12);
-
-  --science-cyan: #0284c7;
-  --science-cyan-bg: rgba(2, 132, 199, 0.12);
-
-  --warning-amber: #b45309;
-  --warning-bg: rgba(245, 158, 11, 0.08);
-  --warning-border: rgba(180, 83, 9, 0.35);
-  --warning-text: #92400e;
-
-  --error-red: #dc2626;
-  --error-bg: rgba(220, 38, 38, 0.1);
-
-  --success-green: #059669;
-  --success-bg: rgba(5, 150, 105, 0.1);
-
-  --map-bg: #e2e8f0;
-  --map-placeholder-gradient: radial-gradient(circle at center, #ffffff 0%, #e2e8f0 100%);
-  --hud-bg: rgba(255, 255, 255, 0.85);
-}
 
 *,
 *::before,
@@ -121,26 +21,67 @@ body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   font-size: var(--text-base);
-  line-height: 1.5;
-  letter-spacing: -0.01em;
+  line-height: var(--leading-body);
+  font-feature-settings: 'cv11', 'ss01';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
-  transition: background-color 150ms ease, color 150ms ease;
+  transition:
+    background-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out);
 }
 
-h1, h2, h3, h4, h5, h6 {
+/* Safe areas: content never sits under a notch, rounded corner or gesture bar. */
+body {
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+  padding-bottom: var(--safe-bottom);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
-  letter-spacing: -0.01em;
-  line-height: 1.25;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: var(--leading-tight);
+}
+
+/* Measurements and counts line up: tabular numerals in the numeric face. */
+dd,
+td,
+.num,
+.font-mono,
+app-header .mission-meta {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Status pills: real states, in the heading face (no decorative telemetry). */
+app-header .mission-meta {
+  font-family: var(--font-numeric);
+  letter-spacing: 0;
 }
 
 button {
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+  transition:
+    background-color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out),
+    box-shadow var(--dur-fast) var(--ease-out);
 }
 
 button:disabled {
   cursor: not-allowed;
+}
+
+/* Links: unstyled links (source library) were browser-default blue, 1.9:1 on dark. */
+a,
+a:visited {
+  color: var(--link);
+  text-underline-offset: 2px;
 }
 
 /* Long identifiers, URLs and source names wrap instead of widening the page. */
@@ -150,7 +91,6 @@ code,
   overflow-wrap: anywhere;
 }
 
-/* Touch and keyboard accessibility */
 button,
 input,
 textarea,
@@ -164,23 +104,12 @@ button:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible,
-[tabindex='0']:focus-visible {
-  outline: 3px solid var(--border-focus);
-  outline-offset: 2px;
-}
-
+[tabindex='0']:focus-visible,
 summary:focus-visible,
 a:focus-visible {
   outline: 3px solid var(--border-focus);
   outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* Touch screens keep comfortable 44px targets; precise pointers use compact 36px controls. */
-@media (pointer: coarse) {
-  :root {
-    --control-h: 44px;
-  }
+  border-radius: 4px;
 }
 
 /* Shared states used by the shell (deferred panels, optional viewer toggle). */
@@ -223,7 +152,7 @@ a:focus-visible {
   color: var(--text-primary);
 }
 
-/* Mission-control accents shared across panels (one rule, no per-component budget cost). */
+/* Section markers shared across panels (one rule, no per-component budget cost). */
 app-mission-review .review-heading::before,
 app-exploration-confidence h2::before,
 app-image-passport h2::before,
@@ -239,25 +168,92 @@ app-science-context h2::before,
   vertical-align: -0.08em;
 }
 
-/* Status pills read as compact telemetry. */
-app-header .mission-meta {
-  font-family: var(--font-mono);
-  letter-spacing: 0;
+/* MARSWALK mark (header). Original artwork, not an agency or mission insignia. */
+app-header .mark-disc {
+  fill: var(--mars-accent);
+}
+app-header .mark-crater {
+  fill: #000;
+  fill-opacity: 0.16;
+}
+app-header .mark-route {
+  fill: none;
+  stroke: #fffdf9;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-dasharray: 0.1 3.1;
+}
+app-header .mark-start {
+  fill: #fffdf9;
+}
+app-header .mark-goal {
+  fill: none;
+  stroke: #fffdf9;
+  stroke-width: 1.7;
+}
+
+/* ---------- Map: the orbital image is the hero ---------- */
+
+/* Image attribution under the map inherited light text in the light theme (about 1:1). */
+app-map .image-credit {
+  color: var(--text-secondary);
+}
+
+/* Route line: soft glow and rounded joins; start/destination keep their own symbols. */
+.leaflet-overlay-pane path.mw-route-line {
+  filter: drop-shadow(0 0 3px var(--route-glow)) drop-shadow(0 0 8px var(--route-glow));
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  animation: mw-route-in var(--dur-slow) var(--ease-out);
+}
+
+.leaflet-overlay-pane path.mw-route-point {
+  filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.55));
+  transition: stroke-width var(--dur-fast) var(--ease-out);
+}
+
+.leaflet-overlay-pane path.mw-route-point:hover {
+  stroke-width: 4;
+}
+
+@keyframes mw-route-in {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Leaflet chrome in the product palette. */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: var(--map-bg);
+}
+
+.leaflet-tooltip,
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: var(--glass-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-float);
+  backdrop-filter: blur(var(--glass-blur));
 }
 
 /* Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-surface);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--border-subtle);
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -265,5 +261,10 @@ app-header .mission-meta {
 }
 
 @media (max-width: 768px) {
-  html, body { height: auto; min-height: 100%; overflow-y: auto; }
+  html,
+  body {
+    height: auto;
+    min-height: 100%;
+    overflow-y: auto;
+  }
 }
