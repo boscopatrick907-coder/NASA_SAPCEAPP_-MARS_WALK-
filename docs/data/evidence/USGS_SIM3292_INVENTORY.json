@@ -1,0 +1,786 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "usgs-sim3292-mars-global-geology-20m",
+  "title": "Geologic Map of Mars (USGS Scientific Investigations Map 3292)",
+  "authors": [
+    "Kenneth L. Tanaka",
+    "James A. Skinner Jr.",
+    "James M. Dohm",
+    "Rossman P. Irwin III",
+    "Eric J. Kolb",
+    "Corey M. Fortezzo",
+    "Thomas Platz",
+    "Gregory G. Michael",
+    "Trent M. Hare"
+  ],
+  "publicationYear": 2014,
+  "doi": "https://doi.org/10.3133/sim3292",
+  "sourceUrls": {
+    "publicationPage": "https://pubs.usgs.gov/sim/3292/",
+    "gisDatabaseZip": "https://pubs.usgs.gov/sim/3292/downloads/sim3292_database.zip",
+    "readmeTxt": "https://pubs.usgs.gov/sim/3292/downloads/sim3292_readme.txt",
+    "metadataTxt": "https://pubs.usgs.gov/sim/3292/downloads/sim3292_metadata.txt",
+    "metadataXml": "https://pubs.usgs.gov/sim/3292/downloads/sim3292_metadata.xml",
+    "pamphletPdf": "https://pubs.usgs.gov/sim/3292/pdf/sim3292_pamphlet.pdf",
+    "dmuChartPdf": "https://pubs.usgs.gov/sim/3292/pdf/sim3292_dmu_with_locality_images.pdf",
+    "tableD1Pdf": "https://pubs.usgs.gov/sim/3292/pdf/sim3292_tabled1.pdf"
+  },
+  "sourceArchive": {
+    "fileName": "sim3292_database.zip",
+    "totalBytes": 808910442,
+    "readmeSha256": "0bd3fd83a5b50129bb44f632172f374a8426d164c465737ab9f11c368853145c",
+    "metadataTxtSha256": "b94f9adc7c8793dcc1ee0e3b4f75866ecb3aa739b8c8255d96d388b9aa0f1395",
+    "metadataXmlSha256": "011a7566f4a27b3c1600f0b919986682a76d19479574c1421bda6213b6e6b748"
+  },
+  "crsVerification": {
+    "shapefileGeographicCrs": {
+      "name": "GCS_Mars_2000_Sphere",
+      "wkt": "GEOGCS[\"GCS_Mars_2000_Sphere\",DATUM[\"D_Mars_2000_Sphere\",SPHEROID[\"Mars_2000_Sphere_IAU_IAG\",3396190.0,0.0]],PRIMEM[\"Reference_Meridian\",0.0],UNIT[\"Degree\",0.0174532925199433]]",
+      "datum": "D_Mars_2000_Sphere",
+      "spheroid": "Mars_2000_Sphere_IAU_IAG",
+      "semiMajorAxisMeters": 3396190.0,
+      "inverseFlattening": 0.0,
+      "primeMeridian": "Reference_Meridian (0.0)",
+      "angularUnit": "Degree (0.0174532925199433 rad)",
+      "coordinateConvention": "Planetocentric latitude [-90..90 deg N], East-positive longitude [-180..180 deg E]"
+    },
+    "geodatabaseProjectedCrs": {
+      "name": "Robinson_clon0_Mars_2000_Sphere",
+      "projection": "Robinson",
+      "centralMeridianDeg": 0.0,
+      "linearUnit": "Meter (1.0)",
+      "semiMajorAxisMeters": 3396190.0,
+      "inverseFlattening": 0.0,
+      "note": "Shape_Leng and Shape_Area attributes are in Robinson projected meters; SphArea_km and SphLen_km are true spherical geodesic measurements."
+    },
+    "opticalDatasetAlignment": {
+      "sourceObservationId": "PSP_001752_1750",
+      "nasaCatalogId": "PIA26306",
+      "cropFileName": "marswalk_crop.tif",
+      "widthPx": 2048,
+      "heightPx": 2048,
+      "bitsPerSample": 10,
+      "pixelScaleMeters": 0.25,
+      "tiepointUpperLeftEastingMeters": -2531487.0,
+      "tiepointUpperLeftNorthingMeters": -286803.75,
+      "projection": "Equirectangular MARS",
+      "gcsName": "GCS_MARS",
+      "datum": "D_MARS",
+      "ellipsoid": "MARS_localRadius",
+      "sphereRadiusMeters": 3396190.0,
+      "centralMeridianDeg": 180.0,
+      "standardParallel1Deg": 0.0,
+      "widthMeters": 512.0,
+      "heightMeters": 512.0,
+      "areaSqMeters": 262144.0,
+      "areaSqKm": 0.262144,
+      "eastingRangeMeters": [
+        -2531487.0,
+        -2530975.0
+      ],
+      "northingRangeMeters": [
+        -287315.75,
+        -286803.75
+      ],
+      "bboxLonLat": [
+        137.292283,
+        -4.84719,
+        137.300921,
+        -4.838553
+      ],
+      "centerLonLat": [
+        137.296602,
+        -4.842872
+      ],
+      "polygonRing": [
+        [
+          137.292283,
+          -4.84719
+        ],
+        [
+          137.300921,
+          -4.84719
+        ],
+        [
+          137.300921,
+          -4.838553
+        ],
+        [
+          137.292283,
+          -4.838553
+        ],
+        [
+          137.292283,
+          -4.84719
+        ]
+      ],
+      "datumCompatibility": "Exact sphere radius match (R = 3,396,190.0 m) between HiRISE Equirectangular MARS (Central_Meridian = 180.0 deg) and SIM 3292 GCS_Mars_2000_Sphere (Central_Meridian = 0.0 deg). Zero ellipsoid/datum shift is required."
+    }
+  },
+  "layers": {
+    "SIM3292_Global_Geology": {
+      "featureCount": 1311,
+      "shapeType": "Polygon",
+      "crsWkt": "GEOGCS[\"GCS_Mars_2000_Sphere\",DATUM[\"D_Mars_2000_Sphere\",SPHEROID[\"Mars_2000_Sphere_IAU_IAG\",3396190.0,0.0]],PRIMEM[\"Reference_Meridian\",0.0],UNIT[\"Degree\",0.0174532925199433]]",
+      "globalBoundingBoxLonLat": [
+        -179.99999,
+        -89.999969,
+        179.99999,
+        89.999969
+      ],
+      "fields": [
+        {
+          "name": "OBJECTID",
+          "type": "N",
+          "length": 9,
+          "decimals": 0
+        },
+        {
+          "name": "Shape_Leng",
+          "type": "F",
+          "length": 19,
+          "decimals": 11
+        },
+        {
+          "name": "Shape_Area",
+          "type": "F",
+          "length": 19,
+          "decimals": 11
+        },
+        {
+          "name": "Unit",
+          "type": "C",
+          "length": 8,
+          "decimals": 0
+        },
+        {
+          "name": "UnitDesc",
+          "type": "C",
+          "length": 50,
+          "decimals": 0
+        },
+        {
+          "name": "SphArea_km",
+          "type": "F",
+          "length": 13,
+          "decimals": 11
+        }
+      ],
+      "files": {
+        "SIM3292_Global_Geology.shp": {
+          "bytes": 63803656,
+          "sha256": "9c0fbc204c1c7f108a854036d85f44c77531e85e0c03959eaea2b6cd33197f3a"
+        },
+        "SIM3292_Global_Geology.shx": {
+          "bytes": 10588,
+          "sha256": "c6e40da9148010bf93ac1cf57b4976635574e9b1977e5eef75c3930212011935"
+        },
+        "SIM3292_Global_Geology.dbf": {
+          "bytes": 156235,
+          "sha256": "06a7b40338f8f62e1d8192e07068fcb343ca7c2f02ffb353bead832ffa1d2bab"
+        },
+        "SIM3292_Global_Geology.prj": {
+          "bytes": 176,
+          "sha256": "2fb085b6ac6c8594c2e411b1c99b35093b1ff01ba125b06e1b57328a2dc8f8bc"
+        },
+        "SIM3292_Global_Geology.shp.xml": {
+          "bytes": 53319,
+          "sha256": "b568de11e1e151e9dff06908d26365711d1e9845a5097154308af64f76969eab"
+        }
+      }
+    },
+    "SIM3292_Global_Contacts": {
+      "featureCount": 3800,
+      "shapeType": "PolyLine",
+      "crsWkt": "GEOGCS[\"GCS_Mars_2000_Sphere\",DATUM[\"D_Mars_2000_Sphere\",SPHEROID[\"Mars_2000_Sphere_IAU_IAG\",3396190.0,0.0]],PRIMEM[\"Reference_Meridian\",0.0],UNIT[\"Degree\",0.0174532925199433]]",
+      "globalBoundingBoxLonLat": [
+        -179.999985,
+        -89.999969,
+        179.999985,
+        89.999969
+      ],
+      "fields": [
+        {
+          "name": "OBJECTID",
+          "type": "N",
+          "length": 9,
+          "decimals": 0
+        },
+        {
+          "name": "ConType",
+          "type": "C",
+          "length": 15,
+          "decimals": 0
+        },
+        {
+          "name": "Shape_Leng",
+          "type": "F",
+          "length": 19,
+          "decimals": 11
+        },
+        {
+          "name": "SphLen_km",
+          "type": "F",
+          "length": 13,
+          "decimals": 11
+        }
+      ],
+      "files": {
+        "SIM3292_Global_Contacts.shp": {
+          "bytes": 32122912,
+          "sha256": "40387139da3734ca7d68ff22858ec63ba2b09cefe7d1dd9f5df57cc92490efe8"
+        },
+        "SIM3292_Global_Contacts.shx": {
+          "bytes": 30500,
+          "sha256": "b498afdd9d76c8cd954ce9b6401211a3705562436511cd3d57064c75f759bc13"
+        },
+        "SIM3292_Global_Contacts.dbf": {
+          "bytes": 216762,
+          "sha256": "666ca4615fd5cc24c12d9750a41d9ce89e41ce64ed7e93e0966f42f022f6cb63"
+        },
+        "SIM3292_Global_Contacts.prj": {
+          "bytes": 176,
+          "sha256": "2fb085b6ac6c8594c2e411b1c99b35093b1ff01ba125b06e1b57328a2dc8f8bc"
+        },
+        "SIM3292_Global_Contacts.shp.xml": {
+          "bytes": 34508,
+          "sha256": "e20618251ea78acc82307859111d9a8cba4bb622ac4bc135f99a6dc7f03e543d"
+        }
+      }
+    },
+    "SIM3292_Global_Structure": {
+      "featureCount": 3593,
+      "shapeType": "PolyLine",
+      "crsWkt": "GEOGCS[\"GCS_Mars_2000_Sphere\",DATUM[\"D_Mars_2000_Sphere\",SPHEROID[\"Mars_2000_Sphere_IAU_IAG\",3396190.0,0.0]],PRIMEM[\"Reference_Meridian\",0.0],UNIT[\"Degree\",0.0174532925199433]]",
+      "globalBoundingBoxLonLat": [
+        -179.999624,
+        -87.855571,
+        179.999934,
+        87.152368
+      ],
+      "fields": [
+        {
+          "name": "OBJECTID",
+          "type": "N",
+          "length": 9,
+          "decimals": 0
+        },
+        {
+          "name": "Morphology",
+          "type": "C",
+          "length": 50,
+          "decimals": 0
+        },
+        {
+          "name": "Origin",
+          "type": "C",
+          "length": 50,
+          "decimals": 0
+        },
+        {
+          "name": "Interpreta",
+          "type": "C",
+          "length": 50,
+          "decimals": 0
+        },
+        {
+          "name": "Preservati",
+          "type": "C",
+          "length": 50,
+          "decimals": 0
+        },
+        {
+          "name": "Dimension",
+          "type": "C",
+          "length": 10,
+          "decimals": 0
+        },
+        {
+          "name": "Shape_Leng",
+          "type": "F",
+          "length": 19,
+          "decimals": 11
+        },
+        {
+          "name": "SphLen_km",
+          "type": "F",
+          "length": 13,
+          "decimals": 11
+        }
+      ],
+      "files": {
+        "SIM3292_Global_Structure.shp": {
+          "bytes": 11319800,
+          "sha256": "f41953d2a5daa96de5e18f10425e23f996864c567a4c6f428a9504d66a09395d"
+        },
+        "SIM3292_Global_Structure.shx": {
+          "bytes": 28844,
+          "sha256": "551a961412d949a7427e8c2587592b6d1b2e4cb90e4812fa514beb682a12b191"
+        },
+        "SIM3292_Global_Structure.dbf": {
+          "bytes": 905726,
+          "sha256": "bd5e6359150596af5ad42f7175fc5bca055717d631c8b7dc5e92e8c8060ba6d6"
+        },
+        "SIM3292_Global_Structure.prj": {
+          "bytes": 176,
+          "sha256": "2fb085b6ac6c8594c2e411b1c99b35093b1ff01ba125b06e1b57328a2dc8f8bc"
+        },
+        "SIM3292_Global_Structure.shp.xml": {
+          "bytes": 51079,
+          "sha256": "f04860a6444863e57b8b8b7fc702e88b861485a8e80e3dd42d97ac63c18fd28a"
+        }
+      }
+    },
+    "SIM3292_Global_Landing_sites": {
+      "featureCount": 9,
+      "shapeType": "MultiPoint",
+      "crsWkt": "GEOGCS[\"GCS_Mars_2000_Sphere\",DATUM[\"D_Mars_2000_Sphere\",SPHEROID[\"Mars_2000_Sphere_IAU_IAG\",3396190.0,0.0]],PRIMEM[\"Reference_Meridian\",0.0],UNIT[\"Degree\",0.0174532925199433]]",
+      "globalBoundingBoxLonLat": [
+        -158.0943,
+        -45.0419,
+        175.4729,
+        68.21883
+      ],
+      "fields": [
+        {
+          "name": "OBJECTID",
+          "type": "N",
+          "length": 9,
+          "decimals": 0
+        },
+        {
+          "name": "ID",
+          "type": "N",
+          "length": 9,
+          "decimals": 0
+        },
+        {
+          "name": "NAME",
+          "type": "C",
+          "length": 50,
+          "decimals": 0
+        },
+        {
+          "name": "X_COORD",
+          "type": "F",
+          "length": 19,
+          "decimals": 11
+        },
+        {
+          "name": "Y_COORD",
+          "type": "F",
+          "length": 19,
+          "decimals": 11
+        },
+        {
+          "name": "FULL_NAME",
+          "type": "C",
+          "length": 36,
+          "decimals": 0
+        },
+        {
+          "name": "NSSDC_ID",
+          "type": "C",
+          "length": 12,
+          "decimals": 0
+        },
+        {
+          "name": "WEB_LINK",
+          "type": "C",
+          "length": 128,
+          "decimals": 0
+        },
+        {
+          "name": "COUNTRY",
+          "type": "C",
+          "length": 16,
+          "decimals": 0
+        },
+        {
+          "name": "YEAR",
+          "type": "N",
+          "length": 4,
+          "decimals": 0
+        }
+      ],
+      "files": {
+        "SIM3292_Global_Landing_sites.shp": {
+          "bytes": 676,
+          "sha256": "dc35042b6f2c058a619502f3e12198e9c9abc23412c99eea0d16f243cafc4c14"
+        },
+        "SIM3292_Global_Landing_sites.shx": {
+          "bytes": 172,
+          "sha256": "ea1adb4cfedc123a501b4eb950c158f3b358c5e4ae4ee4563ac3daa8cc095205"
+        },
+        "SIM3292_Global_Landing_sites.dbf": {
+          "bytes": 3081,
+          "sha256": "28ac0ca745c3cc9046f65201c1c9055b13972d88d0bbeeffbfa96e02baf9d123"
+        },
+        "SIM3292_Global_Landing_sites.prj": {
+          "bytes": 176,
+          "sha256": "2fb085b6ac6c8594c2e411b1c99b35093b1ff01ba125b06e1b57328a2dc8f8bc"
+        },
+        "SIM3292_Global_Landing_sites.shp.xml": {
+          "bytes": 8813,
+          "sha256": "f35186a576b6b2bf9e2b2dd34cc4673ae5b2a329bc747e6ab4fa5083791c0fbd"
+        }
+      }
+    },
+    "Mars_PublishedGeologicMaps_1Mscale_greater": {
+      "featureCount": 22,
+      "shapeType": "Polygon",
+      "crsWkt": "GEOGCS[\"GCS_Mars_2000\",DATUM[\"D_Mars_2000\",SPHEROID[\"Mars_2000_IAU_IAG\",3396190.0,169.8944472236118]],PRIMEM[\"Reference_Meridian\",0.0],UNIT[\"Degree\",0.0174532925199433]]",
+      "fields": [
+        {
+          "name": "quad_name",
+          "type": "C",
+          "length": 128,
+          "decimals": 0
+        },
+        {
+          "name": "url",
+          "type": "C",
+          "length": 254,
+          "decimals": 0
+        },
+        {
+          "name": "usgs_map",
+          "type": "C",
+          "length": 128,
+          "decimals": 0
+        },
+        {
+          "name": "target",
+          "type": "C",
+          "length": 32,
+          "decimals": 0
+        },
+        {
+          "name": "Sph_Area",
+          "type": "N",
+          "length": 19,
+          "decimals": 12
+        },
+        {
+          "name": "ID",
+          "type": "N",
+          "length": 4,
+          "decimals": 0
+        }
+      ],
+      "galeCraterOverlappingCount": 0,
+      "files": {
+        "Mars_PublishedGeologicMaps_1Mscale_greater.shp": {
+          "bytes": 583800,
+          "sha256": "11c28c8c9074b5c805a2bfe9985b0342ad5a5b7e06509cd469c1080202c472a5"
+        },
+        "Mars_PublishedGeologicMaps_1Mscale_greater.dbf": {
+          "bytes": 12678,
+          "sha256": "995b01fd91a9e050834932760fef02c61f11f20b28c8edee36636c1afd5121d3"
+        },
+        "Mars_PublishedGeologicMaps_1Mscale_greater.prj": {
+          "bytes": 169,
+          "sha256": "9791e99707d7934d89c9775f1b1f5e2852a026f8a64415fe1c8cddf6c8f4d5ff"
+        }
+      }
+    }
+  },
+  "aoiSpatialQuery": {
+    "aoiCornerAndCenterContainment": [
+      {
+        "lon": 137.292283,
+        "lat": -4.84719,
+        "inHtu_OID754": true,
+        "inAHi_OID775": false
+      },
+      {
+        "lon": 137.300921,
+        "lat": -4.84719,
+        "inHtu_OID754": true,
+        "inAHi_OID775": false
+      },
+      {
+        "lon": 137.300921,
+        "lat": -4.838553,
+        "inHtu_OID754": true,
+        "inAHi_OID775": false
+      },
+      {
+        "lon": 137.292283,
+        "lat": -4.838553,
+        "inHtu_OID754": true,
+        "inAHi_OID775": false
+      },
+      {
+        "lon": 137.296602,
+        "lat": -4.842872,
+        "inHtu_OID754": true,
+        "inAHi_OID775": false
+      }
+    ],
+    "enclosingUnit": {
+      "OBJECTID": 754,
+      "Unit": "Htu",
+      "UnitDesc": "Hesperian transition undivided unit",
+      "SphArea_km": 4454.95,
+      "Shape_Leng": 248578.916878,
+      "Shape_Area": 3641761381.53,
+      "bboxLonLat": [
+        137.067128,
+        -5.615742,
+        138.639518,
+        -4.456391
+      ],
+      "vertexCount": 470
+    },
+    "surroundingGaleCraterUnit": {
+      "OBJECTID": 775,
+      "Unit": "AHi",
+      "UnitDesc": "Amazonian and Hesperian impact unit",
+      "SphArea_km": 87031.1,
+      "Shape_Leng": 1663425.08257,
+      "Shape_Area": 71241942748.7,
+      "bboxLonLat": [
+        134.828099,
+        -9.660436,
+        140.970265,
+        -2.321323
+      ],
+      "partCount": 2,
+      "vertexCount": 3359,
+      "craterCountAgeFromTable4": {
+        "craterName": "Gale",
+        "diameterKm": 154.0,
+        "centerLatDegN": -5.4,
+        "centerLonDegE": 137.8,
+        "countAreaSqKm": 62155.0,
+        "N_2": "537 +/- 36",
+        "N_5": "173 +/- 45",
+        "N_16": "24 +/- 17",
+        "epochAssigned": "eH (Early Hesperian)"
+      }
+    },
+    "geodesicDistancesFromBoxworkAoiCenter": {
+      "aoiCenterLonLat": [
+        137.296602,
+        -4.842872
+      ],
+      "toHtuAhiGeologicContact_OID2203": {
+        "minSegmentDistanceKm": 5.784,
+        "minSegmentDistanceMeters": 5784.5,
+        "nearestPointOnSegmentLonLat": [
+          137.231525,
+          -4.769947
+        ],
+        "bearingToNearestSegmentDeg": 318.35,
+        "nearestSegmentIndex": 271,
+        "minVertexDistanceKm": 5.787,
+        "nearestVertexLonLat": [
+          137.229346,
+          -4.771878
+        ],
+        "nearestVertexIndex": 271
+      },
+      "toGaleCraterRimStructure_OID103": {
+        "minSegmentDistanceKm": 33.726,
+        "minSegmentDistanceMeters": 33725.8,
+        "nearestPointOnSegmentLonLat": [
+          136.883253,
+          -4.450449
+        ],
+        "bearingToNearestSegmentDeg": 313.59,
+        "nearestSegmentIndex": 60,
+        "minVertexDistanceKm": 33.726,
+        "nearestVertexLonLat": [
+          136.885641,
+          -4.447951
+        ],
+        "nearestVertexIndex": 60
+      },
+      "toMslCuriosityLandingSite_OID9": {
+        "landingSiteLonLat": [
+          137.44,
+          -4.59
+        ],
+        "distanceKm": 17.217,
+        "distanceMeters": 17217.0,
+        "bearingDeg": 29.48,
+        "landingSiteInAHi_OID775": true,
+        "landingSiteInHtu_OID754": false
+      }
+    },
+    "regionalUnitsInGaleSector_134_141E_8S_2S": [
+      {
+        "OBJECTID": 743,
+        "Unit": "lNh",
+        "UnitDesc": "Late Noachian highland unit",
+        "SphArea_km": 7496.55,
+        "Shape_Leng": 299503.192485,
+        "Shape_Area": 6138695668.4,
+        "bboxLonLat": [
+          132.463976,
+          -7.237777,
+          134.324661,
+          -5.628722
+        ],
+        "partCount": 1,
+        "vertexCount": 617,
+        "containsBoxworkAoi": false
+      },
+      {
+        "OBJECTID": 754,
+        "Unit": "Htu",
+        "UnitDesc": "Hesperian transition undivided unit",
+        "SphArea_km": 4454.95,
+        "Shape_Leng": 248578.916878,
+        "Shape_Area": 3641761381.53,
+        "bboxLonLat": [
+          137.067128,
+          -5.615742,
+          138.639518,
+          -4.456391
+        ],
+        "partCount": 1,
+        "vertexCount": 470,
+        "containsBoxworkAoi": true
+      },
+      {
+        "OBJECTID": 775,
+        "Unit": "AHi",
+        "UnitDesc": "Amazonian and Hesperian impact unit",
+        "SphArea_km": 87031.1,
+        "Shape_Leng": 1663425.08257,
+        "Shape_Area": 71241942748.7,
+        "bboxLonLat": [
+          134.828099,
+          -9.660436,
+          140.970265,
+          -2.321323
+        ],
+        "partCount": 2,
+        "vertexCount": 3359,
+        "containsBoxworkAoi": false
+      },
+      {
+        "OBJECTID": 813,
+        "Unit": "HNt",
+        "UnitDesc": "Hesperian and Noachian transition unit",
+        "SphArea_km": 497290.0,
+        "Shape_Leng": 8516840.65293,
+        "Shape_Area": 408498177174.0,
+        "bboxLonLat": [
+          137.697814,
+          -15.591549,
+          176.436932,
+          0.758131
+        ],
+        "partCount": 1,
+        "vertexCount": 17554,
+        "containsBoxworkAoi": false
+      },
+      {
+        "OBJECTID": 848,
+        "Unit": "AHtu",
+        "UnitDesc": "Amazonian and Hesperian transition undivided unit",
+        "SphArea_km": 124584.0,
+        "Shape_Leng": 2493642.87461,
+        "Shape_Area": 101685159994.0,
+        "bboxLonLat": [
+          139.50135,
+          -6.887202,
+          150.1485,
+          3.657654
+        ],
+        "partCount": 2,
+        "vertexCount": 5004,
+        "containsBoxworkAoi": false
+      },
+      {
+        "OBJECTID": 900,
+        "Unit": "eHt",
+        "UnitDesc": "Early Hesperian transition unit",
+        "SphArea_km": 162322.0,
+        "Shape_Leng": 3052605.87634,
+        "Shape_Area": 132489026188.0,
+        "bboxLonLat": [
+          133.154257,
+          -3.275845,
+          142.93903,
+          7.584219
+        ],
+        "partCount": 2,
+        "vertexCount": 6547,
+        "containsBoxworkAoi": false
+      },
+      {
+        "OBJECTID": 930,
+        "Unit": "mNh",
+        "UnitDesc": "Middle Noachian highland unit",
+        "SphArea_km": 4950130.0,
+        "Shape_Leng": 76978311.8015,
+        "Shape_Area": 4505353723820.0,
+        "bboxLonLat": [
+          104.224077,
+          -76.723491,
+          179.999985,
+          11.142949
+        ],
+        "partCount": 25,
+        "vertexCount": 130711,
+        "containsBoxworkAoi": false
+      },
+      {
+        "OBJECTID": 959,
+        "Unit": "HNt",
+        "UnitDesc": "Hesperian and Noachian transition unit",
+        "SphArea_km": 470803.0,
+        "Shape_Leng": 7272015.32525,
+        "Shape_Area": 385815790867.0,
+        "bboxLonLat": [
+          100.931489,
+          -5.319968,
+          136.226919,
+          14.278517
+        ],
+        "partCount": 2,
+        "vertexCount": 14893,
+        "containsBoxworkAoi": false
+      },
+      {
+        "OBJECTID": 985,
+        "Unit": "lAv",
+        "UnitDesc": "Late Amazonian volcanic unit",
+        "SphArea_km": 1036940.0,
+        "Shape_Leng": 11187564.0401,
+        "Shape_Area": 848837619379.0,
+        "bboxLonLat": [
+          138.076904,
+          -5.124022,
+          179.99999,
+          17.202388
+        ],
+        "partCount": 3,
+        "vertexCount": 22740,
+        "containsBoxworkAoi": false
+      }
+    ]
+  },
+  "contextEvaluation": {
+    "usefulForRegionalContext": true,
+    "usefulForLocalBoxworkFeatureMapping": false,
+    "recommendedRole": "regional-chronostratigraphic-context",
+    "draftingScaleDenominator": 5000000,
+    "publicationScaleDenominator": 20000000,
+    "vertexSpacingMeters": 5000.0,
+    "aoiWidthToVertexSpacingRatio": 0.1024,
+    "internalContactsInBoxworkAoi": 0,
+    "internalStructuresInBoxworkAoi": 0,
+    "summary": "SIM 3292 provides authoritative planetary-scale chronostratigraphic context: it places the entire 4,454.95 km^2 Mount Sharp (Aeolis Mons) mound—including 100% of our 512 m x 512 m HiRISE boxwork AOI—inside unit Htu (Hesperian transition undivided unit), interpreted by Tanaka et al. (2014) as fine-grained eolian/pyroclastic layered deposits altered by Hesperian acidic weathering and sulfate enrichment, located 5.78 km southeast (upslope) of the basal Htu/AHi contact (OBJECTID=2203) and surrounded by the Early Hesperian Gale Crater impact unit (AHi, OBJECTID=775, where MSL Curiosity landed 17.22 km to the north-northeast). However, because SIM 3292 was drafted at 1:5,000,000 and published at 1:20,000,000 with a 5 km vertex spacing and 40 x 100 km minimum outcrop rule, the entire boxwork AOI is 1/10th of a single SIM 3292 vertex interval and contains zero internal contacts or structural lines. Meter-scale polygonal boxwork ridges and intervening hollows require HiRISE (0.25 m/pixel) optical/DTM analysis."
+  },
+  "deliveredArtifact": {
+    "path": "docs/data/evidence/USGS_SIM3292_GALE_AOI.geojson",
+    "bytes": 388740,
+    "sha256": "09de70cd83f9183c222126a0430b5cc302139079b8a9972384f6bb014bb8922d",
+    "featureCount": 6
+  }
+}
