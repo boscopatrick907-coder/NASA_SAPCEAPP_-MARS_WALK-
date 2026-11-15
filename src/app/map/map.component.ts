@@ -342,8 +342,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.routeLayer = L.layerGroup().addTo(this.map);
     this.markerLayer = L.layerGroup().addTo(this.map);
     this.routeLine = L.polyline([], {
-      color: '#f4a340',
-      weight: 3,
+      className: 'mw-route-line',
+      color: '#ff8a4c',
+      weight: 3.5,
       opacity: 0.95,
       lineCap: 'round',
       lineJoin: 'round',
@@ -563,6 +564,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
     for (const [key, value] of desired) {
       const style = {
+        className: 'mw-route-point',
         radius: 7,
         color: value.color,
         weight: 2,

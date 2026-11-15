@@ -104,6 +104,17 @@ dd {
 .font-mono {
   font-family: var(--font-mono);
 }
+.state-summary {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 2px var(--space-3);
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 6px 0;
+  }
+}
 .boundary-disclosure {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
@@ -131,11 +142,27 @@ dd {
     line-height: 1.4;
   }
 }
+/* Wide screens: the two disclosures share one row so the image starts higher. */
+@media (min-width: 1000px) {
+  .mission-review {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+  .review-bar {
+    grid-column: 1 / -1;
+  }
+}
 @media (max-width: 640px) {
   .summary-grid {
     grid-template-columns: 1fr;
   }
+  /* Phones: the four steps stay on one swipeable row instead of a 2 x 2 grid. */
+  .workflow-actions {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
   .workflow-btn {
-    flex: 1 1 calc(50% - 6px);
+    flex: 0 0 auto;
   }
 }

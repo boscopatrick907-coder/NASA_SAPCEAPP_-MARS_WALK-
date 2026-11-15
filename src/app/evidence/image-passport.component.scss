@@ -3,13 +3,13 @@
   min-width: 0;
   color: var(--text-primary);
   overflow-wrap: anywhere;
-  --ip-link: #7dd3fc;
+  --ip-link: var(--link);
   --ip-caution-fg: #fde68a;
   --ip-ok-fg: #6ee7b7;
   --ip-err-fg: #fca5a5;
 }
 :host-context([data-theme='light']) {
-  --ip-link: #0369a1;
+  --ip-link: var(--link);
   --ip-caution-fg: #92400e;
   --ip-ok-fg: #065f46;
   --ip-err-fg: #991b1b;

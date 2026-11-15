@@ -20,8 +20,6 @@ $m: var(--mars-accent);
 .actions,
 .status-pill,
 .dataset-tag,
-.layer-toggles,
-.layer-btn,
 .theme-toggle-btn,
 .action-btn {
   display: flex;
@@ -29,9 +27,10 @@ $m: var(--mars-accent);
 }
 .mission-header {
   justify-content: space-between;
-  min-height: 56px;
-  padding: var(--space-2) var(--space-4);
-  background: var(--bg-surface);
+  min-height: 60px;
+  padding: max(var(--space-2), var(--safe-top)) var(--space-4) var(--space-2);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
   border-bottom: 1px solid $b;
   gap: var(--space-2) var(--space-4);
 }
@@ -56,11 +55,13 @@ $m: var(--mars-accent);
   gap: 8px;
   flex-shrink: 0;
 }
-.brand-mark {
-  width: 32px;
-  height: 32px;
+.brand-section {
   flex-shrink: 0;
-  color: $m;
+}
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
   svg {
     display: block;
     width: 100%;
@@ -73,9 +74,8 @@ $m: var(--mars-accent);
   min-width: 0;
 }
 .brand-title {
-  font-size: var(--text-md);
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  font: 700 var(--text-lg) / 1.05 var(--font-heading);
+  letter-spacing: 0.06em;
   color: $p;
   line-height: 1.1;
 }
@@ -87,7 +87,6 @@ $m: var(--mars-accent);
 }
 .status-pill,
 .dataset-tag,
-.layer-toggles,
 .theme-toggle-btn {
   background: $c;
   border: 1px solid $b;
@@ -159,15 +158,6 @@ $m: var(--mars-accent);
 .tag-unloaded .tag-val {
   color: inherit;
 }
-.layer-toggles {
-  flex-wrap: wrap;
-  min-width: 0;
-  max-width: 100%;
-  border-radius: 8px;
-  padding: 2px;
-  gap: 2px;
-}
-.layer-btn,
 .theme-toggle-btn,
 .action-btn {
   justify-content: center;
@@ -181,29 +171,6 @@ $m: var(--mars-accent);
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-}
-.layer-btn {
-  padding: 0 12px;
-  background: none;
-  border: 0;
-  border-radius: 6px;
-  color: $s;
-  font-size: 12px;
-  font-weight: 500;
-  &:hover:not(:disabled) {
-    color: $p;
-    background: var(--bg-card-hover);
-  }
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.72;
-  }
-  &.active {
-    background: $yb;
-    color: $y;
-    font-weight: 600;
-    box-shadow: inset 0 -2px 0 $y;
-  }
 }
 .theme-toggle-btn {
   color: $s;
@@ -249,11 +216,14 @@ $m: var(--mars-accent);
     display: none;
   }
 }
-/* Phones: the map toolbar already carries the Imagery and Science-marker toggles, so the
-   duplicate header set is hidden to give the map room; theme and export stay. */
+/* The map toolbar carries the same Imagery and Science-marker toggles; the duplicate
+   header set is hidden so the header stays one calm row. Theme and Export stay. */
+.layer-toggles {
+  display: none;
+}
 @media (max-width: 600px) {
-  .layer-toggles {
-    display: none;
+  .brand-section {
+    flex: 1 1 0;
   }
   .brand-mark {
     width: 28px;
