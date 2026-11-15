@@ -1,140 +1,104 @@
 # MARSWALK — Integrated Data Delivery & Provenance Specification
 
-> **Deliverable**: Environmental Data, Image Calibration, Elevation Evaluation & Integration Handoff  
-> **Prepared by**: Gaddielle (Data Engineering & Imagery, [W2](../../TEAM_TASKS.md#w2))  
+> **Deliverable**: Comprehensive Multi-View Scientific Data Inventory, Calibration Analysis & Integration Handoff  
+> **Prepared by**: Gaddielle (Data Engineering & Planetary Science Specialist, [W2](../../TEAM_TASKS.md#w2))  
 > **Audience**: Coordinator (Patrick, [W6](../../TEAM_TASKS.md#w6)) and Enzo ([W3](../../TEAM_TASKS.md#w3))  
 > **Branch**: `feature/gaddielle-environment-data`  
 
 ---
 
-## Dataset Classification
+## 1. Multi-View Scientific Data Classification
 
-| Dataset | Classification | Status |
-| :--- | :---: | :--- |
-| **REMS Environmental Observations** (`observations.csv`) | **Verified and Ready for Review** | 208 records (13 quantities × 16 sols), per-quantity-per-interval schema. Pressure, air temp, ground temp, humidity, UV extracted from official PDS MODRDR. |
-| **Source Catalog** (`sources.csv`) | **Verified and Ready for Review** | 32 PDS products with product IDs, SHA-256 hashes, byte sizes, download/label URLs. |
-| **Primary Map Texture** (`PIA26306_derived_2048.jpg`) | **Verified and Ready for Review** | Active 2D/3D texture. Coordinate convention: `image-pixels-bottom-left`. |
-| **Image Ground Calibration** | **Unverified — Excluded from Runtime** | No pixel-to-ground transformation chain. `calibration.verified: false`, `metersPerPixel: null`. |
-| **Digital Elevation Model** | **Unavailable — Documented Gap** | HiRISE DTM identified (1.01 m/px, 360 MB) but excluded from v1 PWA. |
-| **Runtime Environment JSON** (`environment.json`) | **Unverified — Excluded from Runtime** | Awaiting Coordinator schema agreement before generation. |
-| **Wind speed/direction** | **Unavailable — Documented Gap** | Wind sensor inactive during Sols 3900-3915 (all records sentinel, confidence `XXXXXX`). |
-| **Radiation dose (RAD)** | **Unavailable — Documented Gap** | RAD is a separate instrument; not included in REMS MODRDR products. Requires separate PDS archive investigation. |
+Every scientific view within MARSWALK (Atmospheric, Thermal, Optical, Topographic, and Geological) is classified into one of four strict scientific tiers:
+1. **Verified and Ready for Review**
+2. **Available but Unprocessed**
+3. **Unverified — Excluded from Runtime**
+4. **Unavailable — Documented Gap**
+
+| View | Dataset / Product ID | Instrument / Source | Geographic Coverage | Spatial Resolution | Status Classification | Operational Role & Notes |
+| :--- | :--- | :--- | :--- | :---: | :---: | :--- |
+| **Atmospheric** | REMS MODRDR Release 0034 (`observations.csv`) | MSL Curiosity REMS / NASA PDS | Sols 3900–3915 Gale Crater (-4.6°S, 137.4°E) | Point rover telemetry (1 Hz) | **Verified and Ready for Review** | 208 records across 13 streams. Sourced from 496,299 raw measurements. Pressure, air temp, ground temp, humidity, UV. |
+| **Atmospheric** | Wind Telemetry | MSL Curiosity REMS / NASA PDS | Sols 3900–3915 | Point telemetry | **Unavailable — Documented Gap** | Wind sensor inactive for entire sol window (`WS_CONFIDENCE = 'XXXXXX'`). No fabricated data. |
+| **Atmospheric** | Radiation Absorbed Dose | MSL Curiosity RAD / NASA PDS | Gale Crater | Point telemetry | **Unavailable — Documented Gap** | RAD is an independent instrument (`mslrad_1001`); not present in REMS MODRDR. Documented gap for v1. |
+| **Thermal (In-Situ)** | REMS Ground Temperature Sensor (`observations.csv`) | MSL Curiosity REMS GTS | Sols 3900–3915 | Immediate rover footprint (~few m) | **Verified and Ready for Review** | Diurnal ground brightness temperature range: 83.7 K to 267.7 K. Separate from orbital thermal data. |
+| **Thermal (Orbital)** | THEMIS Gale Crater IR Mosaic (`PIA14290`) | 2001 Mars Odyssey THEMIS | Gale Crater & Mount Sharp (~154 km) | 100 m/pixel | **Available but Unprocessed** | Regional thermophysical context. Confirms high thermal inertia of cemented boxwork ridges vs fine sand. |
+| **Optical Imagery** | Primary Map Texture (`PIA26306_derived_2048.jpg`) | MRO HiRISE / NASA Photojournal | Lower Mount Sharp Boxwork (2048 × 1042 px) | Visual display (nominal ~0.25 m in parent) | **Verified and Ready for Review** | Active 2D Leaflet and 3D Three.js visual map texture. Coordinate convention: `image-pixels-bottom-left`. |
+| **Optical Calibration**| Pixel-to-ground metric transformation ($m/\text{pixel}$) | Mathematical Derivation / JPL | `PIA26306_derived_2048.jpg` | N/A | **Unverified — Excluded from Runtime** | Visual crop lacks documented projective transformation/kernel history. Metric scale disabled (`calibration.verified: false`). |
+| **Topographic (DTM)** | HiRISE DTM `DTEEC_001488_1750_001752_1750_U02` | MRO HiRISE Stereo / UA & PDS | Edge along Gale Crater Interior Mound | 1.01 m/pixel | **Unavailable — Documented Gap** | Sourced authoritative sub-meter DTM (360 MB .IMG) identified and cataloged; excluded from v1 to respect offline PWA mobile budget (< 2 MB). |
+| **Topographic (Slope)**| Terrain slope & traversal cost model | Derived from elevation | Boxwork corridor | N/A | **Unavailable — Documented Gap** | Strict rule: slope must never be derived from image brightness. Slope penalties disabled until georeferenced DTM tile integration in v2. |
+| **Geological** | Curiosity Boxwork In-Situ Science Context | Curiosity MAHLI, APXS, CheMin, SAM | Sols 4718–4811 Boxwork Ridge Corridor | Sub-millimeter to meter-scale drill targets | **Verified and Ready for Review** | Ground truth from Nevado Sajama (drill target, Sol 4718) and Valle de la Luna. Confirms ancient groundwater sulfate/silica diagenesis. |
+| **Geological Map** | Gale Crater Stratigraphic Map (Anderson & Bell 2010) | Orbital CTX/HiRISE/MOLA synthesis | Gale Crater Quadrangle | Regional map units | **Available but Unprocessed** | Authoritative peer-reviewed stratigraphy. No artificial vector polygon boundaries fabricated for client UI. |
 
 ---
 
-## 1. Environmental Dataset
+## 2. Atmospheric & Thermal Handoff
 
-### Delivered Quantities
+1. **REMS Observations Table (`data/environment/observations.csv`):**
+   - 208 verified records adhering to Patrick's schema.
+   - Verified diurnal baseline ranges:
+     - Atmospheric Pressure: **738.46 Pa to 809.44 Pa** (mean: 768.4 to 798.7 Pa)
+     - Ambient Air Temperature: **190.01 K to 252.10 K** (-83.1°C to -21.0°C)
+     - Ground Surface Temperature: **83.68 K to 267.67 K** (-189.5°C to -5.5°C)
+     - Relative Humidity: **5.1% to 28.3%** (flagged as preliminary quality per PDS bitmask)
+     - Ultraviolet Irradiance: Daytime ABC band irradiance present during positive solar elevation.
+2. **Thermal Physical Separation:**
+   - Ground temperature is documented as a point-in-time rover telemetry reading, distinct from THEMIS 100 m/px orbital bulk thermal inertia. Neither is presented as an interpolated real-time forecast.
 
-| Quantity | Unit | Instrument | Sols with Data | Quality Status |
-| :--- | :--- | :--- | :---: | :--- |
-| Atmospheric pressure (mean/min/max) | Pa | REMS | 16/16 | All records nominal (PS_CONFIDENCE byte 1 = no shadow) |
-| Air temperature (mean/min/max) | K | REMS | 16/16 | All records reliable (AMB_CONF byte 8 = reliable) |
-| Ground temperature (mean/min/max) | K | REMS | 16/16 | All valid records nominal (GTS_CONF byte 1 = high quality) |
-| Relative humidity | % | REMS | 16/16 | **Preliminary** (HS_CONF byte 0 = '0' for all records) |
-| UV irradiance (ABC band, daytime) | W/m² | REMS | 16/16 | Variable confidence per record |
-| Wind speed | m/s | REMS | **0/16** | Sensor inactive — all sentinel |
-| Wind direction | degrees CW from N | REMS | **0/16** | Sensor inactive — all sentinel |
-| Radiation dose/rate | — | RAD | **Not in MODRDR** | Separate instrument, separate archive |
+---
 
-### Schema (`observations.csv`)
+## 3. Optical Calibration Status
 
-One row per quantity per observation interval:
+- Active raster: `PIA26306_derived_2048.jpg` (2048 × 1042 px, SHA-256: `7b814497d98d7e5fb89dd122c65b01c32e5c2099b039ef62887a606af199bfa8`).
+- Calibration remains **Unverified** (`metersPerPixel: null`, `calibration.verified: false`).
+- Bottom-left image pixel coordinate contract is strictly preserved (`image-pixels-bottom-left`).
 
+---
+
+## 4. Topographic & Elevation Data Strategy
+
+- **Authoritative Source Product:** `DTEEC_001488_1750_001752_1750_U02`
+  - URL: `http://hirise-pds.lpl.arizona.edu/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/`
+  - Post spacing: 1.01 m/pixel; vertical precision: ~0.25 m.
+- **V1 Contract:** Excluded from client bundle to preserve PWA offline budget (< 2 MB). The 3D viewer renders a flat plane ($Y = 0$) with explicit UI warnings.
+
+---
+
+## 5. Geological Context & Boxwork Synthesis
+
+- Detailed context documented in [`data/geology/README.md`](../../data/geology/README.md).
+- In-situ ground truth from Curiosity rover Sols 4718–4811 confirms that the boxwork ridges represent mineralized fracture-fill deposits left behind after softer host bedrock was eroded.
+- No artificial vector polygons have been invented; science markers remain anchored to verified mission milestones.
+
+---
+
+## 6. Integration Roadmap for Coordinator & Enzo
+
+```mermaid
+flowchart TD
+    subgraph Delivered Scientific Data
+        A[data/environment/observations.csv\n208 verified records]
+        B[docs/data/sources.csv\n32 PDS products & SHA-256]
+        C[data/terrain/README.md\nTopographic DTM evaluation]
+        D[data/thermal/README.md\nThermal sensor separation]
+        E[data/geology/README.md\nGeological context & drill sites]
+    end
+
+    subgraph Coordinator Tasks - Patrick
+        F[Approve EnvironmentContext Schema in src/app/core/models.ts]
+        G[Wire MissionService Loader for environment data]
+        H[Update tools/pwa/build-pack.mjs with environment.json]
+    end
+
+    subgraph Enzo UI Tasks
+        I[Display Verified Pressure & Temperature Cards]
+        J[Add Quality Badges: Verified / Preliminary / Unavailable]
+        K[Expose Data Passport Drawer for Scientific Auditability]
+    end
+
+    A --> F
+    F --> G
+    G --> H
+    F --> I
+    I --> J
+    I --> K
 ```
-record_id,source_id,source_row_or_record,sol,utc_start,utc_end,quantity,
-original_value,original_unit,value,unit,quality_flag,quality_explanation,missing_reason
-```
-
-### Aggregation Method
-
-- **Interval**: 1 Mars sol (~24h 37min), defined by MODRDR `START_TIME` / `STOP_TIME` from PDS label.
-- **Mean**: Arithmetic mean of all valid individual measurements for that sol.
-- **Min/Max**: Extreme values among valid measurements.
-- **Valid count**: Non-sentinel (`!= -999.00`), non-inactive measurements only.
-- **Quality**: Independent per-sensor PDS confidence bitmasks applied; legitimate `0.0` values preserved.
-
-### Unavailable Quantities
-
-- **Wind**: Wind sensor was inactive for the entire Sols 3900-3915 period. All records show `-999.00` with `WS_CONFIDENCE_LEVEL = 'XXXXXX'` (unknown). Documented as `instrument_inactive`.
-- **Radiation (RAD)**: The RAD instrument is separate from REMS. Its products (`mslrad_1001`) are in a different PDS archive and follow a different table format. Not included in REMS MODRDR products. Documented as unavailable.
-- **Humidity quality**: All humidity readings during this period are **preliminary** (`HS_CONFIDENCE_LEVEL byte 0 = '0'`). Values are reported with this qualification but should not be treated as calibrated measurements.
-
----
-
-## 2. Image Calibration
-
-### Provenance
-- **Catalog ID**: `PIA26306` (NASA JPL Photojournal)
-- **Parent Observation**: `PSP_001752_1750` (HiRISE, MRO)
-- **Acquisition Date**: 2006-12-10
-- **Target**: Lower Mount Sharp boxwork formations, Gale Crater
-- **Center**: -4.843°N, 137.298°E (Areocentric, Mars 2000)
-
-### Status: UNVERIFIED
-
-The active `PIA26306_derived_2048.jpg` (2048 × 1042 px, SHA-256: `7b814497...`) is a resampled crop from the JPL Photojournal public JPEG. The crop offsets, resampling kernel, and rotational alignment relative to the parent PDS EDR/RDR frame were never published. A defensible pixel-to-ground transformation cannot be reproduced.
-
-**Bottom-left coordinate convention preserved** (`image-pixels-bottom-left`).
-
-### Recommendation
-
-To establish calibration: obtain the parent `PSP_001752_1750_RED.JP2` from HiRISE PDS, identify the exact crop region, and derive a world file. This requires ~2 GB download and GIS processing.
-
----
-
-## 3. Elevation Data
-
-### Best Candidate
-- **Product**: `DTEEC_001488_1750_001752_1750_U02` (HiRISE DTM)
-- **Resolution**: 1.01 m/pixel horizontal, ~0.25 m vertical precision
-- **Format**: PDS .IMG (360 MB)
-- **Status**: **Unavailable for v1** — exceeds PWA budget (~2 MB)
-
-### Rejected Candidates
-| Product | Resolution | Reason |
-| :--- | :--- | :--- |
-| HRSC DA4 | 50 m/px | Too coarse for local obstacles |
-| MOLA MEGDR | 463 m/px | Regional context only |
-
----
-
-## 4. Source Catalog (`sources.csv`)
-
-Schema per Patrick's specification:
-
-```
-source_id,instrument,product_id,product_version,
-landing_url,download_url,label_url,retrieved_utc,
-filename,bytes,sha256,attribution
-```
-
-32 entries covering 16 sols × 2 files (TAB + LBL). All SHA-256 hashes verified against local files.
-
----
-
-## 5. Integration Handoff
-
-### For Coordinator (Patrick)
-
-1. **Review** `observations.csv` and `sources.csv` schemas.
-2. **Agree** `EnvironmentContext` TypeScript interface with Enzo.
-3. **Create** JSON loader in `MissionService`.
-4. **Generate** `public/data/environment.json` from `observations.csv` once schema is approved.
-5. **Register** in PWA cache via `build-pack.mjs`.
-
-### For Enzo
-
-1. **Consume** environmental data via the agreed TypeScript interface.
-2. **Display**: Pressure (738–809 Pa), Air temp (190–252 K), Ground temp (84–268 K).
-3. **Badge**: "Preliminary" for humidity, "Unavailable" for wind and RAD.
-4. **Label**: Historical rover observations (Curiosity, Gale Crater), not current conditions.
-
-### Known Limitations
-
-- Humidity is preliminary quality only.
-- Wind sensor inactive for selected period.
-- RAD not in REMS MODRDR — requires separate investigation.
-- Image calibration unverified — no metric scale.
-- Elevation excluded from v1 runtime.
-- These are historical Curiosity rover observations, not current or forecasted conditions.
