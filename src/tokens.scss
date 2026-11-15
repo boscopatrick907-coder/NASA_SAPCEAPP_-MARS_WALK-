@@ -126,19 +126,19 @@
   --route-glow: rgba(255, 138, 76, 0.75);
 }
 
-/* ---------- Light: cream base, muted rust accent ---------- */
+/* ---------- Light: cool slate surfaces, muted rust accent ---------- */
 [data-theme='light'] {
-  --bg-space: #f6f1e9;
-  --bg-surface: #fffdf9;
-  --bg-card: #fbf7f0;
-  --bg-card-hover: #f3ece1;
-  --border-subtle: #e7dccd;
-  --border-control: #9a8a7c;
+  --bg-space: #eef2f6;
+  --bg-surface: #ffffff;
+  --bg-card: #f8fafc;
+  --bg-card-hover: #e8edf3;
+  --border-subtle: #d5dde7;
+  --border-control: #8592a6;
   --border-focus: #2563eb;
 
-  --text-primary: #1f1a17;
-  --text-secondary: #4a4038;
-  --text-muted: #675a4f;
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
+  --text-muted: #526075;
 
   --mars-accent: #ff8a4c;
   --mars-accent-hover: #f47a3a;
@@ -166,7 +166,7 @@
   --map-placeholder-gradient: radial-gradient(circle at center, #2a2521 0%, #1a1714 100%);
   --hud-bg: rgba(255, 253, 249, 0.82);
 
-  --glass-bg: rgba(255, 253, 249, 0.74);
+  --glass-bg: rgba(255, 255, 255, 0.86);
   --glass-border: rgba(255, 255, 255, 0.7);
   --glass-blur: 14px;
   --shadow-panel: 0 1px 2px rgba(31, 26, 23, 0.06), 0 1px 1px rgba(31, 26, 23, 0.04);
