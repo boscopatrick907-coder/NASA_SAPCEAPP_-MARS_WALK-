@@ -1,5 +1,10 @@
 # MARSWALK — Internal Presentation Outline (Flexible 7 Slides)
 
+<!-- Updated per ENZO 2.md slice 1: added clarification of AI‑assisted explanation proposal and revision separation -->
+
+> **Note:** The AI‑assisted science explanations are documented in `docs/qa/ENZO_2_RELEASE_STORY.md` as a proposal only. No runtime AI is added.
+
+
 <!-- CURRENT_WORK_PLAN -->
 > **Current work and status:** [canonical team plan](../TEAM_TASKS.md). Distinguish main capabilities, verified feature branches and pending assignments; preserve completed work.
 <!-- /CURRENT_WORK_PLAN -->
