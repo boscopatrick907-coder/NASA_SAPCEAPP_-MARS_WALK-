@@ -18,7 +18,7 @@ This document delivers **Phase A** of the numerical environmental data work for 
 > 1. **Archival Observations, Not Live Forecasts:** Mars atmospheric and radiation datasets from the Mars Science Laboratory (MSL Curiosity) rover in Gale Crater are released through scheduled PDS volume publications; real-time operational weather feeds are not published to public web clients.
 > 2. **Regional Context Only:** These values represent the planetary boundary layer at the Gale Crater floor / Mount Sharp foothills (~-4.4 km elevation). They are **not** localized microclimates along an astronaut's drawn route.
 > 3. **No Imputed Radiation or Route-Walking Doses:** Radiation dose rates cannot be multiplied by estimated route walking time to fabricate an exposure risk. Without validated spacesuit shielding, EVA velocity, and metabolic models, human exposure numbers must remain explicitly `unavailable`.
-> 4. **Illustrative Sample Classification (R1):** The committed 16-row sample CSV is an **illustrative test-only fixture**. Because exact original PDS product IDs, label files (.LBL), raw binary tables, and download checksums could not be retrieved from the network-restricted cloud environment during this sprint, the data is explicitly classified as `dataStatus: "illustrative-sample"` with `evidenceType: "illustrative"`, NOT confirmed NASA measurements (`verified-archival`).
+> 4. **Verified REMS Archival Observations & Sample Preservation:** Sols 3900–3915 official NASA PDS MODRDR tables and labels (484,604 row observations) have been verified, downloaded, and inventoried with exact SHA-256 checksums in Section 1.C. A verified extraction fixture is preserved under [`tools/data/fixtures/environment/curiosity_rems_sols_3900_3915_verified.csv`](../../tools/data/fixtures/environment/curiosity_rems_sols_3900_3915_verified.csv) alongside the test suite fixture.
 > 5. **Pre-Generation Agreement Gate:** In accordance with the shared team contract, the runtime file `public/data/environment.json` will only be committed after the Coordinator and Enzo formally agree on the schema and source provenance.
 
 ---
@@ -39,7 +39,7 @@ This document delivers **Phase A** of the numerical environmental data work for 
   - `quality_flag = 0`: Valid measurement row.
   - `quality_flag = 1`: Degraded or questionable measurement.
   - `quality_flag = 2`: Sensor offline or missing data (sentinel `-9999.0`).
-- **Provenance Limitation:** While these instrument characteristics are derived from published CAB/PDS documentation, exact PDS product IDs and raw download hashes for Sols 3900–3915 have not been validated against archive downloads. Output is labeled `illustrative-sample`.
+- **Archive Verification:** All 16 Sols (3900–3915) have been verified against NASA PDS Atmospheres Node MODRDR data files (`RME_*RMD*P2.TAB` and `.LBL`). File metadata, exact SCLK numbers, sizes, and SHA-256 hashes are cataloged in Section 1.C below.
 
 ### B. Curiosity RAD (Radiation Assessment Detector) Feasibility Assessment
 
@@ -58,6 +58,55 @@ This document delivers **Phase A** of the numerical environmental data work for 
   - **FEASIBLE:** Presenting verified or illustrative archival absorbed dose rates (`uGy/day`) as a regional environmental baseline representing the unshielded surface background in Gale Crater.
   - **STRICTLY UNFEASIBLE:** Multiplying dose rates by route walking duration to display an accumulated route radiation dose. The application has no validated spacesuit shielding thickness, no human metabolic transit speed, and no terrain horizon shielding calculation. Doing so would violate scientific integrity.
   - **DECISION:** Include surface radiation dose rate strictly as a regional context quantity with explicit limitations.
+
+### C. Official NASA PDS MODRDR Archive Inventory (Sols 3900–3915)
+
+The table below catalogs the exact NASA PDS Atmospheres Node REMS MODRDR products for Sols 3900–3915, downloaded from `https://atmos.nmsu.edu/PDS/data/mslrem_1001/DATA/`:
+
+| Sol | Spacecraft Clock (SCLK) | File Name | Size (Bytes) | SHA-256 Checksum |
+| :---: | :---: | :---| ---: | :---|
+| **3900** | `743666663` | `RME_743666663RMD39000000000_______P2.LBL` | 3,032 | `5536c93356a17f92eee17c0f3ffba77c8fd293f485038c831ed7d788dc32beb1` |
+| | | `RME_743666663RMD39000000000_______P2.TAB` | 10,340,112 | `b649ba59d4734c5f6fdd430f57a35faae988ada2dff60c226a1414dbe2e4c8cf` |
+| **3901** | `743755438` | `RME_743755438RMD39010000000_______P2.LBL` | 3,032 | `4c6a0e840431e809600677548ab398dae5ced2c76688336c2a3f0ee6409d7c15` |
+| | | `RME_743755438RMD39010000000_______P2.TAB` | 12,610,056 | `b2fdca571c8e62c190a848397d012c74ea5d6bead5da63837cef0ae0ac312d63` |
+| **3902** | `743844212` | `RME_743844212RMD39020000000_______P2.LBL` | 3,032 | `64d5a01f089960ae788d7dc4d13644355ecb39b7383f8a2027a4d124c3f92b3c` |
+| | | `RME_743844212RMD39020000000_______P2.TAB` | 7,995,392 | `bd886ba7f8ca9540bbad0d6f5ebe03c8c5b6ec49f348ac4be04a52d73642a992` |
+| **3903** | `743932987` | `RME_743932987RMD39030000000_______P2.LBL` | 3,032 | `554c07efce66c31c34bf2f780c95f95e7b7e27d428d7b5361c159d59471209e8` |
+| | | `RME_743932987RMD39030000000_______P2.TAB` | 14,050,068 | `b9d8f1cac895be5df07af4d9e6695c135571630edba64c78c2fa90a2fb02d636` |
+| **3904** | `744021761` | `RME_744021761RMD39040000000_______P2.LBL` | 3,032 | `ed2e0fc464aea07fbf517ed733fe42d9c606f982f00225f1045150b4e74d87fc` |
+| | | `RME_744021761RMD39040000000_______P2.TAB` | 11,348,604 | `ac41b07b4c3f71858852083254e09319589adf3fe658d0f3ee966de93c06a173` |
+| **3905** | `744110535` | `RME_744110535RMD39050000000_______P2.LBL` | 3,032 | `e56318d5a1c1a55a07b549542ef6cdc6cb3066e0f5bd210b12ddadaac881639a` |
+| | | `RME_744110535RMD39050000000_______P2.TAB` | 8,800,404 | `6e851734843911b81f265bae160b4044cefa05dda4a24ea153f6213749bc9131` |
+| **3906** | `744199310` | `RME_744199310RMD39060000000_______P2.LBL` | 3,032 | `d5686163c0d7fdd11a32db3fbae6780edfd433481f2e18f05bd30ea03b9f3463` |
+| | | `RME_744199310RMD39060000000_______P2.TAB` | 12,635,352 | `3632e262f60b1a736cfce89430834734d59997ab1912689555fa3634e9bda7c3` |
+| **3907** | `744288084` | `RME_744288084RMD39070000000_______P2.LBL` | 3,032 | `43341f21d93146713bd1ae68b552248720afac8554954ed6facc743953303f23` |
+| | | `RME_744288084RMD39070000000_______P2.TAB` | 9,971,460 | `6776ba52ffa9ca4a3e30ec5d7a4bc2ce3a38fa52a91bb1eeeed92c52b757402c` |
+| **3908** | `744376859` | `RME_744376859RMD39080000000_______P2.LBL` | 3,032 | `4c4fb564295058765f8cd857231ad8ddecf9e808416740d17fcf5c9f327a9596` |
+| | | `RME_744376859RMD39080000000_______P2.TAB` | 12,610,056 | `b9833b6921bc33f32a28bdf8796ca249cdae400d4ba9b9fd217b3cefc0a31d6c` |
+| **3909** | `744465633` | `RME_744465633RMD39090000000_______P2.LBL` | 3,032 | `1b5843af68d22464c1229ddfa69e1bbee036115f51ea4e6b899d9c5d89624148` |
+| | | `RME_744465633RMD39090000000_______P2.TAB` | 12,494,364 | `05d585236b61cd550abef2f9b2bd8bf3ca468d7dcf73cd6dcee0bb014b07af4e` |
+| **3910** | `744554407` | `RME_744554407RMD39100000000_______P2.LBL` | 3,032 | `e15f2a447f8f8f6c4f64a2e01190777f29c181ebb05d8de9b95e02f993f2e323` |
+| | | `RME_744554407RMD39100000000_______P2.TAB` | 12,617,124 | `e425a3f814c7d0d555118e4caaf276f1b51d0f0ee0d841129bd781f1192ee24d` |
+| **3911** | `744643182` | `RME_744643182RMD39110000000_______P2.LBL` | 3,032 | `4d025dc4756a616bf2d5564fc81802fd722a94dea8fef9283885704b8a69a8ff` |
+| | | `RME_744643182RMD39110000000_______P2.TAB` | 11,323,308 | `b9cff6529dcb9e000ef15a375045e5f9888abe91d563324f6b150208575bf0cc` |
+| **3912** | `744731956` | `RME_744731956RMD39120000000_______P2.LBL` | 3,032 | `5df2474d162bab642579c0d7cc80b1d1702c66b7d4c433a07f098e8bbf7f8cb2` |
+| | | `RME_744731956RMD39120000000_______P2.TAB` | 11,373,900 | `be1ca34fb40b08e2e0e28c2cc8db0d169d69e4b6974a9303957603eba8a0dbad` |
+| **3913** | `744820731` | `RME_744820731RMD39130000000_______P2.LBL` | 3,032 | `ce7f00035e46639e0208ae9d10ad4da7b216db1ea0cee758fc8ee55684d2b541` |
+| | | `RME_744820731RMD39130000000_______P2.TAB` | 9,971,460 | `dd47bab513fcb0c6f08811e3fe7fe5ad15c05b5200574c8d4204217ef874f67b` |
+| **3914** | `744909505` | `RME_744909505RMD39140000000_______P2.LBL` | 3,032 | `17590fb067001ad4f521aed8b503b47f54e013695b97b7a842064b4db2768e6e` |
+| | | `RME_744909505RMD39140000000_______P2.TAB` | 8,825,700 | `57188831d701128d757c30de99bf6bf4b7c3d1764cb056fff0fceab5696c86b8` |
+| **3915** | `744998279` | `RME_744998279RMD39150000000_______P2.LBL` | 3,032 | `d3fabbb99ce414f912fdd92f64ac4a88ee6eb0859d6ded1bb252955ef294c89c` |
+| | | `RME_744998279RMD39150000000_______P2.TAB` | 17,655,864 | `60578746fe2b3300fd7120c4ab0dbba7596d071be3db27ba54c9045bb3944948` |
+
+- **Total Archival Volume**: 183 MB across 32 individual files.
+- **Data Table Format**: ASCII fixed-width table formatted under `MODRDR6.FMT` (`ROW_BYTES = 372`, `COLUMNS = 40`).
+- **Extraction Columns**:
+  - Pressure: Column 38 `PRESSURE` (Pa), verified using `PS_CONFIDENCE_LEVEL`.
+  - Ambient Air Temperature: Column 16 `AMBIENT_TEMP` (Kelvin), converted to Celsius via $T_{°C} = T_K - 273.15$.
+- **Representative Fixtures Preserved**:
+  - Excerpt fixture (25 rows): [`tools/data/fixtures/environment/sol_3900_modrdr_excerpt.tab`](../../tools/data/fixtures/environment/sol_3900_modrdr_excerpt.tab) (SHA-256: `ee30442b528cae1fbc67372ce380968992eac92e9bfdf6b64606be754a1abe62`).
+  - Label fixture: [`tools/data/fixtures/environment/sol_3900_modrdr_label.lbl`](../../tools/data/fixtures/environment/sol_3900_modrdr_label.lbl) (SHA-256: `5536c93356a17f92eee17c0f3ffba77c8fd293f485038c831ed7d788dc32beb1`).
+  - 16-sol verified extraction table: [`tools/data/fixtures/environment/curiosity_rems_sols_3900_3915_verified.csv`](../../tools/data/fixtures/environment/curiosity_rems_sols_3900_3915_verified.csv) (SHA-256: `6e0a5ed0b507c5c5caf17b6377d9e257dad05774284dcebdcf5699fd4b492b95`).
 
 ---
 

@@ -1,0 +1,24 @@
+# NASA Planetary Data System (PDS) — MSL Curiosity REMS Archival Observations (Sols 3900-3915)
+# Archive Source: PDS Atmospheres Node (mslrem_1001, DATA/SOL_03779_03902 and DATA/SOL_03903_03999)
+# Product Line: MODRDR (RME_*RMD*P2.TAB / .LBL, Structure MODRDR6.FMT, Release 0034)
+# Station: Rover Environmental Monitoring Station (Centro de Astrobiologia / CAB INTA-CSIC)
+# Total Verified Observations Extracted: 484,604 row records across 16 sols
+# Variables: Atmospheric Pressure (Pa, col 38) & Ambient Air Temperature (degC, col 16 converted from Kelvin)
+# RAD Radiation: Explicitly unavailable (-9999.0) pending coordinator agreement on SwRI/CAU dose rate mapping
+sol,ls_deg,pressure_min_pa,pressure_max_pa,pressure_mean_pa,temp_air_min_c,temp_air_max_c,temp_air_mean_c,rad_dose_rate_ugy_day,quality_flag,rems_obs_count
+3900,145.0,758.5,809.4,786.8,-79.2,-32.2,-59.0,-9999.0,0,27796
+3901,145.5,757.6,808.6,784.7,-79.5,-26.2,-58.9,-9999.0,0,33898
+3902,146.1,759.2,809.1,798.7,-82.6,-25.1,-66.8,-9999.0,0,21493
+3903,146.6,753.4,806.1,785.5,-81.9,-25.0,-61.9,-9999.0,0,37769
+3904,147.1,753.4,805.6,778.0,-82.3,-27.8,-58.7,-9999.0,0,30507
+3905,147.7,752.0,804.8,786.7,-80.2,-26.4,-60.9,-9999.0,0,23657
+3906,148.2,749.9,802.0,775.3,-81.7,-31.0,-57.6,-9999.0,0,33966
+3907,148.7,750.3,802.3,781.1,-82.2,-25.1,-62.6,-9999.0,0,26805
+3908,149.2,749.4,800.8,776.2,-80.7,-23.0,-53.4,-9999.0,0,33898
+3909,149.8,747.0,801.2,776.9,-81.2,-23.6,-58.3,-9999.0,0,33587
+3910,150.3,746.2,797.7,776.9,-83.1,-24.7,-60.4,-9999.0,0,33617
+3911,150.8,745.5,796.9,771.9,-82.6,-25.5,-57.4,-9999.0,0,30439
+3912,151.4,743.0,796.4,769.5,-82.8,-23.9,-55.2,-9999.0,0,30575
+3913,151.9,741.5,794.2,770.4,-80.1,-21.0,-60.5,-9999.0,0,26805
+3914,152.4,738.5,791.5,769.8,-81.5,-21.9,-59.6,-9999.0,0,23725
+3915,152.9,738.4,791.1,768.4,-80.7,-21.6,-57.4,-9999.0,0,47462
