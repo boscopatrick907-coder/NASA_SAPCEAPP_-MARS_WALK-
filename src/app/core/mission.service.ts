@@ -60,7 +60,10 @@ export class MissionService {
 
   /** Call once from root assembly. URLs respect the application's deployed base. */
   initialize(): Promise<void> {
-    return (this.initialization ??= this.loadData());
+    return (this.initialization ??= this.loadData().then(() => {
+      // Auto‑load saved mission if present. Errors are ignored.
+      this.loadRoute();
+    }));
   }
   private async loadData(): Promise<void> {
     try {

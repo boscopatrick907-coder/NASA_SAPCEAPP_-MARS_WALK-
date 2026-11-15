@@ -37,7 +37,8 @@ export class NotebookComponent {
 
   toggleAttachStart(): void {
     if (this.hasStartPoint()) {
-      this.attachStartLocation.update((v) => !v);
+      // Enable attaching the start location to the next observation
+      this.attachStartLocation.set(true);
     }
   }
 
@@ -51,8 +52,9 @@ export class NotebookComponent {
     }
 
     let pos: Point | null = null;
-    if (this.attachStartLocation() && this.route().start) {
-      pos = { ...this.route().start! };
+    const routeStart = this.route().start;
+    if (this.attachStartLocation() && routeStart) {
+      pos = { ...routeStart };
     }
 
     // Call service to validate and persist
