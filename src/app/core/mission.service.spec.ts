@@ -227,11 +227,12 @@ describe('MissionService', () => {
     await load();
     expect(service.importMission(' '.repeat(1024 * 1024 + 1)).ok).toBe(false);
   });
-  it('exports versioned mission JSON with provenance and limitations', async () => {
+  it('exports versioned mission JSON with provenance and limitations and verifies unique observation', async () => {
     await load();
     service.setMode('start');
     service.applyMapPoint({ x: 1, y: 2 });
-    expect(service.addObservation('Exported note', null).ok).toBe(true);
+    const uniqueNote = 'Exported note ' + Date.now();
+    expect(service.addObservation(uniqueNote, null).ok).toBe(true);
     let blob: Blob | undefined;
     vi.spyOn(URL, 'createObjectURL').mockImplementation((value) => {
       blob = value as Blob;
@@ -240,18 +241,52 @@ describe('MissionService', () => {
     vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
     vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
     service.exportMission();
-    const result = JSON.parse(await blob!.text());
-    expect(result.schemaVersion).toBe(1);
-    expect(result.imageRef).toBe(testImage().imageRef);
-    expect(result.image.source).toEqual(testImage().source);
-    expect(result.assessment.terrainStatus).toBe('unavailable');
-    expect(result.type).toBeUndefined();
+    const exported = JSON.parse(await blob!.text());
+    // verify exported structure
+    expect(exported.schemaVersion).toBe(1);
+    expect(exported.imageRef).toBe(testImage().imageRef);
+    expect(exported.image.source).toEqual(testImage().source);
+    expect(exported.assessment.terrainStatus).toBe('unavailable');
+    expect(exported.type).toBeUndefined();
+    // verify our unique observation is present
+    const noteFound = exported.observations.some((n: any) => n.text === uniqueNote);
+    expect(noteFound).toBe(true);
+
+    // now import the exported JSON and ensure the note and route survive
     service.clearRoute();
-    expect(service.importMission(JSON.stringify(result)).ok).toBe(true);
+    expect(service.importMission(JSON.stringify(exported)).ok).toBe(true);
     expect(service.route().start).toEqual({ x: 1, y: 2 });
-    expect(service.observations()[0].text).toBe('Exported note');
+    expect(service.observations()[0].text).toBe(uniqueNote);
     service.clearRoute();
     expect(service.loadRoute().ok).toBe(true);
     expect(service.route().start).toEqual({ x: 1, y: 2 });
+  });
+
+  // Additional test: corrupted storage should not crash initialization
+  it('gracefully handles corrupted localStorage entry on init', async () => {
+    await load();
+    // Save a normal mission first
+    service.setMode('start');
+    service.applyMapPoint({ x: 5, y: 5 });
+    expect(service.addObservation('temp', null).ok).toBe(true);
+    service.saveRoute();
+    // Corrupt the stored JSON
+    const key = `marswalk:v1:${service.image()!.imageRef}`;
+    localStorage.setItem(key, '{ malformed json');
+    // Reset TestBed to get a fresh service instance
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
+    const fresh: any = TestBed.inject(MissionService);
+    const freshHttp = TestBed.inject(HttpTestingController);
+    const init = fresh.initialize();
+    freshHttp.expectOne((r) => r.url.endsWith('/data/manifest.json')).flush(testImage());
+    await Promise.resolve();
+    freshHttp.expectOne((r) => r.url.endsWith('/data/markers.json')).flush([]);
+    await init;
+    // After init the mission should be empty (corrupted data ignored)
+    expect(fresh.route().start).toBeNull();
+    expect(fresh.observations()).toEqual([]);
   });
 });
