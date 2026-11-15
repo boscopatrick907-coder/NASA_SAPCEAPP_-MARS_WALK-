@@ -136,6 +136,77 @@
   color: var(--text-secondary, #9aa6b8);
 }
 
+.guide-intro {
+  margin: 0 0 0.5rem;
+}
+
+.guide-actions {
+  margin-bottom: 0.5rem;
+}
+
+.copy-template-btn {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.45rem 0.85rem;
+  border: 1px solid var(--border-subtle, #2e3846);
+  border-radius: 0.375rem;
+  background: var(--bg-card, #151b25);
+  color: var(--text-primary, #f1f5fa);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.copy-template-btn:hover {
+  background: var(--bg-card-hover, #202a38);
+  border-color: var(--border-focus, #8bc8ff);
+}
+
+.copy-template-btn:focus-visible {
+  outline: 2px solid var(--border-focus, #8bc8ff);
+  outline-offset: 2px;
+}
+
+.copy-feedback {
+  margin: 0.4rem 0;
+  padding: 0.45rem 0.65rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--border-subtle, #2e3846);
+  background: var(--bg-card, #151b25);
+  font-size: 0.82rem;
+}
+
+.copy-feedback--error {
+  border-color: var(--warning-text, #f27979);
+}
+
+.template-label {
+  display: block;
+  margin: 0.4rem 0 0.25rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary, #9aa6b8);
+}
+
+.template-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--border-subtle, #2e3846);
+  border-radius: 0.375rem;
+  background: var(--bg-card, #151b25);
+  color: var(--text-primary, #f1f5fa);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  resize: vertical;
+}
+
+.template-textarea:focus-visible {
+  outline: 2px solid var(--border-focus, #8bc8ff);
+  outline-offset: 2px;
+}
+
 a {
   color: var(--mars-accent, #8bc8ff);
   text-decoration: underline;

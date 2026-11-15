@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MissionService } from '../core/mission.service';
 import type { ImageManifest, Observation, Route, ScienceMarker } from '../core/models';
 import { MissionBriefingComponent } from './mission-briefing.component';
@@ -61,6 +61,7 @@ describe('MissionBriefingComponent', () => {
   let dataErrorSig = signal<string | null>(null);
 
   let mockMission: Record<string, unknown>;
+  const originalClipboard = navigator.clipboard;
 
   beforeEach(async () => {
     imageSig = signal<ImageManifest | null>(makeImage());
@@ -109,6 +110,13 @@ describe('MissionBriefingComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: originalClipboard,
+    });
+  });
+
   it('renders the boxwork mission question, MRO/Curiosity sources, and explicit spatial limits', () => {
     const text = fixture.nativeElement.textContent ?? '';
     expect(text).toContain(
@@ -136,10 +144,21 @@ describe('MissionBriefingComponent', () => {
     expect(component.checklist().startAndDestination).toBe(true);
   });
 
-  it('reflects record selection and resets if the selected record is removed from markers()', () => {
+  it('reflects record selection and resets if the selected record is removed or belongs to a stale imageRef', () => {
     expect(component.checklist().markerSelected).toBe(false);
 
     selectedMarkerIdSig.set('curiosity-mount-sharp-boxwork');
+    fixture.detectChanges();
+    expect(component.checklist().markerSelected).toBe(true);
+
+    // Stale imageRef mismatch
+    imageSig.set(makeImage({ imageRef: 'different-image-ref-v2' }));
+    fixture.detectChanges();
+    expect(component.checklist().markerSelected).toBe(false);
+    expect(component.selectedRecord()).toBeNull();
+
+    // Restore matching imageRef, then remove record from markers()
+    imageSig.set(makeImage());
     fixture.detectChanges();
     expect(component.checklist().markerSelected).toBe(true);
 
@@ -203,5 +222,99 @@ describe('MissionBriefingComponent', () => {
     expect(mockMission['selectMarker']).not.toHaveBeenCalled();
     expect(mockMission['saveRoute']).not.toHaveBeenCalled();
     expect(mockMission['addObservation']).not.toHaveBeenCalled();
+  });
+
+  it('generates deterministic field observation template with required headings, honest placeholders, and safe URL fallback', () => {
+    // 1. No selection, active image
+    let tpl = component.observationTemplate();
+    expect(tpl).toContain('Mission question:');
+    expect(tpl).toContain('What I can see in this image:');
+    expect(tpl).toContain('What the selected source reports:');
+    expect(tpl).toContain('My interpretation/question:');
+    expect(tpl).toContain('What remains uncertain:');
+    expect(tpl).toContain('Active imageRef: hirise-mro-pia26306-boxwork-2048x1042-v1');
+    expect(tpl).toContain(
+      'Selected contextual record: [None selected — choose a record in Confidence & Data]',
+    );
+
+    // 2. Valid selection with HTTPS URL
+    selectedMarkerIdSig.set('curiosity-mount-sharp-boxwork');
+    fixture.detectChanges();
+    tpl = component.observationTemplate();
+    expect(tpl).toContain(
+      'Selected contextual record: Mount Sharp Boxwork Campaign (curiosity-mount-sharp-boxwork) — https://science.nasa.gov/blog/curiosity-blog-sols-4804-4811-kicking-off-the-final-phase-of-boxwork-exploration/ [Regional context; position: unavailable — not tied to a route coordinate]',
+    );
+
+    // 3. Unsafe source URL rendered as safe fallback text
+    markersSig.set([
+      makeMarker({
+        source: {
+          title: 'Unsafe Source',
+          url: 'http://insecure.example.com/blog',
+          credit: 'Test',
+        },
+      }),
+    ]);
+    fixture.detectChanges();
+    tpl = component.observationTemplate();
+    expect(tpl).toContain('Source URL unavailable or non-HTTPS');
+    expect(tpl).not.toContain('http://insecure.example.com/blog');
+
+    // 4. Missing image state
+    imageSig.set(null);
+    fixture.detectChanges();
+    tpl = component.observationTemplate();
+    expect(tpl).toContain('Active imageRef: [No verified image loaded]');
+  });
+
+  it('copies observation template on user click and handles unavailable or rejected clipboard without mutating state', async () => {
+    const writeTextMock = vi.fn().mockResolvedValue(undefined);
+    const readTextMock = vi.fn();
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: writeTextMock, readText: readTextMock },
+    });
+
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+    const copyBtn = fixture.nativeElement.querySelector('.copy-template-btn') as HTMLButtonElement;
+    expect(copyBtn).toBeTruthy();
+
+    await component.copyObservationTemplate();
+    fixture.detectChanges();
+
+    expect(writeTextMock).toHaveBeenCalledWith(component.observationTemplate());
+    expect(readTextMock).not.toHaveBeenCalled();
+    expect(component.copyStatus()).toBe('copied');
+    expect(component.copyMessage()).toContain('Template copied to clipboard');
+
+    // Simulate permission denied
+    writeTextMock.mockRejectedValueOnce(new Error('NotAllowedError'));
+    await component.copyObservationTemplate();
+    fixture.detectChanges();
+    expect(component.copyStatus()).toBe('error');
+    expect(component.copyMessage()).toContain('Clipboard permission was denied');
+
+    // Simulate unavailable clipboard
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: undefined,
+    });
+    await component.copyObservationTemplate();
+    fixture.detectChanges();
+    expect(component.copyStatus()).toBe('error');
+    expect(component.copyMessage()).toContain('Clipboard access is unavailable');
+
+    // Readonly textarea remains intact and selectable in all states
+    const textarea = fixture.nativeElement.querySelector(
+      '#briefing-observation-template',
+    ) as HTMLTextAreaElement;
+    expect(textarea.readOnly).toBe(true);
+    expect(textarea.value).toBe(component.observationTemplate());
+
+    // Zero mission or storage mutations
+    expect(mockMission['addObservation']).not.toHaveBeenCalled();
+    expect(mockMission['saveRoute']).not.toHaveBeenCalled();
+    expect(setItemSpy).not.toHaveBeenCalled();
+    setItemSpy.mockRestore();
   });
 });

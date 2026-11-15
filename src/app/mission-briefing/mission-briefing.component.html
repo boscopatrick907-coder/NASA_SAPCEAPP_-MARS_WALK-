@@ -42,7 +42,9 @@
             } @else {
               <span>{{ img.title }}</span>
             }
-            <span class="evidence-credit">({{ img.credit }}; ref: <code>{{ img.imageRef }}</code>)</span>
+            <span class="evidence-credit"
+              >({{ img.credit }}; ref: <code>{{ img.imageRef }}</code>)</span
+            >
           </p>
         } @else {
           <p class="evidence-empty">
@@ -186,6 +188,49 @@
         confirm that a mission has been saved, exported, recovered via Load Route, installed for
         offline use, or evaluated as safe.
       </p>
+    </div>
+  </details>
+
+  <details class="briefing-disclosure">
+    <summary class="briefing-summary">Field Observation Guide (Source-Aware Template)</summary>
+    <div class="briefing-body">
+      <p class="guide-intro">
+        Use this structured template to record a source-aware observation in the
+        <strong>Notebook</strong> tab. It prefills only the active <code>imageRef</code> and
+        currently selected contextual science record (if any) without generating geological claims
+        or implying that a regional record lies at your route coordinates.
+      </p>
+
+      <div class="guide-actions">
+        <button
+          type="button"
+          class="copy-template-btn"
+          (click)="copyObservationTemplate()"
+        >
+          Copy observation template
+        </button>
+      </div>
+
+      @if (copyMessage(); as msg) {
+        <p
+          class="copy-feedback"
+          [class.copy-feedback--error]="copyStatus() === 'error'"
+          [attr.role]="copyStatus() === 'error' ? 'alert' : 'status'"
+        >
+          {{ msg }}
+        </p>
+      }
+
+      <label for="briefing-observation-template" class="template-label">
+        Read-only observation template (select and copy manually if clipboard is unavailable):
+      </label>
+      <textarea
+        id="briefing-observation-template"
+        class="template-textarea"
+        readonly
+        rows="11"
+        [value]="observationTemplate()"
+      ></textarea>
     </div>
   </details>
 </section>
