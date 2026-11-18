@@ -1,3 +1,27 @@
+# Enzo — Agent 1: reproducible terrain preparation
+
+## Active assignment — 18 November 2026, post-submission planning v2
+
+This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.
+
+**Milestone:** choose two points on a real orbital image, preview a path derived from an independently reviewed and aligned DEM, understand its limits, then save and recover the mission offline.
+
+Read [the shared ownership and acceptance plan](../planning/TEAM_PLANNING_V2.md). Start from the coordinator-confirmed integration revision in your own checkout/branch. `science/planning-v2` is the development branch; main and public deployments remain unchanged by these assignments. The existing local terrain-routing foundation is experimental and is not an accepted data contract or runtime feature. Agree contract v1 with Patrick before dependent integration.
+
+Own new `tools/terrain/` preparation scripts/tests and `docs/data/TERRAIN_PREPARATION.md`. Gaddielle owns source inventory; Patrick owns scientific acceptance and shared contracts. Do not overwrite existing scientific source files or expected hashes.
+
+1. Propose the extraction interface with Patrick: source path, exact crop/extent, target grid, output folder and explicit vertical/horizontal units. Document pixel-centre and row-direction conventions, CRS/affine and imageRef.
+2. Implement reproducible inspection/extraction using installed GDAL where practical. Preserve nodata; never fill unknown elevation or derive it from brightness/AI meshes. Resampling choice and native versus output spacing must be recorded.
+3. Emit prepared grid plus provenance: source/derivative hashes, exact commands/tool versions, CRS, bounds, vertical reference, masks, spacing and transformation evidence. Unknown vertical reference blocks acceptance.
+4. Validate bounds, data size, finite values, overlap and expected output dimensions. Invalid input must return nonzero and preserve any existing output; use temporary outputs and atomic replacement only after validation.
+5. Test synthetic flat/ramp/nodata fixtures, incompatible CRS/units, partial coverage and output failures. Label fixtures as synthetic. Run actual-source extraction only after Patrick accepts the source and contract.
+
+Start now on tooling/tests; no runtime DEM delivery is accepted yet. Hand off an inspection/tooling commit before the real-data package.
+
+---
+
+## Historical assignments and review records — superseded queue
+
 # Enzo — Remaining verification, science, AI and presentation work
 
 ## Latest submission decision — read before resuming

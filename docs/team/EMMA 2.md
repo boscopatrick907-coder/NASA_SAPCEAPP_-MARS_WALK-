@@ -1,3 +1,27 @@
+# Emma — Agent 2: terrain evidence view
+
+## Active assignment — 18 November 2026, post-submission planning v2
+
+This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.
+
+**Milestone:** choose two points on a real orbital image, preview a path derived from an independently reviewed and aligned DEM, understand its limits, then save and recover the mission offline.
+
+Read [the shared ownership and acceptance plan](../planning/TEAM_PLANNING_V2.md). Start from the coordinator-confirmed integration revision in your own checkout/branch. `science/planning-v2` is the development branch; main and public deployments remain unchanged by these assignments. The existing local terrain-routing foundation is experimental and is not an accepted data contract or runtime feature. Agree contract v1 with Patrick before dependent integration.
+
+Own new `src/app/terrain-evidence/` components and `docs/qa/PLANNING_V2_EVIDENCE_UI.md`. Agent 1 owns planner controls; coordinate styling conventions without overlapping edits.
+
+1. Design a concise terrain-availability summary with expandable product, source/credit, acquisition metadata where supplied, native/prepared spacing, vertical units/reference, coverage, registration evidence, nodata and uncertainty.
+2. Clearly distinguish no terrain, pending review, rejected package and accepted package. A hash or populated metadata is not proof of authenticity, alignment or scientific acceptance.
+3. Explain unavailable route results using actual engine reason codes once agreed. Do not claim every failure means terrain is impassable.
+4. Keep provenance accessible on demand, preserve every existing source/limitation, and distinguish regional geology and historical REMS context from aligned terrain.
+5. Test missing/long metadata, source-link handling, keyboard disclosure/focus, both themes, phone layout and 200% zoom. No edits to runtime scientific data, engine or shared persistence.
+
+Start with the component and state contract; integrate only coordinator-approved metadata. Deliver code, tests, screenshots and a branch/SHA.
+
+---
+
+## Historical assignments and review records — superseded queue
+
 # Emma 2 — Guided boxwork mission briefing
 
 ## ACTIVE — final 90-minute survival-planning release

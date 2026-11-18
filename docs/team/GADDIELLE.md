@@ -1,3 +1,27 @@
+# Gaddielle — source and geology package
+
+## Active assignment — 18 November 2026, post-submission planning v2
+
+This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.
+
+**Milestone:** choose two points on a real orbital image, preview a path derived from an independently reviewed and aligned DEM, understand its limits, then save and recover the mission offline.
+
+Read [the shared ownership and acceptance plan](../planning/TEAM_PLANNING_V2.md). Start from the coordinator-confirmed integration revision in your own checkout/branch. `science/planning-v2` is the development branch; main and public deployments remain unchanged by these assignments. The existing local terrain-routing foundation is experimental and is not an accepted data contract or runtime feature. Agree contract v1 with Patrick before dependent integration.
+
+Own `docs/data/terrain-v2/` source inventory and evidence. Coordinate raw archive placement with Patrick before committing large files; do not deploy raw archives or change `public/data` directly.
+
+1. Retrieve official catalogue/label information for candidate `DTEEC_001488_1750_001752_1750_U02`, starting at `https://www.uahirise.org/dtm/PSP_001488_1750`. This is an unverified lead, not an accepted product. Record exact final URLs, product/version, stereo images, dates, producer, citation/credit and use terms.
+2. Obtain the actual DTM label and raster or documented retrieval instructions. Inventory file sizes and SHA-256 hashes. Extract CRS, footprint/bounds, native spacing, nodata, elevation units and vertical reference with the exact supporting label fields. Unknown fields stay unknown.
+3. Compare documented footprint with the current calibrated crop using its existing evidence. A shared product name or place name is not alignment. Ask Patrick to verify the spatial test; if coverage fails, propose an alternative study area with compatible imagery/DEM instead of forcing a match.
+4. Inventory useful local geology from official USGS/NASA sources: scale/resolution, geometry CRS, mapped units, footprint and limitations. Existing SIM3292 is coarse regional context and does not justify metre-scale boundaries in this crop.
+5. Deliver `SOURCE_INVENTORY.md`, machine-readable file inventory/hashes and retained original metadata under your folder. Separate retrieved, inspected, proposed and accepted states. Network-blocked files remain pending; do not fabricate metadata.
+
+Useful official entry points: https://www.uahirise.org/ ; https://hirise-pds.lpl.arizona.edu/ ; https://astrogeology.usgs.gov/ ; https://planetarymaps.usgs.gov/ . Patrick owns final source/registration acceptance. First deliver the metadata dossier; no need to wait for every large download.
+
+---
+
+## Historical assignments and review records — superseded queue
+
 # Gaddielle — Numerical environmental data and remaining release work
 
 ## Latest submission decision — read before resuming

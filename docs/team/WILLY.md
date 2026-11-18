@@ -1,3 +1,27 @@
+# Willy — Agent 1: terrain and route map integration
+
+## Active assignment — 18 November 2026, post-submission planning v2
+
+This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.
+
+**Milestone:** choose two points on a real orbital image, preview a path derived from an independently reviewed and aligned DEM, understand its limits, then save and recover the mission offline.
+
+Read [the shared ownership and acceptance plan](../planning/TEAM_PLANNING_V2.md). Start from the coordinator-confirmed integration revision in your own checkout/branch. `science/planning-v2` is the development branch; main and public deployments remain unchanged by these assignments. The existing local terrain-routing foundation is experimental and is not an accepted data contract or runtime feature. Agree contract v1 with Patrick before dependent integration.
+
+Own `src/app/map/` component integration and tests, with new terrain-layer helpers in that folder. Agent 2 owns independent verification; Patrick owns image/grid transforms and mission adapters.
+
+1. Agree map overlay/input contracts with Patrick and Enzo. Existing bottom-left image pixels differ from north-to-south terrain rows; do not invent a conversion from matching dimensions.
+2. Render only approved, registered terrain coverage and unknown-data masks. Keep the orbital image prominent. Provide clear layer controls/legend and distinguish terrain coverage from geological context.
+3. Preview suggested paths separately from the saved manual route. Preserve start/destination/waypoints and Reset/Focus behavior. Accept/reject actions delegate through the agreed adapter; opening layers must not mutate or save a mission.
+4. Handle unavailable package, load failure, cancellation, stale imageRef/result, and out-of-coverage endpoints. Do not render a path on another raster.
+5. Add interaction/alignment regression tests and browser checks at phone/tablet/desktop sizes in both themes; record in `docs/qa/PLANNING_V2_MAP.md`.
+
+Start by agreeing inputs and reviewing current map extension points. Use labelled synthetic fixtures only in tests until actual aligned terrain is accepted. Deliver a bounded component change rather than a redesign.
+
+---
+
+## Historical assignments and review records — superseded queue
+
 # Willy — Remaining map, installation and deployment work
 
 ## Latest submission decision — read before resuming

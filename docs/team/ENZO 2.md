@@ -1,3 +1,27 @@
+# Enzo — Agent 2: routing engine and worker
+
+## Active assignment — 18 November 2026, post-submission planning v2
+
+This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.
+
+**Milestone:** choose two points on a real orbital image, preview a path derived from an independently reviewed and aligned DEM, understand its limits, then save and recover the mission offline.
+
+Read [the shared ownership and acceptance plan](../planning/TEAM_PLANNING_V2.md). Start from the coordinator-confirmed integration revision in your own checkout/branch. `science/planning-v2` is the development branch; main and public deployments remain unchanged by these assignments. The existing local terrain-routing foundation is experimental and is not an accepted data contract or runtime feature. Agree contract v1 with Patrick before dependent integration.
+
+Own `src/app/terrain/` routing algorithms, tests and worker implementation after Patrick hands off the existing local foundation. Until that handoff, review the intended contract and propose cases without creating a competing engine. Own `docs/qa/TERRAIN_ROUTING.md`.
+
+1. Review shortest-sampled-distance semantics, absolute segment-grade limit, endpoint validation, no-route handling, missing cells, deterministic tie handling and no diagonal corner cutting.
+2. Agree structured result/reason codes and worker messages with Emma/Willy. Distinguish invalid input, missing terrain, out-of-coverage endpoints, cancellation and disconnected search.
+3. Move expensive searches into a cancellable worker. Ignore stale responses using request/data IDs; bound memory/input size and clean up worker resources. Keep pure algorithms testable.
+4. Test flat/ramp/barrier/nodata grids, coincident endpoints, disconnected regions, steep alternatives and deterministic outputs. Compare small cases to an independent exhaustive/reference solution, not only implementation-shaped assertions.
+5. Benchmark representative sizes with recorded browser/hardware, timing and memory where measurable. Device checks remain pending if unavailable. Run integrated tests/build.
+
+No safe-route score, guessed traversability, AI-derived elevation, runtime test data or unsupported energy model. Source review and registration are prerequisites to real-map use.
+
+---
+
+## Historical assignments and review records — superseded queue
+
 # Enzo 2 — Release story, demonstration and submission evidence
 
 ## ACTIVE — final 90-minute survival-planning release

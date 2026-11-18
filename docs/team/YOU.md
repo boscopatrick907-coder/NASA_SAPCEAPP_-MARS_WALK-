@@ -1,3 +1,27 @@
+# Patrick — coordinator and scientific acceptance
+
+## Active assignment — 18 November 2026, post-submission planning v2
+
+This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.
+
+**Milestone:** choose two points on a real orbital image, preview a path derived from an independently reviewed and aligned DEM, understand its limits, then save and recover the mission offline.
+
+Read [the shared ownership and acceptance plan](../planning/TEAM_PLANNING_V2.md). Start from the coordinator-confirmed integration revision in your own checkout/branch. `science/planning-v2` is the development branch; main and public deployments remain unchanged by these assignments. The existing local terrain-routing foundation is experimental and is not an accepted data contract or runtime feature. Agree contract v1 with Patrick before dependent integration.
+
+Own the verified source decision, image/grid contract, shared mission adapters and integration. Keep submitted main/public artifacts unchanged until a separately reviewed release.
+
+1. Confirm archive access and independently inspect candidate DEM metadata/raster. Require Mars horizontal CRS, metre units, known vertical reference, actual coverage, nodata and documented uncertainty. Reject AI relief as measured terrain.
+2. Publish contract v1 for prepared grids, provenance, affine/pixel-centre transform, admission states, routing request/result/reason codes and cancellation. Review existing experimental routing with Enzo 2 before transferring ownership.
+3. Independently check imagery/DEM alignment and geology scale. If the current crop lacks usable terrain, choose and document a compatible study area; do not silently move existing missions or remap legacy coordinates.
+4. Integrate reviewed tooling, data, worker, map and UI in dependency order. Own shared mission/store changes and recovery compatibility. Source presence or a boolean flag is not scientific verification.
+5. Run integrated tests/build/PWA checks and review actual device findings before any deployment. Name the exact revision and retain recovery/export capability. Publish a candidate only when explicitly intended, preserving the submitted baseline.
+
+Current local development has a tested routing prototype, not accepted terrain or enabled terrain routing. Track source blockers honestly. Coordinate handoffs rather than editing files actively owned by others.
+
+---
+
+## Historical assignments and review records — superseded queue
+
 # YOU / Dinang — Remaining integration, PWA, deployment and submission work
 
 ## ACTIVE — final 90-minute survival-planning release

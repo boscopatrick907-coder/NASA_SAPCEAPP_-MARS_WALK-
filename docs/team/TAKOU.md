@@ -1,3 +1,9 @@
+# Takou / Charles — one contributor
+
+The active 18 November 2026 assignment is [CHARLES.md](CHARLES.md). These names refer to the same person; do not allocate duplicate work. Older entries below are historical.
+
+---
+
 # Takou — release tasks
 
 ## ACTIVE — final 90-minute survival-planning release

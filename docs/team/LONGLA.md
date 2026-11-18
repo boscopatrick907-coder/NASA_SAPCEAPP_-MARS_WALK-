@@ -1,3 +1,27 @@
+# Royce / Longla — mission recovery and release QA
+
+## Active assignment — 18 November 2026, post-submission planning v2
+
+This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.
+
+**Milestone:** choose two points on a real orbital image, preview a path derived from an independently reviewed and aligned DEM, understand its limits, then save and recover the mission offline.
+
+Read [the shared ownership and acceptance plan](../planning/TEAM_PLANNING_V2.md). Start from the coordinator-confirmed integration revision in your own checkout/branch. `science/planning-v2` is the development branch; main and public deployments remain unchanged by these assignments. The existing local terrain-routing foundation is experimental and is not an accepted data contract or runtime feature. Agree contract v1 with Patrick before dependent integration.
+
+Own `tests/planning-v2/` end-to-end tests and `docs/qa/PLANNING_V2_RELEASE.md`; agree test-runner integration with Patrick. Preserve existing Notebook corrections and report unpublished branches first. Do not independently replace persistence or the service worker.
+
+1. Establish a baseline on a named revision: route, observation, save, close/restart, offline restore and export/import. Use isolated test profiles and preserve real user data.
+2. Extend scenarios when terrain integration lands: suggestion alone does not overwrite a route; acceptance preserves observations; save/reopen retains the accepted path; rejection/cancellation/stale results do not mutate it.
+3. Cover malformed import, wrong imageRef, unreadable storage, failed writes, unavailable terrain and offline missing terrain assets. Missing assets must produce an honest unavailable state, not fabricated results.
+4. Verify worker cancellation, 3D open/close and phone map visibility remain functional. The AI relief stays illustrative; do not derive measured slopes from it.
+5. Run actual available Android installed-PWA close/disconnect/reopen checks. Record origin/source/pack, device/OS/browser and evidence. Coordinate phone checks with Willy 2; mark unavailable hardware untested.
+
+First handoff: automated baseline/reproduction evidence. Second: candidate acceptance matrix. Report blockers with minimal steps and expected/actual output; no deployment or unsupported release certification.
+
+---
+
+## Historical assignments and review records — superseded queue
+
 # Royce / Longla — Remaining 3D, VR, QA and deployment work
 
 ## Latest submission decision — read before resuming

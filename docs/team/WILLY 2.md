@@ -1,3 +1,27 @@
+# Willy — Agent 2: independent spatial and map verification
+
+## Active assignment — 18 November 2026, post-submission planning v2
+
+This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.
+
+**Milestone:** choose two points on a real orbital image, preview a path derived from an independently reviewed and aligned DEM, understand its limits, then save and recover the mission offline.
+
+Read [the shared ownership and acceptance plan](../planning/TEAM_PLANNING_V2.md). Start from the coordinator-confirmed integration revision in your own checkout/branch. `science/planning-v2` is the development branch; main and public deployments remain unchanged by these assignments. The existing local terrain-routing foundation is experimental and is not an accepted data contract or runtime feature. Agree contract v1 with Patrick before dependent integration.
+
+Own new `docs/qa/PLANNING_V2_ALIGNMENT.md` and independent integration tests under `tests/terrain-map/`; agree the test runner with Patrick before adding dependencies. Do not edit Agent 1 map files, data or shared transforms.
+
+1. Write an independent test matrix for image corners, sample centres, row inversion, crop offsets, grid borders, partial coverage, nodata and wrong imageRef. Synthetic checks prove mathematics only; real alignment requires actual source/control evidence.
+2. Once accepted terrain is supplied, compare recorded control locations against the rendered overlay. Record CRS, source/grid/image identifiers, expected/observed positions, tolerances and screenshots. Report misalignment; never adjust coordinates to make the picture look right.
+3. Check zoom/pan, endpoint interaction, route preview/accept/reject, unknown regions, keyboard/touch and small screens. Coordinate device coverage with Royce.
+4. Verify legacy mission imports and manual routing still work; changing imageRef must not silently reinterpret old coordinates.
+5. Report exact branch/SHA/URL/browser/device and separate automation, desktop emulation and physical tests. Do not claim live or device acceptance from a local build.
+
+Start now with the matrix and independent synthetic test design. Actual-source acceptance waits for the package; no duplicate installation-asset work.
+
+---
+
+## Historical assignments and review records — superseded queue
+
 # Willy 2 — Installation and release verification agent
 
 ## ACTIVE — final 90-minute survival-planning release

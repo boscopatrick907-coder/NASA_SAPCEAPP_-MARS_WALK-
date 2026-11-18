@@ -1,3 +1,27 @@
+# Emma — Agent 1: planning controls
+
+## Active assignment — 18 November 2026, post-submission planning v2
+
+This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.
+
+**Milestone:** choose two points on a real orbital image, preview a path derived from an independently reviewed and aligned DEM, understand its limits, then save and recover the mission offline.
+
+Read [the shared ownership and acceptance plan](../planning/TEAM_PLANNING_V2.md). Start from the coordinator-confirmed integration revision in your own checkout/branch. `science/planning-v2` is the development branch; main and public deployments remain unchanged by these assignments. The existing local terrain-routing foundation is experimental and is not an accepted data contract or runtime feature. Agree contract v1 with Patrick before dependent integration.
+
+Own new `src/app/terrain-planner/` controls, templates, styles and tests. Coordinate shell placement with Patrick; do not edit map, shared mission persistence, scientific calculations or Agent 2's evidence folder.
+
+1. First deliver a compact interaction specification covering endpoints, constraint input, request/cancel, result, no route, error and acceptance. Use existing tokens and native accessible controls.
+2. After contract v1 lands, connect real endpoint state and a validated experimental maximum-segment-grade input. Show units and explain that the chosen constraint is not an established human/rover capability.
+3. Display objective, sampled distance, maximum sampled segment grade, terrain resolution and relevant missing information from engine results. Do not calculate a competing distance or call the result safe.
+4. Keep suggestions separate from the saved route. Accept/reject must be explicit; cancel, failure or navigation must preserve routes and Notebook drafts. Patrick owns any required shared-store adapter.
+5. Cover invalid input, unavailable terrain, stale results after endpoint/data changes, cancellation and keyboard/phone layouts. Run tests/build and record actual viewport/theme checks in `docs/qa/PLANNING_V2_UI.md`.
+
+Start now with UI structure and synthetic test fixtures confined to tests. Do not expose mock terrain as real Mars data. First handoff is the component and state specification; second is connected implementation after dependency acceptance.
+
+---
+
+## Historical assignments and review records — superseded queue
+
 # Emma — Remaining professional UI and deployment work
 
 ## Latest submission decision — read before resuming
