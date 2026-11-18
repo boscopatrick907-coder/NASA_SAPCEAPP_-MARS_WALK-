@@ -1,5 +1,26 @@
 # Enzo — Agent 1: reproducible terrain preparation
 
+## START HERE — your executable checklist
+
+Read only this checklist and the active assignment immediately below it for current work. Everything under **Historical assignments** is reference, not another assignment. Do not wait for all teammates: complete the **Do now** item first.
+
+**Before editing:** preserve/commit your current work, report its branch/SHA, then use a separate clean checkout for this agent. Fetch `origin/science/planning-v2` and create your own feature branch from that development line. Never reset existing work or switch a teammate's checkout. Branch names below are suggestions only if you have not started this slice. Main does not contain this plan yet.
+
+Read [the exact source-to-offline runbook](../planning/TERRAIN_DELIVERY_RUNBOOK.md) for the shared steps, fallback and handoff format. No real terrain product or versioned terrain API is accepted yet. Do not guess missing API names; send your interface proposal to Patrick and continue tests/audit while waiting.
+
+**Suggested branch:** `feature/enzo-terrain-preparation-v2`.
+
+- [ ] **Do now:** propose the input/output contract in `docs/data/TERRAIN_PREPARATION.md` and implement synthetic-data inspection tests under `tools/terrain/`. Agree with Patrick on affine, cell-centre convention, spacing, grid format and vertical reference before generating a runtime package.
+- [ ] Consume Gaddielle's exact source inventory after Patrick approves it. Inspect with GDAL; stop scientific export if elevation units/datum, CRS, coverage or registration evidence are unresolved. Produce a diagnostic report instead of inventing missing values.
+- [ ] Implement a reproducible crop/extraction command. Preserve nodata; explicitly record resampling and native/output resolution. Reject bad input with nonzero exit and preserve existing output files.
+- [ ] Produce a **compact study-area package** in a staging directory supplied by Patrick: display imagery, elevation grid, validity mask (embedded or separate per contract), package manifest, hashes and provenance. Original large DEM/JP2 archives stay outside deployed assets. No arbitrary downsampling to hit a size target; document lost detail and get it reviewed.
+- [ ] Report compressed/uncompressed bytes, native/prepared spacing, coverage and expected runtime memory. Patrick sets the package size/performance budget with Willy/Royce before final preparation. Do not place staged data in `public/` until accepted.
+- [ ] Test flat/ramp/nodata grids, partial coverage, bad units/CRS, malformed dimensions, interrupted output and reproducibility. First submit tooling with labelled synthetic tests; then a separate real-data extraction handoff.
+- [ ] **Done:** Patrick reproduces the extraction, validates alignment and accepts package contents; Royce receives exact files for offline checks. A successful script run alone is not source acceptance.
+
+**Send to Patrick:** commands, GDAL/tool versions, source and output hashes, staging paths, sizes, tests, branch/full SHA. Offline cache/worker integration belongs to Patrick; do not edit that implementation.
+
+
 ## Active assignment — 18 November 2026, post-submission planning v2
 
 This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.

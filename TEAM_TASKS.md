@@ -1,5 +1,7 @@
 # MARSWALK — Current team work plan
 
+> **18 November 2026 — active post-submission assignments:** [Planning V2](docs/planning/TEAM_PLANNING_V2.md). Follow the START HERE checklist in your personal brief. This supersedes old ownership/deadline queues below; existing v1 APIs and accepted work remain valid until explicitly changed by the reviewed V2 contract. No terrain API is accepted yet.
+
 > **Current priority override:** [MISSION_MAP_FINISH_PLAN.md](docs/MISSION_MAP_FINISH_PLAN.md). Exact-raster alignment/calibrated route context, science/location clarity and real mission recovery take precedence over optional AI/VR or broad data collection. See updated personal briefs for non-overlapping assignments.
 
 > **Live deployment update — 15 November:** https://marswalk-jet.vercel.app/ is public and passes production-origin browser offline restart/mission recovery checks. Source `b6669fb`; [deployment evidence](docs/qa/VERCEL_PRODUCTION.md), [Vercel runbook](docs/VERCEL_SETUP.md). Physical home-screen acceptance remains pending; automatic GitHub deployment is not connected. Earlier revision-scoped statements below retain their historical scope.

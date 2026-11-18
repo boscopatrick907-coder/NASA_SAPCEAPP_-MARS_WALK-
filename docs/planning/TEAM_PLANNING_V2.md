@@ -2,6 +2,10 @@
 
 Updated 18 November 2026, after competition submission. This plan supersedes the old deadline queues, not historical review evidence. No new task is marked complete by assignment. Main and deployment have not been changed by this document.
 
+## Start here
+
+Follow the **START HERE** checklist in your personal brief and the [step-by-step source-to-offline runbook](TERRAIN_DELIVERY_RUNBOOK.md). The runbook assigns the local-download fallback, compact package preparation, cache integration and offline tests explicitly. Contract and real-terrain acceptance are still pending; no gate is implied complete.
+
 ## Objective
 
 Choose endpoints on real imagery, preview a path derived from a reviewed and aligned measured DEM, understand constraints and unknowns, accept/reject it, then save and recover the mission offline. No safest-path or operational survival claim.

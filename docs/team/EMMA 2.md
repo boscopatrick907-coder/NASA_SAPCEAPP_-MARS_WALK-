@@ -1,5 +1,25 @@
 # Emma — Agent 2: terrain evidence view
 
+## START HERE — your executable checklist
+
+Read only this checklist and the active assignment immediately below it for current work. Everything under **Historical assignments** is reference, not another assignment. Do not wait for all teammates: complete the **Do now** item first.
+
+**Before editing:** preserve/commit your current work, report its branch/SHA, then use a separate clean checkout for this agent. Fetch `origin/science/planning-v2` and create your own feature branch from that development line. Never reset existing work or switch a teammate's checkout. Branch names below are suggestions only if you have not started this slice. Main does not contain this plan yet.
+
+Read [the exact source-to-offline runbook](../planning/TERRAIN_DELIVERY_RUNBOOK.md) for the shared steps, fallback and handoff format. No real terrain product or versioned terrain API is accepted yet. Do not guess missing API names; send your interface proposal to Patrick and continue tests/audit while waiting.
+
+**Suggested branch:** `feature/emma-terrain-evidence-v2`.
+
+- [ ] **Do now:** specify evidence states and implement `src/app/terrain-evidence/` with synthetic test fixtures. Document inputs in `docs/qa/PLANNING_V2_EVIDENCE_UI.md`; ask Patrick to approve the metadata interface.
+- [ ] Show a concise availability summary and expandable product/source/credit, native/prepared spacing, elevation units/datum, coverage, registration, uncertainty and missing-data details. Missing metadata stays explicit.
+- [ ] Distinguish proposed, pending review, rejected and accepted data. A hash or completed metadata form must not trigger an accepted/verified badge. Consume Patrick's admission decision.
+- [ ] Explain actual routing failure reasons after Enzo 2's contract lands. Preserve all limitations and separate coarse geology/historical REMS from aligned terrain.
+- [ ] Coordinate with Emma 1/Charles; test source links, long text, empty states, keyboard disclosures, both themes, 200% zoom and phone widths. Do not edit planner controls or scientific data.
+- [ ] **Done:** component tests/build and accessibility/browser checks pass, and displayed metadata matches Patrick's accepted package. No source or credit disappears from the app.
+
+**Send to Patrick and Emma 1:** proposed metadata interface first, then branch/full SHA, checks/screenshots and unresolved copy questions.
+
+
 ## Active assignment — 18 November 2026, post-submission planning v2
 
 This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.

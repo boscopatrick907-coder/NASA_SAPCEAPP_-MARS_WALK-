@@ -1,5 +1,25 @@
 # Willy — Agent 1: terrain and route map integration
 
+## START HERE — your executable checklist
+
+Read only this checklist and the active assignment immediately below it for current work. Everything under **Historical assignments** is reference, not another assignment. Do not wait for all teammates: complete the **Do now** item first.
+
+**Before editing:** preserve/commit your current work, report its branch/SHA, then use a separate clean checkout for this agent. Fetch `origin/science/planning-v2` and create your own feature branch from that development line. Never reset existing work or switch a teammate's checkout. Branch names below are suggestions only if you have not started this slice. Main does not contain this plan yet.
+
+Read [the exact source-to-offline runbook](../planning/TERRAIN_DELIVERY_RUNBOOK.md) for the shared steps, fallback and handoff format. No real terrain product or versioned terrain API is accepted yet. Do not guess missing API names; send your interface proposal to Patrick and continue tests/audit while waiting.
+
+**Suggested branch:** `feature/willy-terrain-map-v2`.
+
+- [ ] **Do now:** inspect map extension points and write proposed overlay/preview inputs in `docs/qa/PLANNING_V2_MAP.md`; send to Patrick, Enzo 2 and Emma 1. Do not invent image-to-grid registration.
+- [ ] After Patrick supplies the accepted transform, render approved terrain coverage/nodata and a distinct **suggested route**. No actual terrain yet means an explicit unavailable state; synthetic fixtures stay in tests.
+- [ ] Keep manual route and suggestion separate. Confirm accept/reject through the agreed adapter; opening a layer, previewing, rejecting or cancelling must not save/change mission geometry or notes.
+- [ ] Handle wrong imageRef/package ID, outside coverage, missing terrain, failed loads and stale results. Never draw an old suggestion on a new image.
+- [ ] Coordinate independent corner/border/zoom checks with Willy 2. Verify phone/tablet/desktop, keyboard and both themes; preserve Reset View/Focus Route and map height.
+- [ ] **Done:** component tests/build pass and independent alignment checks pass on the accepted package. Deliver actual screenshots and errors in your QA file. Runtime scientific acceptance and store changes remain Patrick-owned.
+
+**Send to Patrick and Willy 2:** branch/full SHA, overlay/acceptance behavior, exact image/package IDs, tests and browser screenshots. Do not deploy independently.
+
+
 ## Active assignment — 18 November 2026, post-submission planning v2
 
 This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.

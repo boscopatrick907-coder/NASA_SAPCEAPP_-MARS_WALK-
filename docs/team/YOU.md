@@ -1,5 +1,27 @@
 # Patrick — coordinator and scientific acceptance
 
+## START HERE — your executable checklist
+
+Read only this checklist and the active assignment immediately below it for current work. Everything under **Historical assignments** is reference, not another assignment. Do not wait for all teammates: complete the **Do now** item first.
+
+**Before editing:** preserve/commit your current work, report its branch/SHA, then use a separate clean checkout for this agent. Fetch `origin/science/planning-v2` and create your own feature branch from that development line. Never reset existing work or switch a teammate's checkout. Branch names below are suggestions only if you have not started this slice. Main does not contain this plan yet.
+
+Read [the exact source-to-offline runbook](../planning/TERRAIN_DELIVERY_RUNBOOK.md) for the shared steps, fallback and handoff format. No real terrain product or versioned terrain API is accepted yet. Do not guess missing API names; send your interface proposal to Patrick and continue tests/audit while waiting.
+
+**Suggested branch:** continue `science/planning-v2` for coordination; integrate contributor work only after review.
+
+- [ ] **Do now:** track the source gate in `docs/data/terrain-v2/ACCEPTANCE.md`, using the runbook fields. Confirm archive access. If cloud access fails, inspect locally downloaded labels first and arrange original-file transfer without exposing secrets or forcing large Git commits.
+- [ ] Independently inspect Gaddielle's candidate and record accept/reject/pending, with source evidence, coverage and missing fields. If incompatible, select one alternative imagery–DTM pair. New area means a new imageRef; preserve original missions/exports without coordinate migration guesses.
+- [ ] Publish contract v1 in `docs/planning/TERRAIN_CONTRACT_V1.md` before dependent integration: grid/layout/affine, image transform and tolerances, vertical reference, provenance/admission states, worker request/result/reason codes and route acceptance adapter. Review then hand off local routing to Enzo 2.
+- [ ] Reproduce Enzo 1's extraction and review Willy 2's independent alignment evidence. Agree package bytes/memory/performance limits with Enzo 1/2 and Royce, then approve a compact deployment package containing the actual required imagery/grid/mask/metadata.
+- [ ] **Own offline integration:** add approved package assets to the existing pack/integrity/cache lifecycle, using current build conventions. Agree replacement/rollback behavior before implementation. Do not mark ready on manifest presence: require verified complete downloads, valid hashes and confirmed availability. Preserve saved missions and previous usable assets on failure.
+- [ ] Integrate engine → map preview → planner/evidence → explicit acceptance → normal persistence. No user-visible scientific feature is enabled by an unreviewed JSON flag.
+- [ ] Review Royce's full disconnected restart and package-failure evidence, plus actual device results. Run integrated tests/build/PWA checks, document exact revision and choose a separately identified candidate deployment. Main/production publication is separate from assigning tasks.
+- [ ] **Done:** every gate in the runbook is passed with evidence; no unresolved alignment/data-loss/readiness blocker. Report the remaining uncertainty honestly even after release.
+
+**Next immediate handoff:** source decision + contract v1 to all implementers. Do not let teammates wait for undefined APIs; accept their interface proposals or provide concrete corrections.
+
+
 ## Active assignment — 18 November 2026, post-submission planning v2
 
 This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.

@@ -1,5 +1,7 @@
 # MARSWALK — Shared Coding-Agent Contract
 
+> **18 November 2026 — active post-submission assignments:** [Planning V2](../planning/TEAM_PLANNING_V2.md). Follow the START HERE checklist in your personal brief. This supersedes old ownership/deadline queues below; existing v1 APIs and accepted work remain valid until explicitly changed by the reviewed V2 contract. No terrain API is accepted yet.
+
 <!-- CURRENT_WORK_PLAN -->
 > **Current work and status:** [canonical team plan](../../TEAM_TASKS.md). Distinguish main capabilities, verified feature branches and pending assignments; preserve completed work.
 <!-- /CURRENT_WORK_PLAN -->

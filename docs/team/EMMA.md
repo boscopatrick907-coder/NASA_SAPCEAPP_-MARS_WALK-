@@ -1,5 +1,25 @@
 # Emma — Agent 1: planning controls
 
+## START HERE — your executable checklist
+
+Read only this checklist and the active assignment immediately below it for current work. Everything under **Historical assignments** is reference, not another assignment. Do not wait for all teammates: complete the **Do now** item first.
+
+**Before editing:** preserve/commit your current work, report its branch/SHA, then use a separate clean checkout for this agent. Fetch `origin/science/planning-v2` and create your own feature branch from that development line. Never reset existing work or switch a teammate's checkout. Branch names below are suggestions only if you have not started this slice. Main does not contain this plan yet.
+
+Read [the exact source-to-offline runbook](../planning/TERRAIN_DELIVERY_RUNBOOK.md) for the shared steps, fallback and handoff format. No real terrain product or versioned terrain API is accepted yet. Do not guess missing API names; send your interface proposal to Patrick and continue tests/audit while waiting.
+
+**Suggested branch:** `feature/emma-terrain-planner-v2`.
+
+- [ ] **Do now:** create the planning state/interaction specification in `docs/qa/PLANNING_V2_UI.md` and implement the new `src/app/terrain-planner/` component shell with tests. Send proposed inputs/actions to Patrick, Enzo 2 and Willy 1. Do not modify core/root integration.
+- [ ] Build endpoint status, explicitly labelled experimental grade constraint, request/cancel, preview result and accept/reject controls. Until a real contract lands, use synthetic values in tests only, not a visible “working” Mars demo.
+- [ ] Consume engine values rather than computing distance/grade yourself. Distinguish missing terrain, pending source review, invalid input, no route, cancelled request and error. No route does not automatically mean impassable.
+- [ ] Navigation, cancel/reject/error and stale results must preserve manual routes and Notebook drafts. Only explicit acceptance delegates a route change to Patrick's adapter. No automatic save.
+- [ ] Coordinate SCSS file ownership with Charles before styling. Test keyboard/focus, phone/tablet/desktop, both themes and 200% zoom.
+- [ ] **Done:** component tests/build and actual navigation/draft-preservation checks pass; Patrick integrates it with the real engine/map. Own controls; Emma 2 owns evidence details.
+
+**Send to Patrick:** state/API proposal first, then branch/full SHA, changed files, actual checks/screenshots and blockers. Do not wait idle for the raster to finish the UI state/tests.
+
+
 ## Active assignment — 18 November 2026, post-submission planning v2
 
 This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.

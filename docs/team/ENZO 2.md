@@ -1,5 +1,25 @@
 # Enzo — Agent 2: routing engine and worker
 
+## START HERE — your executable checklist
+
+Read only this checklist and the active assignment immediately below it for current work. Everything under **Historical assignments** is reference, not another assignment. Do not wait for all teammates: complete the **Do now** item first.
+
+**Before editing:** preserve/commit your current work, report its branch/SHA, then use a separate clean checkout for this agent. Fetch `origin/science/planning-v2` and create your own feature branch from that development line. Never reset existing work or switch a teammate's checkout. Branch names below are suggestions only if you have not started this slice. Main does not contain this plan yet.
+
+Read [the exact source-to-offline runbook](../planning/TERRAIN_DELIVERY_RUNBOOK.md) for the shared steps, fallback and handoff format. No real terrain product or versioned terrain API is accepted yet. Do not guess missing API names; send your interface proposal to Patrick and continue tests/audit while waiting.
+
+**Suggested branch:** `feature/enzo-routing-worker-v2`.
+
+- [ ] **Do now:** write `docs/qa/TERRAIN_ROUTING.md` with proposed result/reason codes and a test matrix. Ask Patrick to publish/hand off the local routing foundation before modifying `src/app/terrain/`; do not create a second engine while it is unpublished.
+- [ ] Review the handed-off engine against a small independent reference solver. Cover flat/ramp/barrier/nodata, coincident endpoints, no route, bad dimensions, invalid endpoints/constraints and no diagonal corner cutting.
+- [ ] Agree a versioned request/result contract with Patrick, Emma 1 and Willy 1. Include image/package IDs, request ID, endpoints, experimental grade constraint, objective, path, distance, grade and explicit failure/cancel reasons. Do not invent existing services.
+- [ ] Implement a worker with bounded inputs, cancellation/termination, stale-response rejection and resource cleanup. Keep pure tests separate from worker lifecycle tests.
+- [ ] Benchmark realistic grid sizes; record device/browser, elapsed time and measured memory where available. State unmeasured metrics. Coordinate package memory limits with Enzo 1 and Patrick.
+- [ ] **Done:** tests/build pass, the same accepted grid gives deterministic results, cancellation/stale responses preserve the mission, and Patrick accepts the worker/API. Real-image integration waits for approved terrain.
+
+**Send to Patrick, Emma 1 and Willy 1:** contract proposal first, then implementation branch/full SHA, tests, benchmark report and remaining limits. Never call this “safest path.”
+
+
 ## Active assignment — 18 November 2026, post-submission planning v2
 
 This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.

@@ -1,5 +1,25 @@
 # Gaddielle — source and geology package
 
+## START HERE — your executable checklist
+
+Read only this checklist and the active assignment immediately below it for current work. Everything under **Historical assignments** is reference, not another assignment. Do not wait for all teammates: complete the **Do now** item first.
+
+**Before editing:** preserve/commit your current work, report its branch/SHA, then use a separate clean checkout for this agent. Fetch `origin/science/planning-v2` and create your own feature branch from that development line. Never reset existing work or switch a teammate's checkout. Branch names below are suggestions only if you have not started this slice. Main does not contain this plan yet.
+
+Read [the exact source-to-offline runbook](../planning/TERRAIN_DELIVERY_RUNBOOK.md) for the shared steps, fallback and handoff format. No real terrain product or versioned terrain API is accepted yet. Do not guess missing API names; send your interface proposal to Patrick and continue tests/audit while waiting.
+
+**Suggested branch:** `feature/gaddielle-terrain-sources-v2`.
+
+- [ ] **Do now:** create `docs/data/terrain-v2/SOURCE_INVENTORY.md`, `files.json` and `retrieval-log.md`. Start with the official [candidate catalogue](https://www.uahirise.org/dtm/PSP_001488_1750); record the actual HTTP outcome and discovered links, never guessed raster filenames.
+- [ ] Save original provider labels/metadata in `docs/data/terrain-v2/metadata/`. Record product/version, source images, CRS, footprint, elevation units/datum, native spacing, nodata and uncertainty, each with its original field/passage. Missing evidence stays `unknown`, not “verified.” Use the inventory fields in the runbook.
+- [ ] Compare the footprint to [the existing crop evidence](../data/evidence/CALIBRATED_CROP.json). Ask Patrick for an independently checked result. If incompatible, deliver **one alternative official imagery–DTM pair** and its evidence; do not continue trying to force the original crop.
+- [ ] If cloud download is blocked, follow the runbook's local-download fallback. Hand over metadata first, then exact verified download URLs, sizes/hashes and local file locations. Keep large binaries out of Git until Patrick agrees storage.
+- [ ] Add a geology table in the inventory: source, scale/resolution, CRS, footprint, units and permitted use as regional context versus aligned layer. SIM3292 remains regional context. Do not delay the DEM dossier for extra weather/geology collection.
+- [ ] **First submission:** metadata dossier + retrieval log + inventory; identify every missing field. **Done:** Patrick can reproduce retrieval and decide accept/reject/alternative. Scientific acceptance itself belongs to Patrick, not you.
+
+**Send to Patrick and Enzo 1:** source folder, exact URLs, file paths/hashes, missing inputs, branch/full SHA. After source approval, supply any missing labels; do not change runtime data yourself.
+
+
 ## Active assignment — 18 November 2026, post-submission planning v2
 
 This assignment supersedes every older ACTIVE/NEXT section and deadline below. The previous plans and acceptance records are retained as history, not a new work queue. Completed work stays completed. Preserve and report unpublished changes before starting; do not reset, force-push or replace another agent's implementation.
