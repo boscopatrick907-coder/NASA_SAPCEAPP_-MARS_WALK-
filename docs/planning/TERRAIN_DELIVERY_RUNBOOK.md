@@ -5,8 +5,8 @@ Updated 18 November 2026. These are assignments and acceptance requirements, not
 ## 1. Everyone: start safely
 
 1. Commit/preserve current unpublished work and report its branch/full SHA. Do not discard it or begin a duplicate implementation.
-2. Use a separate checkout for each simultaneous agent. From a clean checkout: `git fetch origin`, then create your own suggested feature branch from `origin/science/planning-v2`. If you already started the slice, preserve that branch and agree integration with Patrick instead of replacing it.
-   If using a fork, fetch the main repository as `upstream` and branch from `upstream/science/planning-v2` instead. Push your feature branch to your own fork and send its URL/SHA. Never assume your fork already contains the development branch.
+2. Use a separate checkout for each simultaneous agent. From a clean checkout: `git fetch origin`, then create your own suggested feature branch from `origin/main` unless Patrick specifies a newer reviewed development base. If you already started the slice, preserve that branch and agree integration with Patrick instead of replacing it.
+   If using a fork, fetch the main repository as `upstream` and branch from `upstream/main` instead. Push your feature branch to your own fork and send its URL/SHA. Never assume your fork already contains the current upstream instructions.
 3. Read your personal checklist and this runbook. Never treat old final-submission deadlines or old public URLs as current acceptance instructions.
 4. Complete your **Do now** artifact even if real-data access is pending. Runtime synthetic terrain is prohibited; synthetic fixtures stay in tests.
 5. Submit work using the exact handoff template at the end. Only Patrick integrates shared root/core/cache changes and accepts scientific data.

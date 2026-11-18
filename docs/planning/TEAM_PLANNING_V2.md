@@ -1,6 +1,6 @@
 # Planning v2 — team execution and acceptance
 
-Updated 18 November 2026, after competition submission. This plan supersedes the old deadline queues, not historical review evidence. No new task is marked complete by assignment. Main and deployment have not been changed by this document.
+Updated 18 November 2026, after competition submission. This plan supersedes the old deadline queues, not historical review evidence. No new task is marked complete by assignment. The instructions are published on main. Application code is unchanged by this documentation update; no deployment was performed.
 
 ## Start here
 
@@ -41,7 +41,7 @@ If current-crop terrain is unsuitable, document an alternative imagery/DEM study
 ## Shared rules
 
 - Preserve unpublished changes first and report their branch/SHA. Use independent checkouts for simultaneous agents; never run competing installs/builds or branch switches in one checkout.
-- New work starts from a coordinator-confirmed revision of the development line. No blind merges of old task branches and no direct main push.
+- New work starts from current main or a newer coordinator-confirmed development revision. No blind merges of old task branches and no direct main push.
 - Synthetic terrain belongs in tests only. Pixal3D relief is illustrative, not a measured DEM. Brightness is not elevation; segment grade is not local slope or a safety rating.
 - Keep scientific wording, sources, credits and limitations. Historical REMS observations are not route weather; coarse geology is not a local obstacle map.
 - No inferred readiness, successful installation, device certification or outside-user session. Record actual evidence and keep unrun checks pending.

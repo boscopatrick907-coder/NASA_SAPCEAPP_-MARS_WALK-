@@ -1,6 +1,6 @@
 # Team assignments — Planning V2
 
-Open your file below and follow **START HERE**. The current assignments are on branch **`science/planning-v2`**, not main. Older sections under historical assignments are reference only.
+Open your file below and follow **START HERE**. The current assignments are published on **`main`**. Create feature branches for implementation; do not push task code directly to main. Older sections under historical assignments are reference only.
 
 | Person / agent | Assignment file |
 |---|---|
