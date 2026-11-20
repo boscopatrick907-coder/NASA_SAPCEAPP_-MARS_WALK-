@@ -29,7 +29,7 @@
                 "input": "public",
                 "ignore": [
                   "data/imagery/PIA26306.jpg",
-                  "data/terrain/**",
+                  "data/terrain/README.md",
                   "data/imagery/PIA26306_derived_2048.jpg"
                 ]
               }

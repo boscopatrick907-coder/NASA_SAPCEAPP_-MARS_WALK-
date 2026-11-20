@@ -64,6 +64,8 @@ data/terrain/<packageId>/
   provenance.json         # extraction command, tool versions, source hashes (Enzo 1)
 ```
 
+Active package pointer: `data/terrain/index.json` = `{ "schemaVersion": 1, "activePackageId": null | "<packageId>" }`. It ships with `null`. Only Patrick changes it, and only after acceptance.
+
 `packageId` format: `terrain-<sourceProductId>-<imageRef>-v<n>` (lower case). Any change to bytes, transform or imageRef = new `packageId`.
 
 `terrain-manifest.json` (fields map 1:1 onto Emma 2's `TerrainProductMetadata`):
@@ -206,3 +208,16 @@ States (Emma 2's set): `'not-cached' | 'partial' | 'verified' | 'corrupt' | 'una
 6. **Emma 1/2:** accept the renames (`terrain-v1`, `maxSegmentGradeDeg`, single 15° default) before integration.
 
 Reply using the runbook §9 handoff format. After all six are answered, Patrick changes the status line to **frozen** and records the commit SHA here.
+
+## Implementation status (coordinator branch `claude/magical-volta-1c76ak`, 20 Nov)
+
+| Section | Implemented in | Tests |
+|---|---|---|
+| §1–§4 types, transforms, manifest validation, gate | `src/app/core/terrain.ts` | `terrain.spec.ts` |
+| §3/§4/§7 loader: pointer → manifest → byte/hash verification → gate; buffers for the worker | `src/app/core/terrain.service.ts` (started on demand, not at app startup) | `terrain.service.spec.ts` (6) |
+| §7 offline pack: pointer always packed; package only when accepted with reviewer/date/evidence and hash-valid; build fails on anything else under `data/terrain/` | `tools/pwa/build-pack.mjs`, `angular.json` (ignore narrowed to the README) | `tools/pwa/terrain-pack.test.mjs` (6) |
+| §8 acceptance adapter and `terrainSuggestion` provenance | `MissionService.replaceRouteFromSuggestion` | `mission.service.spec.ts` (5) |
+| §5/§6 engine and worker | `feature/enzo-routing-worker-v2` (awaiting Enzo 2's review) | on that branch |
+
+Not yet wired: no UI calls `TerrainService` or the adapter. With `activePackageId: null` the runtime is unchanged apart from one extra 50-byte packed file.
+
