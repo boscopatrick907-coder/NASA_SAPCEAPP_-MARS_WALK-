@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "data/manifest.json",
-      "bytes": 2498,
-      "sha256": "83e59051ede57da6c928660a1ce15b19b342cf3c65ead6be2d2818d9140b6cdf"
+      "bytes": 2521,
+      "sha256": "471cadd746ef01479be3e65b4919de7d6c155c1a009ed544b0a926ac146c3139"
     },
     {
       "path": "data/imagery/PSP_001752_1750_RED_A_ortho_crop_2048.jpg",
@@ -13,5 +13,5 @@
       "sha256": "f49ffa69b28693bb1774372a3137eb423005e2f354c4492734e1b04703953dbc"
     }
   ],
-  "totalBytes": 709861
+  "totalBytes": 709884
 }

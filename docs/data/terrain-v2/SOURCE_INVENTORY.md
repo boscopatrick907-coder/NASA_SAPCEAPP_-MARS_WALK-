@@ -12,7 +12,7 @@ Status: `stated` (copied from a cited source) · `inspected` (checked on the act
 | Producer | University of Arizona (`PRODUCER_ID` UA). Technical contact USGS Astrogeology. ISIS + SOCET SET 5.5.0 (NGATE) | label `PRODUCER_*`, `SOFTWARE_NAME`; Extras README | stated |
 | Source stereo images | PSP_001488_1750 (left), PSP_001752_1750 (right) | label `SOURCE_PRODUCT_ID`; catalogue page | inspected |
 | Acquisition date | PSP_001752_1750: 2006-12-10 (active manifest). PSP_001488_1750: not stated in the files retrieved | manifest `observationDate` | partly stated |
-| Credit / terms | NASA/JPL-Caltech/UArizona (catalogue image credit). Usage policy: https://uahirise.org/media/usage.php (linked from the catalogue, not yet read) | catalogue page | stated; terms **to read** |
+| Credit / terms | **Public domain**, no copyright restriction; credit requested: "Image: NASA/JPL/University of Arizona" | https://www.uahirise.org/media/usage.php, read 2026-11-20T21:24:33Z | stated |
 | Final source URLs | see files.json (provider links followed from the catalogue page) | retrieval-log | inspected |
 | Sizes and SHA-256 | IMG 360 402 944 B, `9359ca71…80bb`; label portion 4 275 B, `fca0e7b9…de1e` | files.json | inspected |
 | Horizontal CRS | Equirectangular, planetocentric, east-positive, sphere R = 3396.19 km (local radius), `CENTER_LATITUDE` 0.0°, `CENTER_LONGITUDE` 137.3° | label `IMAGE_MAP_PROJECTION` | inspected |
@@ -42,6 +42,6 @@ PSP_001752_1750_RED (RDR, map-projected onto MOLA, not orthorectified), centre l
 
 ## Still open (Gaddielle / Patrick)
 
-1. Read and record the HiRISE usage terms (media/usage.php) before any public deployment.
+1. ~~Usage terms~~ done 20 Nov: public domain, credit line used in the app.
 2. Acquisition date of PSP_001488_1750 (from its RDR label if needed).
 3. No stated accuracy: show "not stated by the provider" in the evidence view; never invent one.

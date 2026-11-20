@@ -7,7 +7,8 @@
   "source": {
     "title": "HiRISE DTM DTEEC_001488_1750_001752_1750_U02 (Gale crater layered outcrop), version 2.0",
     "url": "https://www.uahirise.org/dtm/PSP_001488_1750",
-    "credit": "NASA/JPL-Caltech/University of Arizona; DTM produced with ISIS and SOCET SET (USGS Astrogeology)"
+    "credit": "Image: NASA/JPL/University of Arizona (HiRISE DTM, public domain); DTM produced with ISIS and SOCET SET (USGS Astrogeology)",
+    "licenseOrTerms": "Public domain, credit requested: https://www.uahirise.org/media/usage.php"
   },
   "grid": {
     "cols": 513,
