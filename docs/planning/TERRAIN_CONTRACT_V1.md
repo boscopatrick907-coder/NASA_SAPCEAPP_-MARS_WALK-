@@ -121,7 +121,7 @@ Module worker owned by Enzo 2 (`src/app/terrain/`). Grid/mask passed once per pa
 ```ts
 // main → worker
 type TerrainWorkerRequest =
-  | { type: 'load'; contractVersion: 'terrain-v1'; packageId: string; cols: number; rows: number;
+  | { type: 'load'; contractVersion: 'terrain-v1'; packageId: string; image: ImageGeoref; cols: number; rows: number;
       geotransform: readonly number[]; grid: ArrayBuffer; mask: ArrayBuffer }
   | { type: 'route'; contractVersion: 'terrain-v1'; requestId: string; packageId: string; imageRef: string;
       start: Point; destination: Point; maxSegmentGradeDeg: number }
@@ -136,6 +136,7 @@ type TerrainWorkerResponse =
       status: 'no-route' | 'cancelled' | 'error'; reasonCode: TerrainFailureCode; message: string | null };
 ```
 
+- `image` on `load` (amendment proposed by the routing branch): the worker needs the image georeference to snap endpoints. Load failures reply `{ type: 'load-failed', packageId, message }`.
 - `requestId`: UUID from `crypto.randomUUID()`. One active request; a new `route` implicitly cancels the previous one.
 - Cancellation is cooperative: the worker checks for cancel at least every 10 000 node expansions and replies `cancelled`.
 - **Stale guard (main thread):** a response is discarded and recorded as `stale-response` if its `requestId` is not the latest, or its `packageId`/`imageRef` differ from current state, or endpoints/grade changed since request. Emma 1's staleness reasons stay as specified.

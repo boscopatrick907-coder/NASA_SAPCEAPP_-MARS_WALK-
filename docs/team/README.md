@@ -18,3 +18,18 @@ Open your file below and follow **START HERE**. The current assignments are publ
 Read the [shared ownership plan](../planning/TEAM_PLANNING_V2.md) and [step-by-step delivery runbook](../planning/TERRAIN_DELIVERY_RUNBOOK.md) for dependencies, local-download fallback, compact offline package and acceptance gates. Assignment does not mean work is complete or deployed.
 
 **Terrain contract v1 (draft, 20 Nov):** [TERRAIN_CONTRACT_V1.md](../planning/TERRAIN_CONTRACT_V1.md), shared code in `src/app/core/terrain.ts`. Answer your question in its §10 using the runbook handoff format. Source decision status: [ACCEPTANCE.md](../data/terrain-v2/ACCEPTANCE.md) (pending).
+
+### Do-now drafts on feature branches (20 Nov)
+
+The coordinator's coding agent drafted each "Do now" item that doesn't need real data or devices. **Each owner reviews, keeps, changes or discards their branch.** Nothing is merged to main, and no gate is closed by these drafts. If you already have unpublished work for the same item, compare first and keep one.
+
+| Owner | Branch | What's there |
+|---|---|---|
+| Enzo 2 | `feature/enzo-routing-worker-v2` | Routing engine, worker, client, 21 tests incl. reference solver, `docs/qa/TERRAIN_ROUTING.md` with benchmark |
+| Enzo 1 | `feature/enzo-terrain-preparation-v2` | `tools/terrain/prepare_terrain.py` (inspect/extract), 18 synthetic tests, `docs/data/TERRAIN_PREPARATION.md` |
+| Willy 2 | `feature/willy-terrain-alignment-qa-v2` | `tests/terrain-map/` (24 independent checks), `docs/qa/PLANNING_V2_ALIGNMENT.md` |
+| Willy 1 | `feature/willy-terrain-map-v2` | Proposal only: `docs/qa/PLANNING_V2_MAP.md` |
+| Royce | `feature/royce-planning-v2-acceptance` | Browser end-to-end recovery baseline, `docs/qa/PLANNING_V2_RELEASE.md` |
+| Charles | `feature/charles-planning-v2-polish` | Ten-issue audit with screenshots, `docs/design/PLANNING_V2_POLISH.md` |
+| Gaddielle | `feature/gaddielle-terrain-sources-v2` | Dossier skeleton, retrieval log (official hosts blocked from the cloud) |
+| Emma 1 / 2 | (their own branches, already pushed) | Rename to `terrain-v1` types from `src/app/core/terrain.ts` when integrating |
