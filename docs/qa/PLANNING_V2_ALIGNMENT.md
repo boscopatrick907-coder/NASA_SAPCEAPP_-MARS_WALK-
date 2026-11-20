@@ -12,7 +12,7 @@ Branch `feature/willy-terrain-alignment-qa-v2`. Prepared by the coordinator's co
 npm run test:terrain-map
 ```
 
-Result on 20 Nov 2026: **22 passed, 2 expected-fail (findings A5-1)**. `npm test` is unchanged at 325 passing (the new folder isn't included).
+Result on 20 Nov 2026: **24 passed** after the A5-1/A5-2 core fix (before the fix: 22 passed, 2 expected-fail). `npm test` is unchanged at 325 passing (the new folder isn't included).
 
 ## Cases
 
@@ -23,8 +23,8 @@ Result on 20 Nov 2026: **22 passed, 2 expected-fail (findings A5-1)**. `npm test
 | A2 | Cell centres: 4 image pixels per 1 m cell; cell (10,20) centre → image (42, 1966) | as stated | as stated | exact | alignment.test.ts | pass |
 | A3 | Row inversion: image top-left → grid row 0; bottom-left → row 511 | as stated | as stated | exact | alignment.test.ts | pass |
 | A4 | Crop offsets: DEM 10 m W / 20 m N → NW corner in cell (10,20); 2 m half-cell offset; partial 0.5; disjoint none | as stated | as stated | 1e-12 | alignment.test.ts | pass |
-| A5 | Borders: interior boundaries go to the east/south cell; top edge y = H inside | as stated | as stated (row is `-0`, finding A5-2) | exact | alignment.test.ts | pass |
-| A5-1 | Right edge x = W and bottom edge y = 0 with an exactly covering grid | inside (last col/row) | **outside → would give `endpoint-outside-coverage`** | — | `it.fails` tests | **finding** |
+| A5 | Borders: interior boundaries go to the east/south cell; top edge y = H inside | as stated | as stated | exact | alignment.test.ts | pass (A5-2 fixed) |
+| A5-1 | Right edge x = W and bottom edge y = 0 with an exactly covering grid | inside (last col/row) | inside after fix (was outside → `endpoint-outside-coverage`) | exact | alignment.test.ts | **pass (fixed)** |
 | A6 | Mask index for a cell = row × cols + col, row 0 north | NW = 0, SW = 511·512 | equal | exact | alignment.test.ts | pass |
 | A7 | Terrain for another imageRef, or no active image | `image-ref-mismatch` | equal | — | alignment.test.ts | pass |
 | A8 | Legacy mission (old `hirise-mro-pia26306…` imageRef) rejected; current accepted; optional `terrainSuggestion` still imports | false / true / true | equal | — | alignment.test.ts | pass |
@@ -34,8 +34,8 @@ Result on 20 Nov 2026: **22 passed, 2 expected-fail (findings A5-1)**. `npm test
 
 ## Findings for Patrick / Willy 1
 
-- **A5-1 (should fix before integration):** `validPoint` accepts `x = width` and `y = 0`, and the map clamps clicks to those edges. `containingCell` uses half-open cells, so with a grid that exactly covers the image those edge points fall outside. Suggested fix (contract §5, Patrick): if a point lies exactly on the grid's closing east or south edge, assign it to the last column/row. The two `it.fails` tests flip when this is fixed.
-- **A5-2 (minor):** `containingCell` returns `row: -0` on the north edge. Indexing works, but `Object.is` and some deep-equal checks treat it differently. `Math.floor(…) + 0` normalises it.
+- **A5-1 (fixed on `claude/magical-volta-1c76ak`, merged here):** `validPoint` accepts `x = width` and `y = 0`, and the map clamps clicks to those edges. `containingCell` uses half-open cells, so with a grid that exactly covers the image those edge points fall outside. Suggested fix (contract §5, Patrick): if a point lies exactly on the grid's closing east or south edge, assign it to the last column/row. Applied as suggested; the two tests are now ordinary passing tests.
+- **A5-2 (minor, fixed):** `containingCell` returned `row: -0` on the north edge. Now normalised with `+ 0`.
 - **A10 (information):** the crop centre is at 4.84°S, 137.30°E (from the equirectangular inverse with R = 3 396 190 m, centre longitude 180°). With standard parallel 0°, east-west planar distances overstate ground distance by about 0.36 % at this latitude. That's within the "planar distance" caveat the app already shows, but the terrain UI shouldn't present metres to more precision than that.
 
 ## Next (Willy 2)

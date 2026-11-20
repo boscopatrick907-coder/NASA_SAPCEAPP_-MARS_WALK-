@@ -114,17 +114,14 @@ describe('A5 borders', () => {
     expect(containingCell({ x: 1, y: 2044 }, crop, exact, 512, 512)?.row).toBe(1); // N = YMAX − 1 exactly
   });
   it('top edge (y = height) is inside the grid', () => {
-    // FINDING A5-2 (minor): returns row -0. Numerically equal and indexes correctly, so compare with ==.
-    const cell = containingCell({ x: 1, y: 2048 }, crop, exact, 512, 512)!;
-    expect(cell.col === 0 && cell.row === 0).toBe(true);
+    // FINDING A5-2 (fixed in core): no -0 row on the north edge.
+    expect(containingCell({ x: 1, y: 2048 }, crop, exact, 512, 512)).toEqual({ col: 0, row: 0 });
   });
-  // FINDING A5-1: validPoint accepts x = width and y = 0, and the map clamps clicks to them,
-  // but with an exactly covering grid those points fall outside the last cell. Expected:
-  // inside (last col / last row). Marked `fails` so the suite flips when it is fixed.
-  it.fails('right edge (x = width) maps to the last column', () => {
+  // FINDING A5-1 (fixed in core): right/bottom image edges belong to the last cell.
+  it('right edge (x = width) maps to the last column', () => {
     expect(containingCell({ x: 2048, y: 1000 }, crop, exact, 512, 512)?.col).toBe(511);
   });
-  it.fails('bottom edge (y = 0) maps to the last row', () => {
+  it('bottom edge (y = 0) maps to the last row', () => {
     expect(containingCell({ x: 1000, y: 0 }, crop, exact, 512, 512)?.row).toBe(511);
   });
 });
