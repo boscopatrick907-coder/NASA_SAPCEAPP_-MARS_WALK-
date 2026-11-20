@@ -254,4 +254,96 @@ describe('MissionService', () => {
     expect(service.loadRoute().ok).toBe(true);
     expect(service.route().start).toEqual({ x: 1, y: 2 });
   });
+
+  describe('terrain suggestion adapter (contract §8)', () => {
+    const path = [
+      { x: 1, y: 1 },
+      { x: 10, y: 5 },
+      { x: 20, y: 30 },
+    ];
+    const prov = { packageId: 'terrain-x-v1', requestId: 'req-1', maxSegmentGradeDeg: 15 };
+
+    it('replaces the route, records provenance, pushes undo and does not save', async () => {
+      await load();
+      service.setMode('start');
+      service.applyMapPoint({ x: 2, y: 2 });
+      const setItem = vi.spyOn(Storage.prototype, 'setItem');
+      expect(service.replaceRouteFromSuggestion(path, prov).ok).toBe(true);
+      expect(service.route()).toEqual({
+        start: path[0],
+        destination: path[2],
+        waypoints: [path[1]],
+      });
+      expect(service.terrainSuggestion()).toMatchObject({ ...prov, contractVersion: 'terrain-v1' });
+      expect(setItem).not.toHaveBeenCalled();
+      expect(service.canUndo()).toBe(true);
+      service.undoRoute();
+      expect(service.route().start).toEqual({ x: 2, y: 2 });
+      expect(service.terrainSuggestion()).toBeNull();
+    });
+
+    it('rejects bad paths and provenance without changing the route', async () => {
+      await load();
+      const before = service.route();
+      for (const [p, v] of [
+        [[path[0]], prov],
+        [[...path, { x: 101, y: 1 }], prov],
+        [[{ x: NaN, y: 1 }, path[1]], prov],
+        [path, { ...prov, packageId: '' }],
+        [path, { ...prov, maxSegmentGradeDeg: 90 }],
+      ] as const) {
+        expect(service.replaceRouteFromSuggestion(p, v).ok).toBe(false);
+      }
+      expect(service.route()).toBe(before);
+      expect(service.terrainSuggestion()).toBeNull();
+    });
+
+    it('a manual edit or clear drops the provenance', async () => {
+      await load();
+      service.replaceRouteFromSuggestion(path, prov);
+      service.setMode('waypoint');
+      service.applyMapPoint({ x: 50, y: 50 });
+      expect(service.terrainSuggestion()).toBeNull();
+      service.replaceRouteFromSuggestion(path, prov);
+      service.clearRoute();
+      expect(service.terrainSuggestion()).toBeNull();
+    });
+
+    it('saves, reloads and imports provenance; ordinary saves keep the old envelope shape', async () => {
+      await load();
+      service.setMode('start');
+      service.applyMapPoint({ x: 3, y: 3 });
+      expect(service.saveRoute().ok).toBe(true);
+      const key = Object.keys(localStorage)[0];
+      expect(Object.keys(JSON.parse(localStorage.getItem(key)!))).toEqual([
+        'schemaVersion',
+        'imageRef',
+        'route',
+        'observations',
+      ]);
+      service.replaceRouteFromSuggestion(path, prov);
+      expect(service.saveRoute().ok).toBe(true);
+      const saved = JSON.parse(localStorage.getItem(key)!);
+      expect(saved.terrainSuggestion.packageId).toBe('terrain-x-v1');
+      service.clearRoute();
+      expect(service.loadRoute().ok).toBe(true);
+      expect(service.terrainSuggestion()?.requestId).toBe('req-1');
+      expect(service.importMission(JSON.stringify(saved)).ok).toBe(true);
+      expect(service.terrainSuggestion()?.requestId).toBe('req-1');
+    });
+
+    it('drops forged or malformed provenance on import but keeps the valid route', async () => {
+      await load();
+      const mission = {
+        schemaVersion: 1,
+        imageRef: 'synthetic-test-only',
+        route: { start: { x: 1, y: 1 }, destination: { x: 2, y: 2 }, waypoints: [] },
+        observations: [],
+        terrainSuggestion: { contractVersion: 'v1-proposal', packageId: 'p', verified: true },
+      };
+      expect(service.importMission(JSON.stringify(mission)).ok).toBe(true);
+      expect(service.route().destination).toEqual({ x: 2, y: 2 });
+      expect(service.terrainSuggestion()).toBeNull();
+    });
+  });
 });

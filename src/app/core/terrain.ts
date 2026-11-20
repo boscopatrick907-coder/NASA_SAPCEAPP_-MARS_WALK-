@@ -307,3 +307,48 @@ export async function terrainReadiness(
   if (present === manifest.files.length) return 'verified';
   return present === 0 ? 'not-cached' : 'partial';
 }
+
+// ---- §8 route acceptance provenance -------------------------------------
+
+/** Optional mission-envelope field recording where an accepted route came from. */
+export interface TerrainSuggestionRecord {
+  readonly contractVersion: typeof TERRAIN_CONTRACT_VERSION;
+  readonly packageId: string;
+  readonly requestId: string;
+  readonly maxSegmentGradeDeg: number;
+  readonly acceptedAtUtc: string;
+}
+/** Upper bound on accepted path vertices, keeping missions well under the 1 MiB import cap. */
+export const MAX_SUGGESTION_VERTICES = 5000;
+
+export function validTerrainSuggestion(v: unknown): v is TerrainSuggestionRecord {
+  return (
+    record(v) &&
+    v['contractVersion'] === TERRAIN_CONTRACT_VERSION &&
+    text(v['packageId']) &&
+    text(v['requestId']) &&
+    typeof v['maxSegmentGradeDeg'] === 'number' &&
+    Number.isFinite(v['maxSegmentGradeDeg']) &&
+    v['maxSegmentGradeDeg'] > 0 &&
+    v['maxSegmentGradeDeg'] < 90 &&
+    text(v['acceptedAtUtc']) &&
+    !Number.isNaN(Date.parse(v['acceptedAtUtc']))
+  );
+}
+
+// ---- §3 active package pointer ------------------------------------------
+
+/** `data/terrain/index.json`: which package (if any) the build ships. */
+export interface TerrainIndex {
+  readonly schemaVersion: 1;
+  readonly activePackageId: string | null;
+}
+export const PACKAGE_ID = /^terrain-[a-z0-9][a-z0-9._-]*$/;
+export function validTerrainIndex(v: unknown): v is TerrainIndex {
+  return (
+    record(v) &&
+    v['schemaVersion'] === 1 &&
+    (v['activePackageId'] === null ||
+      (typeof v['activePackageId'] === 'string' && PACKAGE_ID.test(v['activePackageId'])))
+  );
+}
