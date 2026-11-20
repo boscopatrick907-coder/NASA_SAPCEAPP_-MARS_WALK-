@@ -101,7 +101,11 @@ export function projectedToGrid(q: Projected, gt: Geotransform): GridIndex {
 export function cellCentre(cell: GridIndex, gt: Geotransform): Projected {
   return { e: gt[0] + (cell.col + 0.5) * gt[1], n: gt[3] + (cell.row + 0.5) * gt[5] };
 }
-/** Cell containing an image point, or null when outside the grid (§5 snapping). */
+/**
+ * Cell containing an image point, or null when outside the grid (§5 snapping).
+ * Cells are half-open, except that a point exactly on the grid's closing east or
+ * south edge belongs to the last column/row (image edges x = width, y = 0 are valid points).
+ */
 export function containingCell(
   p: Point,
   g: ImageGeoref,
@@ -110,8 +114,11 @@ export function containingCell(
   rows: number,
 ): GridIndex | null {
   const q = imageToProjected(p, g);
-  const col = Math.floor((q.e - gt[0]) / gt[1]);
-  const row = Math.floor((q.n - gt[3]) / gt[5]);
+  const fc = (q.e - gt[0]) / gt[1];
+  const fr = (q.n - gt[3]) / gt[5];
+  // `+ 0` normalises -0 on the north/west edges.
+  const col = (fc === cols ? cols - 1 : Math.floor(fc)) + 0;
+  const row = (fr === rows ? rows - 1 : Math.floor(fr)) + 0;
   return col >= 0 && col < cols && row >= 0 && row < rows ? { col, row } : null;
 }
 
