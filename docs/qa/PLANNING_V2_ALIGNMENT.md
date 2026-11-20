@@ -12,7 +12,7 @@ Branch `feature/willy-terrain-alignment-qa-v2`. Prepared by the coordinator's co
 npm run test:terrain-map
 ```
 
-Result on 20 Nov 2026: **24 passed** after the A5-1/A5-2 core fix (before the fix: 22 passed, 2 expected-fail). `npm test` is unchanged at 325 passing (the new folder isn't included).
+Result on 20 Nov 2026 (evening, after the image switch): **29 passed**. Earlier: after the A5-1/A5-2 core fix (before the fix: 22 passed, 2 expected-fail). `npm test` is unchanged at 325 passing (the new folder isn't included).
 
 ## Cases
 
@@ -29,7 +29,9 @@ Result on 20 Nov 2026: **24 passed** after the A5-1/A5-2 core fix (before the fi
 | A7 | Terrain for another imageRef, or no active image | `image-ref-mismatch` | equal | — | alignment.test.ts | pass |
 | A8 | Legacy mission (old `hirise-mro-pia26306…` imageRef) rejected; current accepted; optional `terrainSuggestion` still imports | false / true / true | equal | — | alignment.test.ts | pass |
 | A9 | Map chain: Leaflet `CRS.Simple` with `imageBounds` puts y = H at screen top; a click near the screen NW corner lands in grid row 0, col 0 | as stated | as stated | exact | alignment.test.ts | pass |
-| R1 | Real DEM control points (≥ 8 features, image vs hillshade) | RMS ≤ 1 cell, max ≤ 2 cells (contract §1.4, draft) | — | — | — | **pending: no accepted package** |
+| A10 | Active ortho image + accepted package: valid/accepted, corners from evidence, full coverage, every image corner/edge on a valid cell, spacing ≈ 4 px, margin < 10 m | as stated | as stated | 1e-6 | alignment.test.ts | pass |
+| R1a | Ortho-crop vs provider 1 m orthoimage (16 tiles) | RMS ≤ 1 cell, max ≤ 2 cells | 0.59 m / 0.73 m | draft §1.4 | REGISTRATION.md, evidence JSON | pass |
+| R1b | ≥ 8 independent control points on DTM features (crests, rims) vs the ortho crop | RMS ≤ 1 cell | — | — | — | **pending (Willy 2)**: shaded-relief check shows ~3 m E |
 | D1 | Map pan/zoom/touch, endpoint selection, suggested vs accepted route on devices | — | — | — | — | **pending: no preview UI integrated** |
 
 ## Findings for Patrick / Willy 1

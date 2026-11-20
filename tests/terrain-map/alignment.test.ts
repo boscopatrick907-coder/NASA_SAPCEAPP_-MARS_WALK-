@@ -8,7 +8,10 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import * as L from 'leaflet';
 import {
+  checkGridMask,
   containingCell,
+  imageGeoref,
+  validTerrainManifest,
   coverageLabel,
   Geotransform,
   ImageGeoref,
@@ -22,7 +25,10 @@ import { imageBounds, toLeafletPoint } from '../../src/app/map/map.component';
 import { validEnvelope } from '../../src/app/core/validation';
 import { ImageManifest } from '../../src/app/core/models';
 
+// A1–A6 use the earlier crop's frozen georeference as a hand-checkable fixture for the transforms.
+// The active image (ortho crop) and the accepted package are checked in A0, A8 and A10.
 const evidence = JSON.parse(readFileSync('docs/data/evidence/CALIBRATED_CROP.json', 'utf8'));
+const active = JSON.parse(readFileSync('docs/data/evidence/ORTHO_CROP.json', 'utf8'));
 const manifestJson: ImageManifest = JSON.parse(readFileSync('public/data/manifest.json', 'utf8'));
 const [XMIN, YMIN, XMAX, YMAX] = evidence.boundsProjectedMeters as number[];
 const crop: ImageGeoref = {
@@ -43,10 +49,12 @@ describe('A0 evidence self-consistency', () => {
     expect(YMAX - 2048 * 0.25).toBe(YMIN);
     expect(evidence.pixelSizeMeters).toEqual([0.25, -0.25]);
   });
-  it('runtime manifest matches the evidence', () => {
-    expect(manifestJson.imageRef).toBe(evidence.imageRef);
-    expect([manifestJson.width, manifestJson.height]).toEqual(evidence.dimensions);
-    expect(manifestJson.calibration.metersPerPixel).toBe(0.25);
+  it('runtime manifest matches the active image evidence', () => {
+    expect(manifestJson.imageRef).toBe(active.imageRef);
+    expect([manifestJson.width, manifestJson.height]).toEqual(active.dimensions);
+    expect(manifestJson.calibration.metersPerPixel).toBe(active.pixelSizeMeters[0]);
+    expect(manifestJson.georeference?.xminMeters).toBe(active.boundsProjectedMeters[0]);
+    expect(manifestJson.georeference?.yminMeters).toBe(active.boundsProjectedMeters[1]);
     expect(manifestJson.coordinateSystem).toBe('image-pixels-bottom-left');
   });
 });
@@ -151,7 +159,7 @@ describe('A7 wrong imageRef and A8 legacy missions', () => {
   it('missions saved on the old image are not accepted by the current image', () => {
     const legacy = {
       schemaVersion: 1,
-      imageRef: evidence.oldImageRef,
+      imageRef: active.oldImageRef,
       route: { start: { x: 1, y: 1 }, destination: { x: 2, y: 2 }, waypoints: [] },
       observations: [],
     };
@@ -191,5 +199,61 @@ describe('A9 map ↔ image ↔ grid chain (Leaflet CRS.Simple)', () => {
     const latlng = L.CRS.Simple.pointToLatLng(L.point(0.5, -2047.5), 0); // just inside NW corner at zoom 0
     const p = { x: latlng.lng, y: latlng.lat }; // same conversion as MapComponent click handler
     expect(containingCell(p, crop, exact, 512, 512)).toEqual({ col: 0, row: 0 });
+  });
+});
+
+describe('A10 active image and the accepted DTM package', () => {
+  const index = JSON.parse(readFileSync('public/data/terrain/index.json', 'utf8'));
+  const dir = `public/data/terrain/${index.activePackageId}/`;
+  const pkg = JSON.parse(readFileSync(dir + 'terrain-manifest.json', 'utf8'));
+  const g = imageGeoref(manifestJson)!;
+  const gt = pkg.grid.geotransform as Geotransform;
+  const { cols, rows } = pkg.grid;
+
+  it('package targets the active image, is valid and accepted', () => {
+    expect(validTerrainManifest(pkg)).toBe(true);
+    expect(pkg.imageRef).toBe(manifestJson.imageRef);
+    expect(pkg.admission.status).toBe('accepted');
+  });
+
+  it('image corners derived by hand from the evidence', () => {
+    const [xmin, ymin, xmax, ymax] = active.boundsProjectedMeters;
+    const s = active.pixelSizeMeters[0];
+    expect(xmin + 2048 * s).toBeCloseTo(xmax, 6);
+    expect(ymin + 2048 * s).toBeCloseTo(ymax, 6);
+    expect(imageToProjected({ x: 0, y: 0 }, g)).toEqual({ e: xmin, n: ymin });
+  });
+
+  it('grid covers the whole image and every image corner and edge lands on a valid cell', () => {
+    expect(coverageLabel(imageCoverage(g, gt, cols, rows))).toBe('full');
+    const grid = new Float32Array(new Uint8Array(readFileSync(dir + 'grid.f32')).buffer);
+    const mask = new Uint8Array(readFileSync(dir + 'mask.u8'));
+    expect(checkGridMask(grid, mask)).toBe(cols * rows);
+    for (const p of [
+      { x: 0, y: 0 },
+      { x: 2048, y: 0 },
+      { x: 0, y: 2048 },
+      { x: 2048, y: 2048 },
+      { x: 1024, y: 1024 },
+    ]) {
+      const c = containingCell(p, g, gt, cols, rows)!;
+      expect(c).not.toBeNull();
+      expect(mask[c.row * cols + c.col]).toBe(1);
+    }
+  });
+
+  it('grid spacing is about 4 image pixels and the grid extends at most 1 cell plus margin past the image', () => {
+    expect(gt[1] / g.pixelSizeMeters).toBeCloseTo(4, 6);
+    const extraWest = g.xminMeters - gt[0];
+    expect(extraWest).toBeGreaterThanOrEqual(0);
+    expect(extraWest).toBeLessThan(10); // 8 m extraction margin + < 1 cell
+  });
+
+  it('R1 (from REGISTRATION.md): ortho check within the draft tolerance', () => {
+    const r = JSON.parse(
+      readFileSync('docs/data/terrain-v2/evidence/ORTHO_PAIR_REGISTRATION.json', 'utf8'),
+    );
+    expect(r.orthoCheck.tileRMS_m).toBeLessThanOrEqual(gt[1]);
+    expect(r.orthoCheck.tileMax_m).toBeLessThanOrEqual(2 * gt[1]);
   });
 });

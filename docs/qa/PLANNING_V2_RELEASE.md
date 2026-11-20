@@ -2,6 +2,10 @@
 
 Branch `feature/royce-planning-v2-acceptance`. Prepared by the coordinator's coding agent for **Royce's "Do now" item; Royce owns the report, device runs and all later scenarios.** This records the save → close → reopen → export baseline **before** any terrain feature lands.
 
+## Update — re-run on the switched image (20 Nov 2026, evening)
+
+Re-run on `claude/magical-volta-1c76ak` after the switch to `hirise-psp001752-red-ortho-2048-0253m-v3` with the accepted DTM package. Offline pack `16c6b0d7998edac5127ebdd4f5618efe6405673d310d0addcf77f57b92b1c2ad`, 31 files, 10,497,180 bytes (now includes the terrain package and the routing worker). `npm run test:e2e`: **S1–S5 pass**. The terrain flow (preview → accept → save → offline restart → offline preview) is covered by `tests/planning-v2/terrain-preview.e2e.cjs`; see [TERRAIN_PREVIEW_INTEGRATION.md](TERRAIN_PREVIEW_INTEGRATION.md). The table below is the earlier baseline run.
+
 ## Candidate tested
 
 | Item | Value |
@@ -41,8 +45,9 @@ Run twice in a row: 3/3 pass both times, about 5 s each.
 | Scenario | Why pending | Owner |
 |---|---|---|
 | Denied/full storage (quota, storage blocked) | Needs a reliable way to simulate quota in Chromium; agree the approach with Patrick | Royce + Patrick |
-| Suggest / reject / cancel / stale leave the mission unchanged | No preview UI integrated yet | Royce, after integration |
-| Compact terrain package offline: prepare, verify hashes, restart offline, routing only when complete; missing/corrupt grid, wrong hash, interrupted preparation, offline first visit, stale cache | No accepted package; Patrick supplies package failure scenarios | Royce + Patrick |
+| Suggest / reject / cancel / stale leave the mission unchanged | Covered by unit tests (`terrain-preview.service.spec.ts`, planner spec 9) and the terrain browser run; a manual cancel/stale pass on a device is still Royce's | Royce |
+| Compact terrain package offline: prepare, verify hashes, restart offline, routing only when complete | **Pass** (terrain browser run) | — |
+| Missing/corrupt grid, wrong hash, interrupted preparation, offline first visit, stale cache | Unit level covered (`terrain.service.spec.ts`, `terrain-pack.test.mjs`); browser-level failure injection still to do | Royce |
 | Installed PWA on a physical Android device | Needs hardware. Headless browser and emulation aren't device certification | Royce, with Willy 2 |
 | iOS | Hardware unavailable; stays pending | — |
 
