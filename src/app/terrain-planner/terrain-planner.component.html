@@ -19,13 +19,22 @@
   <article class="tp-card" aria-label="Route endpoints status">
     <div class="tp-title-row">
       <h3>Endpoints</h3>
-      <span class="tp-badge" [class.tp-tone-accepted]="ep.ready" [class.tp-tone-caution]="!ep.ready">{{
-        ep.statusLabel
-      }}</span>
+      <span
+        class="tp-badge"
+        [class.tp-tone-accepted]="ep.ready"
+        [class.tp-tone-caution]="!ep.ready"
+        >{{ ep.statusLabel }}</span
+      >
     </div>
     <dl class="tp-dl">
-      <div class="tp-row"><dt>Start</dt><dd class="tp-mono">{{ ep.startLabel }}</dd></div>
-      <div class="tp-row"><dt>Destination</dt><dd class="tp-mono">{{ ep.destinationLabel }}</dd></div>
+      <div class="tp-row">
+        <dt>Start</dt>
+        <dd class="tp-mono">{{ ep.startLabel }}</dd>
+      </div>
+      <div class="tp-row">
+        <dt>Destination</dt>
+        <dd class="tp-mono">{{ ep.destinationLabel }}</dd>
+      </div>
     </dl>
     @if (ep.error; as epError) {
       <p class="tp-muted" role="status">{{ epError }}</p>
@@ -37,7 +46,9 @@
       <label class="tp-label" for="tp-grade-input"
         >Experimental maximum segment grade ({{ unitLabel() }}, {{ unitSym() }})</label
       >
-      <button type="button" class="tp-btn tp-btn-ghost" (click)="resetConstraint()">Reset default</button>
+      <button type="button" class="tp-btn tp-btn-ghost" (click)="resetConstraint()">
+        Reset default
+      </button>
     </div>
     <input
       id="tp-grade-input"
@@ -53,8 +64,8 @@
       (input)="onGradeInput($event)"
     />
     <p id="tp-grade-help" class="tp-muted">
-      Allowed range: {{ cfg.min }}–{{ cfg.max }}{{ unitSym() }}. Experimental grid-cell segment grade
-      cap only — not an established astronaut, suit, or rover capability.
+      Allowed range: {{ cfg.min }}–{{ cfg.max }}{{ unitSym() }}. Experimental grid-cell segment
+      grade cap only — not an established astronaut, suit, or rover capability.
     </p>
     @if (!gv.valid && gv.error) {
       <p id="tp-grade-error" class="tp-alert" role="alert">{{ gv.error }}</p>
@@ -62,7 +73,12 @@
   </div>
 
   <div class="tp-actions">
-    <button type="button" class="tp-btn tp-btn-primary" [disabled]="!canRequest()" (click)="onRequestPreview()">
+    <button
+      type="button"
+      class="tp-btn tp-btn-primary"
+      [disabled]="!canRequest()"
+      (click)="onRequestPreview()"
+    >
       Request terrain preview
     </button>
     <button type="button" class="tp-btn" [disabled]="!isRunning()" (click)="onCancelPreview()">
@@ -93,27 +109,49 @@
         <div class="tp-alert" role="alert">
           <strong>Suggestion outdated:</strong>
           <ul class="tp-list">
-            @for (reason of stale.reasons; track $index) { <li>{{ reason }}</li> }
+            @for (reason of stale.reasons; track $index) {
+              <li>{{ reason }}</li>
+            }
           </ul>
         </div>
       }
 
       <dl class="tp-dl">
-        <div class="tp-row"><dt>Objective</dt><dd>{{ pm.objectiveLabel }}</dd></div>
-        <div class="tp-row"><dt>Sampled distance</dt><dd class="tp-mono">{{ pm.sampledDistance }}</dd></div>
-        <div class="tp-row"><dt>Max sampled segment grade</dt><dd class="tp-mono">{{ pm.maxSampledGrade }}</dd></div>
-        <div class="tp-row"><dt>Terrain resolution</dt><dd class="tp-mono">{{ pm.terrainResolution }}</dd></div>
-        <div class="tp-row"><dt>Suggested waypoints</dt><dd class="tp-mono">{{ pm.waypointCount }}</dd></div>
+        <div class="tp-row">
+          <dt>Objective</dt>
+          <dd>{{ pm.objectiveLabel }}</dd>
+        </div>
+        <div class="tp-row">
+          <dt>Sampled distance</dt>
+          <dd class="tp-mono">{{ pm.sampledDistance }}</dd>
+        </div>
+        <div class="tp-row">
+          <dt>Max sampled segment grade</dt>
+          <dd class="tp-mono">{{ pm.maxSampledGrade }}</dd>
+        </div>
+        <div class="tp-row">
+          <dt>Terrain resolution</dt>
+          <dd class="tp-mono">{{ pm.terrainResolution }}</dd>
+        </div>
+        <div class="tp-row">
+          <dt>Suggested waypoints</dt>
+          <dd class="tp-mono">{{ pm.waypointCount }}</dd>
+        </div>
       </dl>
 
       <div class="tp-missing">
         <strong>Relevant missing information &amp; limits:</strong>
         @if (pm.missingInformation.length > 0) {
           <ul class="tp-list">
-            @for (item of pm.missingInformation; track $index) { <li>{{ item }}</li> }
+            @for (item of pm.missingInformation; track $index) {
+              <li>{{ item }}</li>
+            }
           </ul>
         } @else {
-          <p class="tp-muted">No extra engine omission list supplied; terrain resolution and local hazard limits still apply.</p>
+          <p class="tp-muted">
+            No extra engine omission list supplied; terrain resolution and local hazard limits still
+            apply.
+          </p>
         }
         @if (pm.caveatNote; as note) {
           <p class="tp-muted">{{ note }}</p>
@@ -121,13 +159,19 @@
       </div>
 
       <div class="tp-actions">
-        <button type="button" class="tp-btn tp-btn-primary" [disabled]="!canAccept()" (click)="onAcceptPreview()">
+        <button
+          type="button"
+          class="tp-btn tp-btn-primary"
+          [disabled]="!canAccept()"
+          (click)="onAcceptPreview()"
+        >
           Accept preview route
         </button>
         <button type="button" class="tp-btn" (click)="onRejectPreview()">Reject preview</button>
       </div>
       <p class="tp-muted">
-        Accepting delegates route replacement to Patrick’s coordinator adapter without saving automatically.
+        Accepting delegates route replacement to Patrick’s coordinator adapter without saving
+        automatically.
       </p>
     </article>
   }

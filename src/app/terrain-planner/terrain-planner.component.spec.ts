@@ -31,9 +31,7 @@ function makeAcceptedTerrain(
   };
 }
 
-function makeReadyEndpoints(
-  overrides: Partial<TerrainEndpointsInput> = {},
-): TerrainEndpointsInput {
+function makeReadyEndpoints(overrides: Partial<TerrainEndpointsInput> = {}): TerrainEndpointsInput {
   return {
     start: START_PT,
     destination: DEST_PT,
@@ -43,9 +41,7 @@ function makeReadyEndpoints(
   };
 }
 
-function makePreviewReady(
-  overrides: Partial<TerrainPreviewState> = {},
-): TerrainPreviewState {
+function makePreviewReady(overrides: Partial<TerrainPreviewState> = {}): TerrainPreviewState {
   return {
     status: 'preview-ready',
     requestId: 'tp-req-1',
@@ -76,6 +72,11 @@ describe('TerrainPlannerComponent', () => {
   let component: TerrainPlannerComponent;
 
   beforeEach(async () => {
+    // Deterministic ids for assertions; production uses crypto.randomUUID() (contract §6).
+    let seq = 0;
+    vi.spyOn(crypto, 'randomUUID').mockImplementation(
+      () => `tp-req-${++seq}` as ReturnType<typeof crypto.randomUUID>,
+    );
     await TestBed.configureTestingModule({
       imports: [TerrainPlannerComponent],
     }).compileComponents();
@@ -83,6 +84,7 @@ describe('TerrainPlannerComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+  afterEach(() => vi.restoreAllMocks());
 
   function text(): string {
     return (fixture.nativeElement as HTMLElement).textContent?.replace(/\s+/g, ' ').trim() ?? '';
@@ -98,7 +100,9 @@ describe('TerrainPlannerComponent', () => {
   }
 
   function gradeInput(): HTMLInputElement {
-    return (fixture.nativeElement as HTMLElement).querySelector('#tp-grade-input') as HTMLInputElement;
+    return (fixture.nativeElement as HTMLElement).querySelector(
+      '#tp-grade-input',
+    ) as HTMLInputElement;
   }
 
   it('1. blocks requests on none, proposed, pending-review, rejected, image mismatch, and incomplete offline pack', () => {
@@ -129,7 +133,10 @@ describe('TerrainPlannerComponent', () => {
   it('2. validates missing or identical endpoints and disables Request until two distinct endpoints exist', () => {
     fixture.componentRef.setInput('terrain', makeAcceptedTerrain());
 
-    fixture.componentRef.setInput('endpoints', makeReadyEndpoints({ start: null, destination: null }));
+    fixture.componentRef.setInput(
+      'endpoints',
+      makeReadyEndpoints({ start: null, destination: null }),
+    );
     fixture.detectChanges();
     expect(text()).toContain('Endpoints incomplete');
     expect(button('Request terrain preview').disabled).toBe(true);
@@ -171,7 +178,7 @@ describe('TerrainPlannerComponent', () => {
     fixture.componentRef.setInput('gradeUnit', 'percent');
     fixture.detectChanges();
     expect(text()).toContain('percent grade, %');
-    expect(gradeInput().value).toBe('25');
+    expect(gradeInput().value).toBe('26.8'); // same 15° limit shown in percent (review E1-4)
     expect(button('Request terrain preview').disabled).toBe(false);
   });
 
@@ -198,6 +205,7 @@ describe('TerrainPlannerComponent', () => {
       destination: DEST_PT,
       maxSegmentGrade: 15,
       gradeUnit: 'deg',
+      maxSegmentGradeDeg: 15,
     });
 
     fixture.componentRef.setInput('preview', { status: 'running', requestId: 'tp-req-1' });
@@ -239,7 +247,10 @@ describe('TerrainPlannerComponent', () => {
         },
       }),
     );
-    fixture.componentRef.setInput('terrain', makeAcceptedTerrain({ terrainResolutionMeters: null }));
+    fixture.componentRef.setInput(
+      'terrain',
+      makeAcceptedTerrain({ terrainResolutionMeters: null }),
+    );
     fixture.detectChanges();
     expect(text()).toContain(ENGINE_UNAVAILABLE_TEXT);
     expect(text()).not.toContain('NaN');
@@ -276,7 +287,10 @@ describe('TerrainPlannerComponent', () => {
     expect(button('Accept preview route').disabled).toBe(false);
 
     // Move destination endpoint
-    fixture.componentRef.setInput('endpoints', makeReadyEndpoints({ destination: { x: 1500, y: 1600 } }));
+    fixture.componentRef.setInput(
+      'endpoints',
+      makeReadyEndpoints({ destination: { x: 1500, y: 1600 } }),
+    );
     fixture.detectChanges();
     expect(text()).toContain('Stale preview — re-run required');
     expect(button('Accept preview route').disabled).toBe(true);
@@ -383,5 +397,46 @@ describe('TerrainPlannerComponent', () => {
     expect(getSpy).not.toHaveBeenCalled();
     setSpy.mockRestore();
     getSpy.mockRestore();
+  });
+});
+
+describe('coordinator review fixes (E1-1, E1-3, E1-4)', () => {
+  afterEach(() => vi.restoreAllMocks());
+  const accepted = {
+    status: 'accepted' as const,
+    packageId: 'pkg',
+    imageRef: 'img',
+    terrainResolutionMeters: 1,
+  };
+  it('E1-1: a missing offlineReady flag is not ready', async () => {
+    const { evaluateTerrainGate } = await import('./terrain-planner.helpers');
+    expect(evaluateTerrainGate(accepted, 'img').canRequest).toBe(false);
+    expect(evaluateTerrainGate({ ...accepted, offlineReady: true }, 'img').canRequest).toBe(true);
+  });
+  it('E1-3: no active image blocks requests', async () => {
+    const { evaluateTerrainGate } = await import('./terrain-planner.helpers');
+    const v = evaluateTerrainGate({ ...accepted, offlineReady: true }, null);
+    expect(v.canRequest).toBe(false);
+    expect(v.badgeLabel).toBe('No active image');
+  });
+  it('E1-4: a percent limit is sent to the engine in degrees', async () => {
+    await TestBed.configureTestingModule({
+      imports: [TerrainPlannerComponent],
+    }).compileComponents();
+    const f = TestBed.createComponent(TerrainPlannerComponent);
+    f.componentRef.setInput('terrain', { ...accepted, offlineReady: true });
+    f.componentRef.setInput('endpoints', {
+      start: { x: 1, y: 1 },
+      destination: { x: 5, y: 5 },
+      activeImageRef: 'img',
+    });
+    f.componentRef.setInput('gradeUnit', 'percent');
+    f.detectChanges();
+    const sent: { maxSegmentGrade: number; maxSegmentGradeDeg: number; requestId: string }[] = [];
+    f.componentInstance.requestPreview.subscribe((v) => sent.push(v));
+    f.componentInstance.onRequestPreview();
+    expect(sent[0].maxSegmentGrade).toBeCloseTo(26.8, 6);
+    expect(sent[0].maxSegmentGradeDeg).toBeCloseTo(15, 1);
+    expect(sent[0].requestId).toMatch(/^[0-9a-f-]{36}$/);
   });
 });

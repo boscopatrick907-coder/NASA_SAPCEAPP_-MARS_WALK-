@@ -5,14 +5,11 @@
  * (`docs/planning/TERRAIN_CONTRACT_V1.md`). Final runtime wiring must consume
  * coordinator-approved admission decisions and Enzo 2's agreed failure codes.
  */
-export const TERRAIN_EVIDENCE_CONTRACT_VERSION = 'v1-proposal' as const;
+import type { TerrainAdmissionStatus as CoreAdmission, TerrainFailureCode } from '../core/terrain';
 
-export type TerrainAdmissionStatus =
-  | 'none'
-  | 'proposed'
-  | 'pending-review'
-  | 'rejected'
-  | 'accepted';
+export const TERRAIN_EVIDENCE_CONTRACT_VERSION = 'terrain-v1' as const;
+
+export type TerrainAdmissionStatus = CoreAdmission;
 
 export interface TerrainAdmissionDecision {
   readonly status: TerrainAdmissionStatus;
@@ -83,12 +80,7 @@ export interface TerrainIntegrityMetadata {
   readonly preparedSha256?: string | null;
   readonly byteLength?: number | null;
   readonly offlinePackStatus?:
-    | 'not-cached'
-    | 'partial'
-    | 'verified'
-    | 'corrupt'
-    | 'unavailable'
-    | null;
+    'not-cached' | 'partial' | 'verified' | 'corrupt' | 'unavailable' | null;
   readonly claimedVerified?: boolean;
 }
 
@@ -115,20 +107,7 @@ export interface TerrainEvidenceState {
 }
 
 /** Provisional failure codes pending Enzo 2's terrain-routing worker contract. */
-export type TerrainRoutingFailureCode =
-  | 'no-terrain-package'
-  | 'terrain-not-accepted'
-  | 'image-ref-mismatch'
-  | 'offline-pack-incomplete'
-  | 'invalid-endpoints'
-  | 'endpoint-outside-coverage'
-  | 'endpoint-on-nodata'
-  | 'grade-limit-exceeded'
-  | 'no-path-within-constraints'
-  | 'cancelled'
-  | 'stale-response'
-  | 'worker-error'
-  | 'unknown';
+export type TerrainRoutingFailureCode = TerrainFailureCode;
 
 export interface TerrainRoutingOutcome {
   readonly status: 'idle' | 'available' | 'unavailable';
@@ -138,11 +117,7 @@ export interface TerrainRoutingOutcome {
 }
 
 export type TerrainContextKind =
-  | 'orbital-imagery'
-  | 'rover-science'
-  | 'regional-geology'
-  | 'historical-rems'
-  | 'illustrative-3d';
+  'orbital-imagery' | 'rover-science' | 'regional-geology' | 'historical-rems' | 'illustrative-3d';
 
 export interface TerrainContextSource {
   readonly kind: TerrainContextKind;

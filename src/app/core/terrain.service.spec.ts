@@ -43,10 +43,18 @@ async function manifest(over: Record<string, unknown> = {}) {
 describe('TerrainService', () => {
   let service: TerrainService;
   let http: HttpTestingController;
-  const flush = (suffix: string, body: unknown, status = 200) =>
-    http
-      .expectOne((r) => r.url.endsWith(suffix))
-      .flush(body as never, status === 200 ? {} : { status, statusText: 'x' });
+  /** Waits (bounded) until the request is issued, then answers it. Async hashing makes timing vary. */
+  const flush = async (suffix: string, body: unknown, status = 200) => {
+    for (let i = 0; i < 200; i++) {
+      const found = http.match((r) => r.url.endsWith(suffix)); // match() also removes the request
+      if (found.length) {
+        expect(found.length).toBe(1);
+        return found[0].flush(body as never, status === 200 ? {} : { status, statusText: 'x' });
+      }
+      await tick();
+    }
+    throw new Error(`request not issued: ${suffix}`);
+  };
   const tick = () => new Promise((r) => setTimeout(r, 0));
 
   beforeEach(async () => {
@@ -58,9 +66,9 @@ describe('TerrainService', () => {
     localStorage.clear();
     const mission = TestBed.inject(MissionService);
     const p = mission.initialize();
-    flush('/data/manifest.json', testImage());
+    await flush('/data/manifest.json', testImage());
     await Promise.resolve();
-    flush('/data/markers.json', []);
+    await flush('/data/markers.json', []);
     await p;
   });
   afterEach(() => http.verify());
@@ -74,7 +82,7 @@ describe('TerrainService', () => {
 
   it('missing index or null pointer: no package, nothing else fetched', async () => {
     const { done: p } = await start();
-    flush('/data/terrain/index.json', '', 404);
+    await flush('/data/terrain/index.json', '', 404);
     await p;
     expect(service.gate()).toBe('no-terrain-package');
     expect(service.packageBuffers()).toBeNull();
@@ -82,7 +90,7 @@ describe('TerrainService', () => {
 
   it('null activePackageId is the shipped default', async () => {
     const { done: p } = await start();
-    flush('/data/terrain/index.json', { schemaVersion: 1, activePackageId: null });
+    await flush('/data/terrain/index.json', { schemaVersion: 1, activePackageId: null });
     await p;
     expect(service.status()).toBe('ready');
     expect(service.gate()).toBe('no-terrain-package');
@@ -90,13 +98,13 @@ describe('TerrainService', () => {
 
   it('accepted, matching, hash-valid package passes the gate and hands out buffer copies', async () => {
     const { done: p } = await start();
-    flush('/data/terrain/index.json', { schemaVersion: 1, activePackageId: ID });
+    await flush('/data/terrain/index.json', { schemaVersion: 1, activePackageId: ID });
     await tick();
-    flush(`/data/terrain/${ID}/terrain-manifest.json`, await manifest());
+    await flush(`/data/terrain/${ID}/terrain-manifest.json`, await manifest());
     await tick();
-    flush(`/data/terrain/${ID}/grid.f32`, grid.slice().buffer);
+    await flush(`/data/terrain/${ID}/grid.f32`, grid.slice().buffer);
     await tick();
-    flush(`/data/terrain/${ID}/mask.u8`, mask.slice().buffer);
+    await flush(`/data/terrain/${ID}/mask.u8`, mask.slice().buffer);
     await p;
     expect(service.readiness()).toBe('verified');
     expect(service.gate()).toBeNull();
@@ -108,11 +116,11 @@ describe('TerrainService', () => {
 
   it('corrupt bytes keep terrain unavailable', async () => {
     const { done: p } = await start();
-    flush('/data/terrain/index.json', { schemaVersion: 1, activePackageId: ID });
+    await flush('/data/terrain/index.json', { schemaVersion: 1, activePackageId: ID });
     await tick();
-    flush(`/data/terrain/${ID}/terrain-manifest.json`, await manifest());
+    await flush(`/data/terrain/${ID}/terrain-manifest.json`, await manifest());
     await tick();
-    flush(`/data/terrain/${ID}/grid.f32`, new Uint8Array(16).buffer);
+    await flush(`/data/terrain/${ID}/grid.f32`, new Uint8Array(16).buffer);
     await p;
     expect(service.readiness()).toBe('corrupt');
     expect(service.gate()).toBe('offline-pack-incomplete');
@@ -121,9 +129,9 @@ describe('TerrainService', () => {
 
   it('pending admission or another image: no bytes fetched, gate explains why', async () => {
     const { done: p } = await start();
-    flush('/data/terrain/index.json', { schemaVersion: 1, activePackageId: ID });
+    await flush('/data/terrain/index.json', { schemaVersion: 1, activePackageId: ID });
     await tick();
-    flush(
+    await flush(
       `/data/terrain/${ID}/terrain-manifest.json`,
       await manifest({
         admission: {
@@ -140,9 +148,9 @@ describe('TerrainService', () => {
 
   it('invalid index or a manifest for another package is an error, not a guess', async () => {
     const { done: p } = await start();
-    flush('/data/terrain/index.json', { schemaVersion: 1, activePackageId: ID });
+    await flush('/data/terrain/index.json', { schemaVersion: 1, activePackageId: ID });
     await tick();
-    flush(
+    await flush(
       `/data/terrain/${ID}/terrain-manifest.json`,
       await manifest({ packageId: 'terrain-other-v1' }),
     );

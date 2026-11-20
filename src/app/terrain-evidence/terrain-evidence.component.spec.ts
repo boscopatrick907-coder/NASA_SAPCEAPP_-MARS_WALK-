@@ -166,7 +166,9 @@ describe('TerrainEvidenceComponent', () => {
     fixture.detectChanges();
     expect(text()).toContain('Accepted terrain package');
     expect(text()).toContain('Patrick (Coordinator)');
-    expect(text()).toContain('not a route safety, obstacle-clearance, or EVA trafficability certification');
+    expect(text()).toContain(
+      'not a route safety, obstacle-clearance, or EVA trafficability certification',
+    );
   });
 
   it('3a. anti-spoofing: hash, populated metadata, and claimedVerified never promote unreviewed state', () => {
@@ -186,7 +188,9 @@ describe('TerrainEvidenceComponent', () => {
 
     expect(text()).toContain('No terrain package');
     expect(text()).not.toContain('Accepted terrain package');
-    expect(text()).toContain('Supplied hashes, pack fields, or client-verified flags do not grant scientific acceptance');
+    expect(text()).toContain(
+      'Supplied hashes, pack fields, or client-verified flags do not grant scientific acceptance',
+    );
   });
 
   it('3b. anti-spoofing: downgrades accepted record missing coordinator reviewer, UTC timestamp, or evidenceRef', () => {
@@ -308,7 +312,9 @@ describe('TerrainEvidenceComponent', () => {
     const content = text();
     expect(content).toContain(code);
     expect(content).toContain('Diagnostic detail from worker');
-    expect(content).toMatch(/not\b.*\bimpassable|passability|never indicates impassable|nothing about terrain traversability/i);
+    expect(content).toMatch(
+      /not\b.*\bimpassable|passability|never indicates impassable|nothing about terrain traversability/i,
+    );
   });
 
   it('8. preserves non-terrain context sources and keeps geology, historical REMS, and Pixal3D separated', () => {
@@ -383,5 +389,20 @@ describe('TerrainEvidenceComponent', () => {
     expect(getItemSpy).not.toHaveBeenCalled();
     setItemSpy.mockRestore();
     getItemSpy.mockRestore();
+  });
+});
+
+describe('coordinator review fix E2-1', () => {
+  it('an accepted package with no active image is not shown as aligned', async () => {
+    const { resolveEffectiveAdmission } = await import('./terrain-evidence.presenters');
+    const view = resolveEffectiveAdmission(
+      {
+        admission: { status: 'accepted', reviewer: 'P', decidedAtUtc: '2026-11-20T00:00:00Z', evidenceRef: 'x' },
+        metadata: { packageId: 'p', productId: 'd', imageRef: 'img', source: null },
+      },
+      null,
+    );
+    expect(view.badgeLabel).toBe('No active image');
+    expect(view.isAlignedToActiveImage).toBe(false);
   });
 });

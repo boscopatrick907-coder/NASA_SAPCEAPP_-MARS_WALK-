@@ -136,7 +136,9 @@ export function validateGradeConstraint(
   return { valid: true, value: num, error: null };
 }
 
-export function evaluateEndpoints(endpoints: TerrainEndpointsInput | null | undefined): EndpointStatusView {
+export function evaluateEndpoints(
+  endpoints: TerrainEndpointsInput | null | undefined,
+): EndpointStatusView {
   const start = endpoints?.start ?? null;
   const dest = endpoints?.destination ?? null;
   const hasStart = isFinitePoint(start);
@@ -231,10 +233,19 @@ export function evaluateTerrainGate(
       canRequest: false,
       badgeLabel: 'Incomplete terrain contract',
       tone: 'caution',
-      message: 'Accepted status requires valid packageId and imageRef metadata from Patrick’s adapter.',
+      message:
+        'Accepted status requires valid packageId and imageRef metadata from Patrick’s adapter.',
     };
   }
-  if (activeRef && pkgRef !== activeRef) {
+  if (!activeRef) {
+    return {
+      canRequest: false,
+      badgeLabel: 'No active image',
+      tone: 'caution',
+      message: 'Load the active orbital image before requesting a terrain preview.',
+    };
+  }
+  if (pkgRef !== activeRef) {
     return {
       canRequest: false,
       badgeLabel: 'Image mismatch',
@@ -242,7 +253,8 @@ export function evaluateTerrainGate(
       message: `Terrain package targets "${pkgRef}", not active image "${activeRef}". Requests are disabled.`,
     };
   }
-  if (terrain.offlineReady === false) {
+  // Readiness must be proven (contract §7): a missing flag is not "ready" (review E1-1).
+  if (terrain.offlineReady !== true) {
     return {
       canRequest: false,
       badgeLabel: 'Offline pack incomplete',
@@ -345,17 +357,19 @@ const OUTCOME_COPY: Record<
   'endpoint-outside-coverage': {
     headline: 'Endpoint outside DEM coverage',
     explanation: 'At least one chosen point lies outside the prepared elevation grid footprint.',
-    nonImpassableNote: 'Missing elevation coverage at an endpoint does not mean terrain is impassable.',
+    nonImpassableNote:
+      'Missing elevation coverage at an endpoint does not mean terrain is impassable.',
   },
   'endpoint-on-nodata': {
     headline: 'Endpoint lands on nodata cell',
     explanation: 'The elevation raster has missing data (nodata) at one of the chosen endpoints.',
-    nonImpassableNote: 'A nodata pixel reflects missing stereo DEM measurements, not impassable terrain.',
+    nonImpassableNote:
+      'A nodata pixel reflects missing stereo DEM measurements, not impassable terrain.',
   },
   'grade-limit-exceeded': {
-    headline: 'No path within experimental grade threshold',
+    headline: 'Endpoint isolated at this grade limit',
     explanation:
-      'Every candidate grid path exceeded the selected experimental maximum segment grade constraint.',
+      'The Start or Destination cell has no neighbouring cell within the selected experimental maximum segment grade.',
     nonImpassableNote:
       'No route under this experimental threshold depends on grid spacing and chosen settings; it does not prove actual Martian terrain is impassable.',
   },
@@ -374,12 +388,14 @@ const OUTCOME_COPY: Record<
   'stale-response': {
     headline: 'Superseded preview discarded',
     explanation: 'An older worker response no longer matched current endpoints or constraints.',
-    nonImpassableNote: 'Discarding a stale result protects consistency and does not mean terrain is impassable.',
+    nonImpassableNote:
+      'Discarding a stale result protects consistency and does not mean terrain is impassable.',
   },
   'worker-error': {
     headline: 'Terrain worker error',
     explanation: 'The experimental routing worker stopped with an unexpected runtime error.',
-    nonImpassableNote: 'A worker failure indicates a software fault, not impassable Martian terrain.',
+    nonImpassableNote:
+      'A worker failure indicates a software fault, not impassable Martian terrain.',
   },
   unknown: {
     headline: 'Terrain preview unavailable',
@@ -391,7 +407,10 @@ const OUTCOME_COPY: Record<
 export function explainPreviewOutcome(
   preview: TerrainPreviewState | null | undefined,
 ): OutcomeExplanationView | null {
-  if (!preview || (preview.status !== 'no-route' && preview.status !== 'cancelled' && preview.status !== 'error')) {
+  if (
+    !preview ||
+    (preview.status !== 'no-route' && preview.status !== 'cancelled' && preview.status !== 'error')
+  ) {
     return null;
   }
   const fallbackCode: TerrainPlannerFailureCode =
@@ -401,7 +420,10 @@ export function explainPreviewOutcome(
         ? 'no-path-within-constraints'
         : 'worker-error';
   const rawCode = preview.reasonCode ?? fallbackCode;
-  const code: TerrainPlannerFailureCode = Object.prototype.hasOwnProperty.call(OUTCOME_COPY, rawCode)
+  const code: TerrainPlannerFailureCode = Object.prototype.hasOwnProperty.call(
+    OUTCOME_COPY,
+    rawCode,
+  )
     ? rawCode
     : fallbackCode;
   const entry = OUTCOME_COPY[code];

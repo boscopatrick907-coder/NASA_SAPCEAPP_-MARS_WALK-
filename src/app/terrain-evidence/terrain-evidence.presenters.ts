@@ -217,6 +217,21 @@ export function resolveEffectiveAdmission(
     };
   }
 
+  if (!activeRef) {
+    // Review E2-1: without an active image, alignment can't be confirmed.
+    return {
+      effectiveStatus: 'accepted',
+      badgeLabel: 'No active image',
+      tone: 'caution',
+      summaryText:
+        'Accepted DEM package is loaded, but no active orbital image is available to align it with.',
+      boundaryNote: baseBoundaryNote,
+      detailNotice: null,
+      isAlignedToActiveImage: false,
+      hasUnverifiedClientClaim: false,
+      isAlert: true,
+    };
+  }
   if (isMismatch) {
     return {
       effectiveStatus: 'accepted',

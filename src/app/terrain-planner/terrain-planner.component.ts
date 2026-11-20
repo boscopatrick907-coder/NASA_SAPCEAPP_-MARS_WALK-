@@ -25,6 +25,7 @@ import {
   unitSymbol,
   validateGradeConstraint,
 } from './terrain-planner.helpers';
+import { percentToDegrees } from '../core/terrain';
 
 /**
  * Standalone experimental terrain path planner controls (Emma Agent 1).
@@ -51,7 +52,6 @@ export class TerrainPlannerComponent {
   readonly acceptPreview = output<TerrainPreviewAcceptPayload>();
   readonly rejectPreview = output<TerrainPreviewActionPayload>();
 
-  private requestSeq = 0;
   private readonly gradeDraft = signal<{ unit: TerrainGradeUnit; raw: string } | null>(null);
   readonly lastRequestId = signal<string | null>(null);
   readonly actionFeedback = signal<string | null>(null);
@@ -151,7 +151,8 @@ export class TerrainPlannerComponent {
     const grade = this.gradeValidation().value;
     if (!t?.packageId || !t.imageRef || !ep?.start || !ep.destination || grade === null) return;
 
-    const requestId = `tp-req-${++this.requestSeq}`;
+    // UUID per contract §6; the coordinator passes this same id to the worker (review E1-2).
+    const requestId = crypto.randomUUID();
     this.lastRequestId.set(requestId);
     this.requestPreview.emit({
       requestId,
@@ -161,6 +162,7 @@ export class TerrainPlannerComponent {
       destination: ep.destination,
       maxSegmentGrade: grade,
       gradeUnit: this.gradeUnit(),
+      maxSegmentGradeDeg: this.gradeUnit() === 'percent' ? percentToDegrees(grade) : grade,
     });
     this.actionFeedback.set(
       `Requested preview (${requestId}). Existing manual routes and Notebook drafts stay untouched.`,
@@ -171,7 +173,9 @@ export class TerrainPlannerComponent {
     if (!this.isRunning()) return;
     const reqId = this.preview()?.requestId ?? this.lastRequestId();
     this.cancelPreview.emit({ requestId: reqId });
-    this.actionFeedback.set('Cancellation requested. Manual routes and Notebook drafts are preserved.');
+    this.actionFeedback.set(
+      'Cancellation requested. Manual routes and Notebook drafts are preserved.',
+    );
   }
 
   onAcceptPreview(): void {

@@ -1,4 +1,6 @@
 import type { Point } from '../core/models';
+import type { TerrainAdmissionStatus, TerrainFailureCode } from '../core/terrain';
+import { degreesToPercent } from '../core/terrain';
 
 /**
  * Proposed Planning V2 Terrain Planner Control Contract (v1-proposal).
@@ -7,14 +9,9 @@ import type { Point } from '../core/models';
  * `docs/planning/TERRAIN_CONTRACT_V1.md` freeze and Enzo 2's worker failure enum.
  * Aligned in vocabulary with Agent 2's evidence view without cross-branch imports.
  */
-export const TERRAIN_PLANNER_CONTRACT_VERSION = 'v1-proposal' as const;
+export const TERRAIN_PLANNER_CONTRACT_VERSION = 'terrain-v1' as const;
 
-export type TerrainPlannerAdmissionStatus =
-  | 'none'
-  | 'proposed'
-  | 'pending-review'
-  | 'rejected'
-  | 'accepted';
+export type TerrainPlannerAdmissionStatus = TerrainAdmissionStatus;
 
 export type TerrainGradeUnit = 'deg' | 'percent';
 
@@ -28,7 +25,14 @@ export interface TerrainConstraintConfig {
 
 export const DEFAULT_GRADE_CONSTRAINTS: Record<TerrainGradeUnit, TerrainConstraintConfig> = {
   deg: { unit: 'deg', min: 1, max: 45, step: 0.5, defaultValue: 15 },
-  percent: { unit: 'percent', min: 1, max: 100, step: 1, defaultValue: 25 },
+  // One default limit (review E1-4): the percent field shows the same 15° limit (≈ 26.8 %).
+  percent: {
+    unit: 'percent',
+    min: 1,
+    max: 100,
+    step: 0.1,
+    defaultValue: Math.round(degreesToPercent(15) * 10) / 10,
+  },
 };
 
 export interface TerrainAvailabilityInput {
@@ -47,20 +51,7 @@ export interface TerrainEndpointsInput {
   readonly manualRoutePointCount?: number;
 }
 
-export type TerrainPlannerFailureCode =
-  | 'no-terrain-package'
-  | 'terrain-not-accepted'
-  | 'image-ref-mismatch'
-  | 'offline-pack-incomplete'
-  | 'invalid-endpoints'
-  | 'endpoint-outside-coverage'
-  | 'endpoint-on-nodata'
-  | 'grade-limit-exceeded'
-  | 'no-path-within-constraints'
-  | 'cancelled'
-  | 'stale-response'
-  | 'worker-error'
-  | 'unknown';
+export type TerrainPlannerFailureCode = TerrainFailureCode;
 
 export interface TerrainEnginePreviewMetrics {
   readonly objectiveLabel: string | null;
@@ -74,12 +65,7 @@ export interface TerrainEnginePreviewMetrics {
 }
 
 export type TerrainPreviewLifecycleStatus =
-  | 'idle'
-  | 'running'
-  | 'preview-ready'
-  | 'no-route'
-  | 'cancelled'
-  | 'error';
+  'idle' | 'running' | 'preview-ready' | 'no-route' | 'cancelled' | 'error';
 
 export interface TerrainPreviewState {
   readonly status: TerrainPreviewLifecycleStatus;
@@ -103,6 +89,8 @@ export interface TerrainRouteRequestPayload {
   readonly destination: Point;
   readonly maxSegmentGrade: number;
   readonly gradeUnit: TerrainGradeUnit;
+  /** Contract §5 canonical limit sent to the engine (converted from percent when needed). */
+  readonly maxSegmentGradeDeg: number;
 }
 
 export interface TerrainPreviewActionPayload {
