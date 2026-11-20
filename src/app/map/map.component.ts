@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import * as L from 'leaflet';
+import { TerrainSuggestionStore } from '../core/terrain-suggestion.store';
 import { MissionService } from '../core/mission.service';
 import { routePoints } from '../core/route';
 import type { ImageManifest, Point, ScienceMarker } from '../core/models';
@@ -79,6 +80,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private mapContainer!: ElementRef<HTMLDivElement>;
 
   readonly mission = inject(MissionService);
+  private readonly terrainSuggestion = inject(TerrainSuggestionStore);
   readonly imageDisplayState = signal<ImageDisplayState>('loading');
   readonly imageDisplayError = signal<string | null>(null);
   readonly canResetView = computed(
@@ -218,6 +220,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private routeLayer?: L.LayerGroup;
   private markerLayer?: L.LayerGroup;
   private routeLine?: L.Polyline;
+  /** Terrain suggestion (not saved), drawn under the manual route; Planning V2. */
+  private suggestionLine?: L.Polyline;
   private readonly routePoints = new Map<string, L.CircleMarker>();
   private readonly scienceMarkers = new Map<string, L.CircleMarker>();
   private resizeObserver?: ResizeObserver;
@@ -232,11 +236,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const markers = this.mission.markers();
     const layers = this.mission.layers();
     const selectedMarkerId = this.mission.selectedMarkerId();
+    const suggestion = this.terrainSuggestion.path();
 
     if (!this.viewReady) return;
     this.syncImage(status, image);
     if (!this.map || !image) return;
     this.syncRoute(route);
+    this.suggestionLine?.setLatLngs(suggestion ? suggestion.map(toLeafletPoint) : []);
     this.syncMarkers(markers, image, selectedMarkerId);
     this.syncLayerVisibility(layers);
   });
@@ -341,6 +347,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
     this.routeLayer = L.layerGroup().addTo(this.map);
     this.markerLayer = L.layerGroup().addTo(this.map);
+    // Added before the manual route so it renders underneath; dashed = not saved.
+    this.suggestionLine = L.polyline([], {
+      className: 'mw-suggested-route',
+      color: '#38bdf8',
+      weight: 3,
+      opacity: 0.95,
+      dashArray: '8 6',
+      interactive: false,
+    }).addTo(this.map); // own layer, outside the manual route group
     this.routeLine = L.polyline([], {
       className: 'mw-route-line',
       color: '#ff8a4c',
@@ -592,6 +607,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   private clearRoutePointLayers(): void {
     this.routeLine?.setLatLngs([]);
+    this.suggestionLine?.setLatLngs([]); // never keep a suggestion across an image change
     for (const layer of this.routePoints.values()) this.routeLayer?.removeLayer(layer);
     this.routePoints.clear();
   }

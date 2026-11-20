@@ -81,8 +81,8 @@ export class TerrainRoutingClient {
     );
   }
 
-  request(input: RouteRequestInput): string {
-    const requestId = this.newId();
+  /** `requestId` lets the planner and worker share one id (review E1-2); generated if omitted. */
+  request(input: RouteRequestInput, requestId: string = this.newId()): string {
     this.pending = {
       ...input,
       start: { ...input.start },

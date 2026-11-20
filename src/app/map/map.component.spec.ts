@@ -98,9 +98,10 @@ const leaflet = vi.hoisted(() => {
       groups.push(group);
       return group;
     }),
-    polyline: vi.fn(() => {
+    polyline: vi.fn((_points: unknown, options?: { className?: string }) => {
       const layer = makeLayer();
-      polylines.push(layer);
+      // Only the manual route line is tracked here; the terrain suggestion line is separate.
+      if (options?.className !== 'mw-suggested-route') polylines.push(layer);
       return layer;
     }),
     circleMarker: vi.fn((point: unknown, options: unknown) => {

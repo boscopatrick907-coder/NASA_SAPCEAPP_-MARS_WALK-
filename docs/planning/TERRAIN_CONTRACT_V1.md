@@ -219,5 +219,5 @@ Reply using the runbook §9 handoff format. After all six are answered, Patrick 
 | §8 acceptance adapter and `terrainSuggestion` provenance | `MissionService.replaceRouteFromSuggestion` | `mission.service.spec.ts` (5) |
 | §5/§6 engine and worker | `feature/enzo-routing-worker-v2` (awaiting Enzo 2's review) | on that branch |
 
-Not yet wired: no UI calls `TerrainService` or the adapter. With `activePackageId: null` the runtime is unchanged apart from one extra 50-byte packed file.
+**Update (later on 20 Nov):** wired end to end and live with the accepted package. See [TERRAIN_PREVIEW_INTEGRATION.md](../qa/TERRAIN_PREVIEW_INTEGRATION.md). §6 now includes `image` on `load`, and requests reuse the planner's UUID.
 
