@@ -6,6 +6,8 @@ Sections marked **[source-dependent]** cannot be finalised until the [source gat
 
 Contract identifier in code: `TERRAIN_CONTRACT_VERSION = 'terrain-v1'`. Emma's `'v1-proposal'` constants are renamed to this on integration.
 
+**Reference module:** [`src/app/core/terrain.ts`](../../src/app/core/terrain.ts) implements the shared types, §1 transforms, grade conversion, §3 manifest validation, §2 grid/mask check, coverage, the §4 gate and §7 readiness, with synthetic-only tests in `terrain.spec.ts`. Import types from there instead of copying them. It is not imported by any UI and enables nothing.
+
 ---
 
 ## 1. Coordinate systems and transforms

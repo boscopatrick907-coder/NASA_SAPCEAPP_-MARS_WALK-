@@ -16,3 +16,5 @@ Open your file below and follow **START HERE**. The current assignments are publ
 | Patrick / coordinator | [YOU.md](YOU.md) |
 
 Read the [shared ownership plan](../planning/TEAM_PLANNING_V2.md) and [step-by-step delivery runbook](../planning/TERRAIN_DELIVERY_RUNBOOK.md) for dependencies, local-download fallback, compact offline package and acceptance gates. Assignment does not mean work is complete or deployed.
+
+**Terrain contract v1 (draft, 20 Nov):** [TERRAIN_CONTRACT_V1.md](../planning/TERRAIN_CONTRACT_V1.md), shared code in `src/app/core/terrain.ts`. Answer your question in its §10 using the runbook handoff format. Source decision status: [ACCEPTANCE.md](../data/terrain-v2/ACCEPTANCE.md) (pending).
