@@ -78,7 +78,10 @@ describe('terrain contract v1 transforms', () => {
   it('finds the containing cell: image top-left is row 0, bottom-left is the last row', () => {
     expect(containingCell({ x: 0.1, y: 2047.9 }, crop, gt, 512, 512)).toEqual({ col: 0, row: 0 });
     expect(containingCell({ x: 0.1, y: 0.1 }, crop, gt, 512, 512)).toEqual({ col: 0, row: 511 });
-    expect(containingCell({ x: 2048, y: 1 }, crop, gt, 512, 512)).toBeNull();
+    expect(containingCell({ x: 2048, y: 1 }, crop, gt, 512, 512)).toEqual({ col: 511, row: 511 });
+    expect(containingCell({ x: 1, y: 0 }, crop, gt, 512, 512)).toEqual({ col: 0, row: 511 });
+    expect(Object.is(containingCell({ x: 0, y: 2048 }, crop, gt, 512, 512)!.row, 0)).toBe(true);
+    expect(containingCell({ x: 2048.01, y: 1 }, crop, gt, 512, 512)).toBeNull();
     expect(containingCell({ x: 1, y: 1 }, crop, gt, 100, 100)).toBeNull();
   });
 });
