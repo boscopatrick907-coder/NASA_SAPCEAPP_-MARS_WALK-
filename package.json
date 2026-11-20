@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false",
     "test:pwa": "node --test tools/pwa/worker.test.mjs tools/pwa/terrain-pack.test.mjs",
-    "test:terrain-map": "vitest run --config tests/terrain-map/vitest.config.mts"
+    "test:terrain-map": "vitest run --config tests/terrain-map/vitest.config.mts",
+    "test:e2e": "node --test tests/planning-v2/recovery.e2e.mjs"
   },
   "private": true,
   "packageManager": "npm@11.9.0",
