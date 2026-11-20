@@ -1,0 +1,13 @@
+[
+  {
+    "productId": "PSP_001752_1750_RED",
+    "role": "imagery",
+    "url": null,
+    "retrievedAtUtc": null,
+    "localPath": "data/imagery/calibrated-source/PSP_001752_1750_RED.label.txt",
+    "bytes": 7973,
+    "sha256": "8ea1701850379b0316e03070089178189eb7934cc3c32ad48ce0ab508cdd3caf",
+    "status": "inspected",
+    "notes": "Existing label of the active image (already in the repository, user-supplied with the GeoTIFF crop). Included so the terrain candidate can be compared against it. Original download URL and retrieval time were not recorded. No terrain file has been retrieved yet: the HiRISE hosts are blocked from the cloud container (see retrieval-log.md)."
+  }
+]
