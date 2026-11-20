@@ -2,14 +2,22 @@
   <app-mission-briefing />
   <app-exploration-confidence />
   <ng-content select="[environmental-context]"></ng-content>
-  <app-science-context />
+  @defer (on idle) {
+    <app-science-context />
+  } @placeholder {
+    <p class="defer-status" role="status">Loading science context…</p>
+  }
   <details class="source-library">
     <summary>Sources, data &amp; methods</summary>
     <p>
       Inspect image attribution, calibration, coverage and recorded limitations here. Science
       records and environmental readings have their own source disclosures.
     </p>
-    <app-image-passport />
+    @defer (on idle) {
+      <app-image-passport />
+    } @placeholder {
+      <p class="defer-status" role="status">Loading image details…</p>
+    }
     <section aria-label="Science source index">
       <h3>Science records</h3>
       <p>Regional context is not a confirmed location on the active image.</p>

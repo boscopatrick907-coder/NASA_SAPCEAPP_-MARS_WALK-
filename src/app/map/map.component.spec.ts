@@ -207,16 +207,20 @@ describe('MapComponent', () => {
   let initializeMission: ReturnType<typeof vi.fn>;
   let resizeDisconnect: ReturnType<typeof vi.fn>;
   let originalResizeObserver: PropertyDescriptor | undefined;
+  const resizeCallbacks: ResizeObserverCallback[] = [];
 
   beforeEach(async () => {
     resizeDisconnect = vi.fn();
+    resizeCallbacks.length = 0;
     originalResizeObserver = Object.getOwnPropertyDescriptor(window, 'ResizeObserver');
     Object.defineProperty(window, 'ResizeObserver', {
       configurable: true,
       value: class {
         observe = vi.fn();
         disconnect = resizeDisconnect;
-        constructor(_callback: ResizeObserverCallback) {}
+        constructor(callback: ResizeObserverCallback) {
+          resizeCallbacks.push(callback);
+        }
       },
     });
     leaflet.handlers.clear();
@@ -300,6 +304,15 @@ describe('MapComponent', () => {
     leaflet.overlays[index]?.callbacks.get('error')?.();
   }
 
+  it('keeps the whole image fitted on resize until the user pans or zooms (audit #3)', async () => {
+    const resize = () => resizeCallbacks.at(-1)!([], {} as ResizeObserver);
+    resize();
+    expect(leaflet.mapInstance.fitBounds).toHaveBeenCalledTimes(1);
+    leaflet.handlers.get('dragstart zoomstart')!({});
+    resize();
+    expect(leaflet.mapInstance.fitBounds).toHaveBeenCalledTimes(1);
+  });
+
   it('dispatches a map click in the shared coordinate shape', () => {
     leaflet.handlers.get('click')?.({ latlng: { lat: 20, lng: 35 } });
     expect(applyMapPoint).toHaveBeenCalledWith({ x: 35, y: 20 });
@@ -315,9 +328,9 @@ describe('MapComponent', () => {
         scrollWheelZoom: true,
       }),
     );
-    expect(fixture.nativeElement.querySelector('.map-container').getAttribute('aria-label')).toContain(
-      'arrow keys to pan',
-    );
+    expect(
+      fixture.nativeElement.querySelector('.map-container').getAttribute('aria-label'),
+    ).toContain('arrow keys to pan');
   });
 
   it.each(['loading', 'unavailable', 'error'] as const)(
@@ -592,9 +605,7 @@ describe('MapComponent', () => {
 
     expect(fixture.nativeElement.querySelector('.science-marker-empty-state')).toBeNull();
     expect(
-      leaflet.circles.some(
-        (layer: any) => layer.point?.[0] === 20 && layer.point?.[1] === 35,
-      ),
+      leaflet.circles.some((layer: any) => layer.point?.[0] === 20 && layer.point?.[1] === 35),
     ).toBe(true);
   });
 
@@ -602,9 +613,9 @@ describe('MapComponent', () => {
     state.markers.set([marker('another-image-v1')]);
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('.science-marker-empty-state')?.textContent).toContain(
-      'No science records are positioned on this image.',
-    );
+    expect(
+      fixture.nativeElement.querySelector('.science-marker-empty-state')?.textContent,
+    ).toContain('No science records are positioned on this image.');
     expect(leaflet.circles).toHaveLength(0);
   });
 
@@ -651,7 +662,7 @@ describe('MapComponent', () => {
         [0, 0],
         [500, 1000],
       ],
-      { padding: [8, 8] },
+      { padding: [8, 8], animate: false },
     );
   });
 
@@ -1136,16 +1147,19 @@ describe('MapComponent', () => {
       ['start', 'Set Start'],
       ['waypoint', 'Add Waypoint'],
       ['destination', 'Set Destination'],
-    ] as const)('clearly shows the active %s mode in the toolbar indicator', (mode, expectedLabel) => {
-      state.mode.set(mode);
-      fixture.detectChanges();
+    ] as const)(
+      'clearly shows the active %s mode in the toolbar indicator',
+      (mode, expectedLabel) => {
+        state.mode.set(mode);
+        fixture.detectChanges();
 
-      const indicator = fixture.nativeElement.querySelector('.map-mode-indicator');
-      expect(indicator).not.toBeNull();
-      const valueEl = indicator.querySelector('.mode-value');
-      expect(valueEl.getAttribute('data-mode')).toBe(mode);
-      expect(valueEl.textContent?.trim()).toBe(expectedLabel);
-    });
+        const indicator = fixture.nativeElement.querySelector('.map-mode-indicator');
+        expect(indicator).not.toBeNull();
+        const valueEl = indicator.querySelector('.mode-value');
+        expect(valueEl.getAttribute('data-mode')).toBe(mode);
+        expect(valueEl.textContent?.trim()).toBe(expectedLabel);
+      },
+    );
 
     it('identifies missing required endpoints when neither is set', () => {
       state.route.set({ start: null, destination: null, waypoints: [] });

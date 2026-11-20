@@ -53,6 +53,9 @@ describe('App integration', () => {
     await loadMission(http);
     await fixture.whenStable();
     fixture.detectChanges();
+    await new Promise((r) => setTimeout(r, 0)); // let @defer (on idle) blocks load
+    await fixture.whenStable();
+    fixture.detectChanges();
 
     expect(mission.dataStatus()).toBe('ready');
     expect(mission.image()?.imageRef).toBe(manifest.imageRef);

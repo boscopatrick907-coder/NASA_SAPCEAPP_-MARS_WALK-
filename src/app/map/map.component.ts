@@ -226,6 +226,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private readonly scienceMarkers = new Map<string, L.CircleMarker>();
   private resizeObserver?: ResizeObserver;
   private viewReady = false;
+  /** Keep the whole image fitted while the layout settles, until the user pans or zooms. */
+  private autoFit = true;
+  private fitting = false;
   private imageRequest = 0;
   private activeImageRef: string | null = null;
   private clickHandler?: (event: L.LeafletMouseEvent) => void;
@@ -306,6 +309,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  private refitIfAuto(): void {
+    const image = this.mission.image();
+    if (!this.autoFit || !this.map || !image || this.imageDisplayState() !== 'ready') return;
+    this.fitting = true;
+    try {
+      this.map.fitBounds(imageBounds(image), { padding: [8, 8], animate: false });
+    } finally {
+      this.fitting = false;
+    }
+  }
+
   resetView(): void {
     const image = this.mission.image();
     if (!this.canResetView() || !this.map || !image) return;
@@ -369,12 +383,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       this.mission.applyMapPoint({ x: event.latlng.lng, y: event.latlng.lat });
     };
     this.map.on('click', this.clickHandler);
+    // Any pan/zoom not started by our own fit ends automatic re-fitting.
+    this.map.on('dragstart zoomstart', () => {
+      if (!this.fitting) this.autoFit = false;
+    });
   }
 
   private installResizeObserver(): void {
     const ResizeObserverType = this.document.defaultView?.ResizeObserver;
     if (!ResizeObserverType || !this.mapContainer?.nativeElement) return;
-    this.resizeObserver = new ResizeObserverType(() => this.map?.invalidateSize({ pan: false }));
+    this.resizeObserver = new ResizeObserverType(() => {
+      this.map?.invalidateSize({ pan: false });
+      this.refitIfAuto();
+    });
     this.resizeObserver.observe(this.mapContainer.nativeElement);
   }
 
@@ -444,7 +465,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         return;
       }
       this.imageDisplayState.set('ready');
-      if (fitInitialView) map.fitBounds(imageBounds(image), { padding: [8, 8] });
+      if (fitInitialView) {
+        this.autoFit = true;
+        this.refitIfAuto();
+      }
       this.syncLayerVisibility(this.mission.layers());
       this.syncRoute(this.mission.route());
       this.syncMarkers(this.mission.markers(), image, this.mission.selectedMarkerId());

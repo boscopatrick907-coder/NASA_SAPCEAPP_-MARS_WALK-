@@ -355,8 +355,11 @@ describe('ShellComponent', () => {
     setItemSpy.mockRestore();
   });
 
-  it('projects lifecycle and environmental content once in the expected order', () => {
+  it('projects lifecycle and environmental content once in the expected order', async () => {
     const hostFixture = TestBed.createComponent(ShellSlotHostComponent);
+    hostFixture.detectChanges();
+    await new Promise((r) => setTimeout(r, 0)); // let @defer (on idle) blocks load
+    await hostFixture.whenStable();
     hostFixture.detectChanges();
     const hostEl = hostFixture.nativeElement as HTMLElement;
 

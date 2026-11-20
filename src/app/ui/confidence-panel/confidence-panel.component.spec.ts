@@ -78,6 +78,9 @@ describe('ConfidencePanelComponent', () => {
       .flush([sampleMarker, unlocatedMarker]);
     await initialized;
     fixture.detectChanges();
+    await new Promise((r) => setTimeout(r, 0)); // let @defer (on idle) blocks load
+    await fixture.whenStable();
+    fixture.detectChanges();
   });
 
   afterEach(() => http.verify());
