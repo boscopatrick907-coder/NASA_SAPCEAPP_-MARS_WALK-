@@ -1,0 +1,138 @@
+<section class="te-panel" aria-label="Terrain Evidence and Provenance">
+  @let adm = admissionView();
+  <header class="te-header">
+    <div class="te-title-row">
+      <h2>Terrain Evidence &amp; Provenance</h2>
+      <span class="te-badge" [class]="'te-badge te-tone-' + adm.tone">{{ adm.badgeLabel }}</span>
+    </div>
+    <p class="te-summary" role="status">{{ adm.summaryText }}</p>
+    <p class="te-boundary">{{ adm.boundaryNote }}</p>
+    @if (adm.detailNotice; as notice) {
+      <p class="te-notice" [class.te-notice-alert]="adm.isAlert" [attr.role]="adm.isAlert ? 'alert' : 'status'">
+        {{ notice }}
+      </p>
+    }
+  </header>
+
+  @if (routingFailure(); as rf) {
+    <article class="te-card te-routing-card" role="status" aria-label="Terrain routing unavailable details">
+      <div class="te-card-head">
+        <h3>{{ rf.headline }}</h3>
+        <code class="te-code">{{ rf.reasonCode }}</code>
+      </div>
+      <p>{{ rf.explanation }}</p>
+      @if (rf.engineMessage; as msg) {
+        <p class="te-muted">Engine note: {{ msg }}</p>
+      }
+      <p class="te-disclaimer">{{ rf.impassabilityDisclaimer }}</p>
+      @if (rf.provisionalNote; as prov) {
+        <p class="te-small">{{ prov }}</p>
+      }
+    </article>
+  }
+
+  <details class="te-details">
+    <summary>Product, source, credits &amp; acquisition</summary>
+    @let p = productMeta();
+    <dl class="te-dl">
+      <div class="te-row"><dt>Admission status</dt><dd>{{ adm.badgeLabel }} ({{ adm.effectiveStatus }})</dd></div>
+      <div class="te-row"><dt>Coordinator review</dt><dd>{{ p.reviewer }} · {{ p.decidedAtUtc }} · <code class="te-code">{{ p.admissionEvidenceRef }}</code></dd></div>
+      <div class="te-row"><dt>Product ID &amp; version</dt><dd><code class="te-code">{{ p.productId }}</code> · {{ p.productVersion }}</dd></div>
+      <div class="te-row"><dt>Package &amp; target imageRef</dt><dd><code class="te-code">{{ p.packageId }}</code> · <code class="te-code">{{ p.targetImageRef }}</code></dd></div>
+      <div class="te-row">
+        <dt>Source &amp; credit</dt>
+        <dd>
+          @if (p.safeSourceUrl; as safeUrl) {
+            <a class="te-link" [href]="safeUrl" target="_blank" rel="noopener noreferrer">{{ p.sourceTitle }}</a>
+            <span class="te-block">Credit: {{ p.sourceCredit }}</span>
+            <small class="te-small">External source pages require network connectivity.</small>
+          } @else {
+            <span>{{ p.sourceTitle }}</span>
+            <span class="te-block">Credit: {{ p.sourceCredit }}</span>
+            @if (p.rawSourceUrl; as unsafeUrl) {
+              <span class="te-block te-small">Unlinked source text (requires valid HTTPS URL): {{ unsafeUrl }}</span>
+            }
+          }
+        </dd>
+      </div>
+      <div class="te-row"><dt>Producer &amp; terms</dt><dd>{{ p.producer }} · {{ p.licenseOrTerms }}</dd></div>
+      <div class="te-row"><dt>Source stereo IDs</dt><dd><code class="te-code">{{ p.stereoIds }}</code></dd></div>
+      <div class="te-row"><dt>Acquisition dates</dt><dd>{{ p.acquisitionDates }}</dd></div>
+      <div class="te-row"><dt>Processing history</dt><dd>{{ p.processingHistory }}</dd></div>
+      <div class="te-row">
+        <dt>Integrity &amp; pack status</dt>
+        <dd>
+          <span class="te-block">Offline status: {{ p.offlinePackStatus }} · Size: {{ p.byteLength }}</span>
+          <span class="te-block">Source SHA-256: <code class="te-code">{{ p.sourceSha256 }}</code></span>
+          <span class="te-block">Prepared SHA-256: <code class="te-code">{{ p.preparedSha256 }}</code></span>
+          <small class="te-small">Hashes verify file bytes only — never scientific alignment or route acceptance.</small>
+        </dd>
+      </div>
+    </dl>
+  </details>
+
+  <details class="te-details">
+    <summary>Grid spacing, elevation datum, registration &amp; uncertainty</summary>
+    @let s = spatialMeta();
+    <dl class="te-dl">
+      <div class="te-row"><dt>Horizontal CRS &amp; units</dt><dd>{{ s.crs }} · {{ s.horizontalUnits }}</dd></div>
+      <div class="te-row"><dt>Native vs. prepared spacing</dt><dd>Native: {{ s.nativeSpacing }} · Prepared: {{ s.preparedSpacing }} (Resampling: {{ s.resamplingMethod }})</dd></div>
+      <div class="te-row"><dt>Elevation units &amp; datum</dt><dd>{{ s.verticalUnits }} · {{ s.verticalDatum }} ({{ s.verticalAccuracyNote }})</dd></div>
+      <div class="te-row"><dt>Coverage &amp; overlap</dt><dd>{{ s.coverageSummary }} · Overlap: {{ s.overlapStatus }} · Bounds: {{ s.boundsSummary }}</dd></div>
+      <div class="te-row"><dt>Registration &amp; residuals</dt><dd>{{ s.registrationStatus }} · {{ s.registrationMethod }} · Residuals: {{ s.registrationResiduals }} · Tolerance: {{ s.registrationTolerance }} (<code class="te-code">{{ s.registrationEvidenceRef }}</code>)</dd></div>
+      <div class="te-row"><dt>Nodata &amp; missing policy</dt><dd>Value: <code class="te-code">{{ s.nodataValue }}</code> · Missing: {{ s.missingPercent }} · Policy: {{ s.nodataPolicy }}</dd></div>
+      <div class="te-row">
+        <dt>Uncertainty &amp; limitations</dt>
+        <dd>
+          <span class="te-block">{{ s.uncertaintySummary }} (Vert: {{ s.verticalUncertainty }}, Horiz: {{ s.horizontalUncertainty }})</span>
+          @if (s.limitations.length > 0) {
+            <ul class="te-list">
+              @for (item of s.limitations; track $index) { <li>{{ item }}</li> }
+            </ul>
+          } @else {
+            <small class="te-small">Additional DEM limitations: Unavailable (not supplied)</small>
+          }
+        </dd>
+      </div>
+    </dl>
+  </details>
+
+  <details class="te-details">
+    <summary>Non-terrain context &amp; preserved sources ({{ contextSourceViews().length }})</summary>
+    <div class="te-context-body">
+      <ul class="te-list">
+        <li><strong>Regional geology (USGS SIM 3292, 1:20M):</strong> Regional stratigraphic context only — not a meter-scale obstacle or hazard map.</li>
+        <li><strong>Historical REMS telemetry:</strong> Archived Curiosity station measurements — not live or route-specific weather.</li>
+        <li><strong>Illustrative 3D relief (Pixal3D):</strong> Single-image visual illustration only — not a measured DEM.</li>
+      </ul>
+      @if (contextSourceViews().length > 0) {
+        <div class="te-source-stack">
+          @for (src of contextSourceViews(); track src.title + $index) {
+            <article class="te-card">
+              <div class="te-card-head">
+                @if (src.safeUrl; as url) {
+                  <a class="te-link" [href]="url" target="_blank" rel="noopener noreferrer">{{ src.title }}</a>
+                } @else {
+                  <strong>{{ src.title }}</strong>
+                }
+                <span class="te-badge te-tone-neutral">{{ src.kindLabel }}</span>
+              </div>
+              <p class="te-muted">Credit: {{ src.credit }}</p>
+              <p class="te-small">{{ src.boundaryNote }}</p>
+              @if (src.rawUrl && !src.safeUrl) {
+                <p class="te-small">Unlinked URL text: {{ src.rawUrl }}</p>
+              }
+              @if (src.limitations.length > 0) {
+                <ul class="te-list">
+                  @for (lim of src.limitations; track $index) { <li>{{ lim }}</li> }
+                </ul>
+              }
+            </article>
+          }
+        </div>
+      } @else {
+        <p class="te-small">No runtime context sources passed to this standalone component.</p>
+      }
+    </div>
+  </details>
+</section>
