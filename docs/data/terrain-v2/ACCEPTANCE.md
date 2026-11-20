@@ -7,15 +7,15 @@ Owner: Patrick (coordinator). Only entries in this file admit terrain for runtim
 | Candidate | For image | Status | Decided | Reviewer |
 |---|---|---|---|---|
 | `DTEEC_001488_1750_001752_1750_U02` (v2.0, sha256 `9359ca71…80bb`) | current crop `hirise-psp001752-red-center-2048-025m-v2` | **rejected for this image**: about 79 m offset and about 6 m RMS non-rigid residual; fails the draft tolerance ([REGISTRATION.md §1](REGISTRATION.md)) | 2026-11-20 | coordinator agent (evidence only; Patrick to confirm) |
-| Same DTM + proposed ortho crop `hirise-psp001752-red-ortho-2048-0253m-v3` | proposed new image | **pending: awaiting Patrick's decision.** Source fields complete except accuracy (not stated by provider) and usage terms (to read); ortho registration 0.59 m RMS / 0.73 m max (within tolerance); shaded-relief check ~3 m E is open for Willy 2 ([REGISTRATION.md §2](REGISTRATION.md)) | — | — |
+| Same DTM + ortho crop `hirise-psp001752-red-ortho-2048-0253m-v3` | **active image from 20 Nov 2026** | **accepted** for experimental terrain preview. Source fields evidenced ([SOURCE_INVENTORY.md](SOURCE_INVENTORY.md)); accuracy not stated by the provider (shown as such); ortho registration 0.59 m RMS / 0.73 m max. **Conditions:** Willy 2's control-point check (shaded-relief ~3 m E) and reading the HiRISE usage terms before public deployment; either can revoke this | 2026-11-20T19:25:18Z | Patrick (coordinator), decision given in the coordination session |
 
-Staged package (not deployed): `data/terrain-v2/staging/ortho-pair-v1/`. Accepting it means:
+Package `terrain-dteec_001488_1750_001752_1750_u02-hirise-psp001752-red-ortho-2048-0253m-v3-v1` is now in `public/data/terrain/` and the index points at it. Acceptance applied:
 
 1. New active image (new imageRef, new display JPEG, new manifest/evidence). Missions saved under the current imageRef stay untouched in storage and in exports but don't load on the new image (no coordinate migration).
 2. Science marker records get the new imageRef (their positions are unlocated, so nothing moves).
 3. Admission block set to accepted with reviewer/date/evidence. `data/terrain/index.json` points at the package. The offline pack then includes it.
 
-No terrain product is active in the app until then.
+Revoking: set `activePackageId` to null in `public/data/terrain/index.json` and record why here. The build then drops the package from the offline pack, and the gate reports `no-terrain-package`.
 
 ## Target image (fixed for this decision)
 

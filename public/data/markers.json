@@ -2,7 +2,7 @@
   {
     "id": "curiosity-mount-sharp-boxwork",
     "name": "Mount Sharp Boxwork Ridges and Hollows",
-    "imageRef": "hirise-psp001752-red-center-2048-025m-v2",
+    "imageRef": "hirise-psp001752-red-ortho-2048-0253m-v3",
     "position": null,
     "positionStatus": "unavailable",
     "instrument": "MAHLI / APXS (Curiosity Rover); HiRISE (MRO context)",
@@ -23,7 +23,7 @@
   {
     "id": "curiosity-vera-rubin-ridge-hematite",
     "name": "Vera Rubin Ridge ('Pettegrove Point' / 'Ailsa Craig' Target)",
-    "imageRef": "hirise-psp001752-red-center-2048-025m-v2",
+    "imageRef": "hirise-psp001752-red-ortho-2048-0253m-v3",
     "position": null,
     "positionStatus": "unavailable",
     "instrument": "MAHLI / APXS / DRT (Curiosity Rover)",
@@ -43,7 +43,7 @@
   {
     "id": "curiosity-sulfate-bearing-unit",
     "name": "Glen Torridon Clay-Bearing Unit to Sulfate-Rich Strata Transition",
-    "imageRef": "hirise-psp001752-red-center-2048-025m-v2",
+    "imageRef": "hirise-psp001752-red-ortho-2048-0253m-v3",
     "position": null,
     "positionStatus": "unavailable",
     "instrument": "Left Navigation Camera / Drill / CheMin / SAM (Curiosity Rover)",

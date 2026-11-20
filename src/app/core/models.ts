@@ -31,6 +31,13 @@ export interface ImageManifest {
     sourceUrl: string | null;
     method: string | null;
   };
+  /** Optional projected georeference (terrain contract v1 §1.2); required for terrain routing. */
+  georeference?: {
+    crs: { radiusMeters: number; centerLongitude: number; centerLatitude: number; units: 'meters' };
+    pixelSizeMeters: number;
+    xminMeters: number;
+    yminMeters: number;
+  };
 }
 export interface ScienceMarker {
   id: string;

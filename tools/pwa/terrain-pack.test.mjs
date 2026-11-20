@@ -22,6 +22,11 @@ async function workspace() {
   await mkdir(join(dir, 'tools/pwa'), { recursive: true });
   for (const f of ['public/data/image-pack.json', 'public/data/manifest.json', 'tools/pwa/worker.js'])
     await cp(join(REPO, f), join(dir, f));
+  // Start every scenario from "no package": the shipped build may carry an accepted one.
+  const terrain = join(dir, 'dist/marswalk/browser/data/terrain');
+  await rm(terrain, { recursive: true, force: true });
+  await mkdir(terrain, { recursive: true });
+  await writeFile(join(terrain, 'index.json'), JSON.stringify({ schemaVersion: 1, activePackageId: null }));
   return dir;
 }
 
@@ -55,7 +60,7 @@ function pack(dir) {
 const packed = async (dir) =>
   JSON.parse(await readFile(join(dir, 'dist/marswalk/browser/offline-pack.json'), 'utf8')).files.map((f) => f.path);
 
-test('default build: only the null pointer is packed', async () => {
+test('null pointer: only the pointer is packed', async () => {
   const dir = await workspace();
   try {
     const r = pack(dir);
@@ -111,4 +116,12 @@ test('build fails: stray staging folder under data/terrain', async () => {
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+test('the shipped build packs its accepted package in full', async () => {
+  const pack = JSON.parse(await readFile(join(DIST, 'offline-pack.json'), 'utf8')).files.map((f) => f.path);
+  const index = JSON.parse(await readFile(join(DIST, 'data/terrain/index.json'), 'utf8'));
+  if (index.activePackageId === null) return;
+  for (const f of ['terrain-manifest.json', 'grid.f32', 'mask.u8', 'provenance.json'])
+    assert.ok(pack.includes(`data/terrain/${index.activePackageId}/${f}`), f);
 });

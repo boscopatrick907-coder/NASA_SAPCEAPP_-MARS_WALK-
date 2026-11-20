@@ -1,28 +1,43 @@
 {
   "schemaVersion": 1,
-  "imageRef": "hirise-psp001752-red-center-2048-025m-v2",
-  "assetPath": "data/imagery/PSP_001752_1750_RED_crop_2048.jpg",
+  "imageRef": "hirise-psp001752-red-ortho-2048-0253m-v3",
+  "assetPath": "data/imagery/PSP_001752_1750_RED_A_ortho_crop_2048.jpg",
   "width": 2048,
   "height": 2048,
   "coordinateSystem": "image-pixels-bottom-left",
   "source": {
-    "title": "HiRISE PSP_001752_1750_RED \u2014 512 m projected central crop",
-    "url": "https://www.uahirise.org/PSP_001752_1750",
+    "title": "HiRISE PSP_001752_1750_RED_A_01_ORTHO \u2014 518 m orthorectified crop (DTM DTEEC_001488_1750_001752_1750_U02)",
+    "url": "https://www.uahirise.org/dtm/PSP_001488_1750",
     "credit": "NASA/JPL-Caltech/University of Arizona"
   },
   "observationDate": "2006-12-10",
   "coverageStatus": "regional-context",
   "limitations": [
-    "Central 512 x 512 projected-meter crop of HiRISE PSP_001752_1750_RED; exact boxwork target and rover/science-site overlap are unverified.",
-    "Distance is derived in the Mars equirectangular map plane, not a geodesic or terrain-following length; projection distortion and source positional uncertainty remain.",
-    "No DEM, elevation, slope, obstacle clearance or route safety classification is supplied. Optical brightness is not elevation.",
-    "GeoTIFF and label supplied by user from local QGIS/GDAL workflow; original full JP2 was not independently downloaded here.",
+    "Orthoimage crop centred near 4.84\u00b0S, 137.30\u00b0E on lower Mount Sharp, Gale crater; exact boxwork target and rover/science-site overlap are unverified.",
+    "Planar distance is measured in the Mars equirectangular map plane (standard parallel 0\u00b0); east-west lengths read about 0.4 % long at this latitude.",
+    "Elevation comes from a 1 m HiRISE stereo DTM tied to MOLA; the provider states no accuracy figure and lists possible artifacts (processing boxes, CCD seams, faceted low-contrast areas).",
+    "Terrain suggestions use sampled grid-segment grades only. No hazard, obstacle-clearance, traction or safety assessment is made.",
+    "Missions saved on the earlier image (hirise-psp001752-red-center-2048-025m-v2) are preserved but do not load on this image; coordinates are not migrated.",
     "Science records and historical REMS excerpt are regional context, not verified measurements at the drawn route."
   ],
   "calibration": {
     "verified": true,
-    "metersPerPixel": 0.25,
-    "sourceUrl": "https://hirise-pds.lpl.arizona.edu/download/PDS/RDR/PSP/ORB_001700_001799/PSP_001752_1750/PSP_001752_1750_RED.JP2",
-    "method": "User-supplied GeoTIFF crop: Mars equirectangular CRS in meters, 0.25 m square pixels; 2048x2048 display conversion without geometric resampling. Distances are projected planar lengths, not terrain-following or safety assessments."
+    "metersPerPixel": 0.2529366986449,
+    "sourceUrl": "https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/PSP_001752_1750_RED_A_01_ORTHO.JP2",
+    "method": "2048x2048 window of the provider orthoimage (orthorectified on HiRISE DTM DTEEC_001488_1750_001752_1750_U02), provider 8-bit values, no resampling. Equirectangular Mars sphere R=3396.19 km, centre longitude 137.3\u00b0. Distances are planar map lengths; terrain routing uses the accepted DTM package."
+  },
+  "georeference": {
+    "crs": {
+      "name": "Equirectangular MARS (HiRISE DTM frame)",
+      "radiusMeters": 3396190.0,
+      "centerLongitude": 137.3,
+      "centerLatitude": 0.0,
+      "standardParallel": 0.0,
+      "units": "meters"
+    },
+    "pixelSizeMeters": 0.2529366986449,
+    "xminMeters": -440.4892606900935,
+    "yminMeters": -287244.90598074486,
+    "evidence": "docs/data/evidence/ORTHO_CROP.json"
   }
 }

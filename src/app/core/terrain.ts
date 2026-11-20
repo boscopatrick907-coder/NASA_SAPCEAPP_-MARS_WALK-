@@ -3,7 +3,7 @@
  * See docs/planning/TERRAIN_CONTRACT_V1.md. Not wired into the UI: no terrain
  * product is accepted and nothing here enables routing on its own.
  */
-import { Point } from './models';
+import { ImageManifest, Point } from './models';
 import { https } from './validation';
 
 export const TERRAIN_CONTRACT_VERSION = 'terrain-v1' as const;
@@ -351,4 +351,30 @@ export function validTerrainIndex(v: unknown): v is TerrainIndex {
     (v['activePackageId'] === null ||
       (typeof v['activePackageId'] === 'string' && PACKAGE_ID.test(v['activePackageId'])))
   );
+}
+
+/** Image georeference for terrain, or null when the manifest lacks a usable one. */
+export function imageGeoref(image: ImageManifest | null): ImageGeoref | null {
+  const g = image?.georeference;
+  if (!image || !g || !record(g)) return null;
+  const ok =
+    positive(g.pixelSizeMeters) &&
+    Number.isFinite(g.xminMeters) &&
+    Number.isFinite(g.yminMeters) &&
+    record(g.crs) &&
+    positive(g.crs.radiusMeters) &&
+    g.crs.units === 'meters' &&
+    g.crs.centerLatitude === 0 &&
+    image.calibration.verified &&
+    image.calibration.metersPerPixel === g.pixelSizeMeters;
+  return ok
+    ? {
+        imageRef: image.imageRef,
+        width: image.width,
+        height: image.height,
+        pixelSizeMeters: g.pixelSizeMeters,
+        xminMeters: g.xminMeters,
+        yminMeters: g.yminMeters,
+      }
+    : null;
 }
