@@ -33,3 +33,5 @@ The coordinator's coding agent drafted each "Do now" item that doesn't need real
 | Charles | `feature/charles-planning-v2-polish` | Ten-issue audit with screenshots, `docs/design/PLANNING_V2_POLISH.md` |
 | Gaddielle | `feature/gaddielle-terrain-sources-v2` | Dossier skeleton, retrieval log (official hosts blocked from the cloud) |
 | Emma 1 / 2 | (their own branches, already pushed) | Rename to `terrain-v1` types from `src/app/core/terrain.ts` when integrating |
+
+**Update (20 Nov, evening):** the routing, preparation-tool, alignment-test, recovery-test and Gaddielle dossier drafts, plus Emma 1/2's branches (with review fixes), are merged into `claude/magical-volta-1c76ak` and retargeted to the new active image. Willy 1's map proposal was implemented in reduced form (dashed suggestion only). Charles's audit #3 and the bundle budget are fixed there; #1/#2 remain. Owners: review what landed in your area on that branch, not on your old draft branch.

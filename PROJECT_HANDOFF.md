@@ -2,6 +2,11 @@
 
 Updated 15 November 2026 UTC. This file is the cross-chat handoff, not an assertion that every remote feature is accepted. Verify Git and deployment state before acting. Never include credentials here.
 
+
+## Planning V2 terrain preview — integrated (20 Nov 2026)
+
+Branch `claude/magical-volta-1c76ak` (PR to main). **Active image is now `hirise-psp001752-red-ortho-2048-0253m-v3`** (HiRISE orthoimage crop) with the accepted 1 m DTM package `DTEEC_001488_1750_001752_1750_U02`. The earlier RDR crop failed registration against the DTM (~79 m offset, ~6 m RMS residual); missions saved on it stay in storage/exports but don't load on the new image. Route Planner has an experimental terrain preview (worker routing, dashed map suggestion, undo-able Accept, provenance on save), working offline. Evidence: [ACCEPTANCE](docs/data/terrain-v2/ACCEPTANCE.md), [REGISTRATION](docs/data/terrain-v2/REGISTRATION.md), [integration QA](docs/qa/TERRAIN_PREVIEW_INTEGRATION.md), [review](docs/reviews/PLANNING_V2_REVIEW.md). Checks: 413 unit, 18 PWA, 29 alignment, 3 recovery e2e, terrain browser run; initial bundle 481 kB. **Open:** independent control points (Willy 2; can revoke acceptance), physical devices, deployment, map below the fold on laptops (audit #1).
+
 ## Takou visual polish integrated
 
 Exact source 4b8658a + 2af5fed fetched and applied as b325575 + 6403b99, preserving authorship. Eight SCSS files and attributed design artifacts; 308 tests/build pass on the current combined app. [Current evidence](docs/qa/TAKOU_POLISH_INTEGRATION.md). Older “Takou branch unreachable” sections below are historical and superseded. Shell style warning resolved; initial/map size and Leaflet warnings remain, budgets unchanged.
