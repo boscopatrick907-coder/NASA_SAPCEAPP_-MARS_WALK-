@@ -1,0 +1,13 @@
+{
+  "name": "marswalk-takou-qa",
+  "private": true,
+  "description": "Isolated release smoke harness for MARSWALK. Separate from the app's package.json and lockfile.",
+  "type": "module",
+  "scripts": {
+    "serve": "node serve.mjs --root ../../../dist/marswalk/browser",
+    "smoke": "playwright test -c playwright.config.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}
