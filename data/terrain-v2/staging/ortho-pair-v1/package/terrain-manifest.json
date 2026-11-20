@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "contractVersion": "terrain-v1",
+  "packageId": "terrain-dteec_001488_1750_001752_1750_u02-hirise-psp001752-red-ortho-2048-0253m-v3-v1",
+  "imageRef": "hirise-psp001752-red-ortho-2048-0253m-v3",
+  "productId": "DTEEC_001488_1750_001752_1750_U02",
+  "source": {
+    "title": "HiRISE DTM DTEEC_001488_1750_001752_1750_U02 (Gale crater layered outcrop), version 2.0",
+    "url": "https://www.uahirise.org/dtm/PSP_001488_1750",
+    "credit": "NASA/JPL-Caltech/University of Arizona; DTM produced with ISIS and SOCET SET (USGS Astrogeology)"
+  },
+  "grid": {
+    "cols": 513,
+    "rows": 513,
+    "geotransform": [
+      -440.6157290394735,
+      1.0117467945795,
+      0.0,
+      -286726.512216854,
+      0.0,
+      -1.0117467945795
+    ],
+    "crs": {
+      "name": "Equirectangular MARS (HiRISE DTM frame)",
+      "radiusMeters": 3396190.0,
+      "centerLongitude": 137.3,
+      "centerLatitude": 0.0,
+      "standardParallel": 0.0,
+      "units": "meters"
+    }
+  },
+  "horizontal": {
+    "units": "meters",
+    "nativeSpacingMeters": 1.0117467945795,
+    "preparedSpacingMeters": 1.0117467945795,
+    "resamplingMethod": "none"
+  },
+  "vertical": {
+    "units": "meters",
+    "datumOrReference": "Meters above the martian equipotential surface (Mars 2000 Datum) defined by Smith et al. (2001); products tied to MOLA elevations (label IMAGE.NOTE; provider README)"
+  },
+  "nodata": {
+    "sourceNodataValue": "-3.4028227e+38",
+    "missingPercent": 0.0
+  },
+  "files": [
+    {
+      "path": "grid.f32",
+      "bytes": 1052676,
+      "sha256": "550fb50e6e8697d6ab1da65fd8400063423850bec4122d44f38d9572064d8557"
+    },
+    {
+      "path": "mask.u8",
+      "bytes": 263169,
+      "sha256": "7e239d27f446d568a82a0632fd22725117a04e7f6239209bc96b83d2fcf2b5f2"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 2132,
+      "sha256": "ccbe26e26e3029aad8cb195d09f5eeebaa7d78a5dac1ac44b4525f2cb24d78e8"
+    }
+  ],
+  "admission": {
+    "status": "proposed",
+    "reviewer": null,
+    "decidedAtUtc": null,
+    "evidenceRef": null
+  }
+}

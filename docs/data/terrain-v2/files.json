@@ -8,6 +8,83 @@
     "bytes": 7973,
     "sha256": "8ea1701850379b0316e03070089178189eb7934cc3c32ad48ce0ab508cdd3caf",
     "status": "inspected",
-    "notes": "Existing label of the active image (already in the repository, user-supplied with the GeoTIFF crop). Included so the terrain candidate can be compared against it. Original download URL and retrieval time were not recorded. No terrain file has been retrieved yet: the HiRISE hosts are blocked from the cloud container (see retrieval-log.md)."
+    "notes": "Existing label of the active image (already in the repository, user-supplied with the GeoTIFF crop). Included so the terrain candidate can be compared against it. Original download URL and retrieval time were not recorded."
+  },
+  {
+    "productId": "DTEEC_001488_1750_001752_1750_U02",
+    "role": "elevation",
+    "url": "https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/DTEEC_001488_1750_001752_1750_U02.IMG",
+    "retrievedAtUtc": "2026-11-20T18:58Z",
+    "localPath": null,
+    "bytes": 360402944,
+    "sha256": "9359ca71b31e2689d9e2f38dd56fa83b051a09e360f8566730092a0f4cbe80bb",
+    "status": "inspected",
+    "notes": "PDS3 IMG with attached label. Size matches the provider directory listing. Not stored in Git (360 MB); re-download from the URL and compare the hash."
+  },
+  {
+    "productId": "DTEEC_001488_1750_001752_1750_U02",
+    "role": "label",
+    "url": "https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/DTEEC_001488_1750_001752_1750_U02.IMG",
+    "retrievedAtUtc": "2026-11-20T18:57:42Z",
+    "localPath": "docs/data/terrain-v2/metadata/DTEEC_001488_1750_001752_1750_U02.label.txt",
+    "bytes": 4275,
+    "sha256": "fca0e7b98f0b616476684f9e93f468f7f39727e594a8abb51dc33b8b3f2bde1e",
+    "status": "inspected",
+    "notes": "Attached label bytes (up to END), first fetched with an HTTP Range request (206), unmodified."
+  },
+  {
+    "productId": "DTEEC_001488_1750_001752_1750_U02",
+    "role": "metadata",
+    "url": "https://www.uahirise.org/PDS/EXTRAS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/README.TXT",
+    "retrievedAtUtc": "2026-11-20T18:58Z",
+    "localPath": "docs/data/terrain-v2/metadata/EXTRAS_README.TXT",
+    "bytes": 1427,
+    "sha256": "7bd2765e243707ed9e90cf5ba504bd5ae4f54165a58841dac560a4e1e7e16712",
+    "status": "inspected",
+    "notes": "Provider DTM Extras README: MOLA tie, 1 m post spacing, known artifact types."
+  },
+  {
+    "productId": "PSP_001752_1750_RED_A_01_ORTHO",
+    "role": "imagery",
+    "url": "https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/PSP_001752_1750_RED_A_01_ORTHO.JP2",
+    "retrievedAtUtc": "2026-11-20T19:03Z",
+    "localPath": null,
+    "bytes": 371396220,
+    "sha256": "24b86b20f7bb3255c3d957aaa0f87ef41a2681bfa9e75b02b2927485d6a89436",
+    "status": "inspected",
+    "notes": "0.2529 m orthoimage produced from this DTM. Source of the proposed new display image. Not stored in Git."
+  },
+  {
+    "productId": "PSP_001752_1750_RED_A_01_ORTHO",
+    "role": "label",
+    "url": "https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/PSP_001752_1750_RED_A_01_ORTHO.LBL",
+    "retrievedAtUtc": "2026-11-20T19:02:43Z",
+    "localPath": "docs/data/terrain-v2/metadata/PSP_001752_1750_RED_A_01_ORTHO.LBL",
+    "bytes": 5335,
+    "sha256": "8abdda468a7769de6a221844af4d5bc1875d10cbaa28215979e04d65fdcebc2f",
+    "status": "inspected",
+    "notes": ""
+  },
+  {
+    "productId": "PSP_001752_1750_RED_C_01_ORTHO",
+    "role": "imagery",
+    "url": "https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/PSP_001752_1750_RED_C_01_ORTHO.JP2",
+    "retrievedAtUtc": "2026-11-20T18:59:26Z",
+    "localPath": null,
+    "bytes": 33256997,
+    "sha256": "0ce302f9e68f41330f5bd79f8ac64c775ce38f8a306614c18e9a365b516b3858",
+    "status": "inspected",
+    "notes": "1 m orthoimage on the DTM grid; used only for registration checks. Not stored in Git."
+  },
+  {
+    "productId": "PSP_001752_1750_RED_C_01_ORTHO",
+    "role": "label",
+    "url": "https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/PSP_001752_1750_RED_C_01_ORTHO.LBL",
+    "retrievedAtUtc": "2026-11-20T18:59:26Z",
+    "localPath": "docs/data/terrain-v2/metadata/PSP_001752_1750_RED_C_01_ORTHO.LBL",
+    "bytes": 5341,
+    "sha256": "6b871d5e74916999bd4d56171abeaede29216b4641e7e2eda2424574a5ff28da",
+    "status": "inspected",
+    "notes": ""
   }
 ]

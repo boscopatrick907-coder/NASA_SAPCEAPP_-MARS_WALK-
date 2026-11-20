@@ -1,0 +1,65 @@
+{
+  "contractVersion": "terrain-v1",
+  "createdAtUtc": "2026-11-20T19:07:32Z",
+  "command": [
+    "prepare_terrain.py",
+    "extract",
+    "--source",
+    "/tmp/claude-0/-home-user-NASA-SAPCEAPP--MARS-WALK-/d1132a28-7bea-5f97-8d79-4a33d484ee18/scratchpad/pair/dem/dtm_window.tif",
+    "--image-evidence",
+    "/tmp/claude-0/-home-user-NASA-SAPCEAPP--MARS-WALK-/d1132a28-7bea-5f97-8d79-4a33d484ee18/scratchpad/pair/image/IMAGE_EVIDENCE.json",
+    "--out",
+    "/tmp/claude-0/-home-user-NASA-SAPCEAPP--MARS-WALK-/d1132a28-7bea-5f97-8d79-4a33d484ee18/scratchpad/pair/package",
+    "--package-id",
+    "terrain-dteec_001488_1750_001752_1750_u02-hirise-psp001752-red-ortho-2048-0253m-v3-v1",
+    "--product-id",
+    "DTEEC_001488_1750_001752_1750_U02",
+    "--title",
+    "HiRISE DTM DTEEC_001488_1750_001752_1750_U02 (Gale crater layered outcrop), version 2.0",
+    "--source-url",
+    "https://www.uahirise.org/dtm/PSP_001488_1750",
+    "--credit",
+    "NASA/JPL-Caltech/University of Arizona; DTM produced with ISIS and SOCET SET (USGS Astrogeology)",
+    "--vertical-reference",
+    "Meters above the martian equipotential surface (Mars 2000 Datum) defined by Smith et al. (2001); products tied to MOLA elevations (label IMAGE.NOTE; provider README)"
+  ],
+  "tools": {
+    "python": "3.13.18",
+    "numpy": "2.5.3",
+    "tifffile": "2026.11.16"
+  },
+  "source": {
+    "path": "dtm_window.tif",
+    "bytes": 1119940,
+    "sha256": "0c79847eca7fef7b94940451e723208e103351d393d901c16b81f25f724d7422",
+    "rows": 529,
+    "cols": 529,
+    "geotransform": [
+      -448.7097033961095,
+      1.0117467945795,
+      0.0,
+      -286718.41824249737,
+      0.0,
+      -1.0117467945795
+    ],
+    "nodataValue": -3.4028227e+38,
+    "rasterType": "PixelIsArea"
+  },
+  "window": {
+    "row0": 8,
+    "row1": 521,
+    "col0": 8,
+    "col1": 521
+  },
+  "resampling": "none (whole-cell window, no reprojection)",
+  "imageEvidence": {
+    "imageRef": "hirise-psp001752-red-ortho-2048-0253m-v3",
+    "bounds": [
+      -440.4892606900935,
+      -287244.90598074486,
+      77.52509813466168,
+      -286726.8916219201
+    ]
+  },
+  "validFraction": 1.0
+}

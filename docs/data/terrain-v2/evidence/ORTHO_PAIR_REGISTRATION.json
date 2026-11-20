@@ -1,0 +1,28 @@
+{
+ "orthoCheck": {
+  "globalOffsetE_N_m": [
+   -0.43,
+   0.505
+  ],
+  "peakNCC": 0.982,
+  "tilesUsed": 16,
+  "tileRMS_m": 0.587,
+  "tileMax_m": 0.73
+ },
+ "reliefCheck": {
+  "sunAzimuthDeg": 150,
+  "corrAtZero": 0.482,
+  "peakNCC": 0.531,
+  "offsetE_N_m": [
+   -3.206,
+   0.429
+  ],
+  "note": "Shaded relief vs albedo image is an approximate check; a peak within ~2 cells supports registration."
+ },
+ "tolerance": {
+  "rmsCells": 1,
+  "maxCells": 2,
+  "cellMeters": 1.0117467945795
+ },
+ "withinTolerance": true
+}

@@ -11,5 +11,13 @@ Each attempt: UTC time, exact URL, HTTP outcome, saved filename. No HTML error p
 | 2026-11-20T16:26:32Z | https://pds-geosciences.wustl.edu/ | Same proxy 403 | — | coordinator agent |
 | 2026-11-20T16:26:32Z | https://astrogeology.usgs.gov/search | Same proxy 403 | — | coordinator agent |
 | 2026-11-20T16:26:32Z | https://pds-imaging.jpl.nasa.gov/ | Same proxy 403 | — | coordinator agent |
+| 2026-11-20 | — | Coordinator approved adding `www.uahirise.org` and `hirise-pds.lpl.arizona.edu` to the cloud environment's network allowlist | — | coordinator |
+| 2026-11-20T18:57:26Z | https://www.uahirise.org/dtm/PSP_001488_1750 | 200, catalogue HTML (19 123 B). Links followed from this page only | — | coordinator agent |
+| 2026-11-20T18:57:42Z | https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/ | 200, directory listing | — | coordinator agent |
+| 2026-11-20T18:57:42Z | …/DTEEC_001488_1750_001752_1750_U02.IMG (Range 0–65535) | 206, PDS3 label read first | metadata/DTEEC_…_U02.label.txt | coordinator agent |
+| 2026-11-20T18:58Z | …/DTEEC_001488_1750_001752_1750_U02.IMG | 200, 360 402 944 B (matches listing) | not in Git; hash in files.json | coordinator agent |
+| 2026-11-20T18:58Z | https://www.uahirise.org/PDS/EXTRAS/DTM/…/README.TXT | 200, 1 427 B | metadata/EXTRAS_README.TXT | coordinator agent |
+| 2026-11-20T18:59:26Z | …/PSP_001752_1750_RED_C_01_ORTHO.LBL and .JP2 | 200, 5 341 B / 33 256 997 B | metadata/…RED_C…LBL; JP2 not in Git | coordinator agent |
+| 2026-11-20T19:02:43Z–19:03Z | …/PSP_001752_1750_RED_A_01_ORTHO.LBL and .JP2 | 200, 5 335 B / 371 396 220 B | metadata/…RED_A…LBL; JP2 not in Git | coordinator agent |
 
-The proxy was not bypassed and TLS checks were not disabled. **Next:** Gaddielle follows the runbook §3 local-download fallback from a normal browser: open the catalogue page, follow the provider's own links, download the small label first, record the final URL and time here, then compute size and SHA-256. Alternatively Patrick allows these hosts for the cloud environment.
+The proxy was not bypassed and TLS checks were not disabled. Retrieval is complete for candidate 1 and both orthoimages. `…` stands for `https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750`.

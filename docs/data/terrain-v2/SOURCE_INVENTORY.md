@@ -1,52 +1,47 @@
 # Terrain V2 — source inventory (dossier)
 
-Branch `feature/gaddielle-terrain-sources-v2`. Skeleton prepared by the coordinator's coding agent for **Gaddielle's "Do now" item. Gaddielle owns retrieval and every value below**, and Patrick owns acceptance ([ACCEPTANCE.md](ACCEPTANCE.md)). **No terrain file has been retrieved**: every official host was blocked from the cloud container ([retrieval-log.md](retrieval-log.md)). Nothing here is verified. Unknown stays unknown.
+Gaddielle's dossier, filled by the coordinator's coding agent on 20 Nov 2026 after network access to the provider was approved. **Gaddielle reviews these values against the files; Patrick owns acceptance** ([ACCEPTANCE.md](ACCEPTANCE.md)). Every value cites its source. Files and hashes: [files.json](files.json). Retrieval: [retrieval-log.md](retrieval-log.md). Original labels: [metadata/](metadata/).
 
-Status values: `unknown` (no evidence yet) · `stated` (copied from a cited source) · `inspected` (checked on the actual file).
+Status: `stated` (copied from a cited source) · `inspected` (checked on the actual file) · `unknown`.
 
-## Candidate 1 — HiRISE DTM lead
-
-| Field | Value | Evidence (exact label field or provider passage) | Status |
-|---|---|---|---|
-| Product ID / version | `DTEEC_001488_1750_001752_1750_U02` is a **lead only** (from the runbook). Not confirmed | — | unknown |
-| Producer | | | unknown |
-| Source stereo image IDs | The lead's name suggests PSP_001488_1750 + PSP_001752_1750. **Must be confirmed from the label**, not the name | — | unknown |
-| Acquisition dates | PSP_001752_1750: 2006-12-10 is the active image's observation date (`public/data/manifest.json`). The other image's date is unknown | manifest `observationDate` | partly stated (image only) |
-| Citation / credit / use terms | | | unknown |
-| Final source URL(s) | | | unknown |
-| Label / raster bytes and SHA-256 | | | unknown |
-| Horizontal CRS and units | | | unknown |
-| Standard parallel / centre latitude | **Critical.** The image crop uses standard parallel 0°. A DTM with another value needs a reviewed reprojection (see `docs/data/TERRAIN_PREPARATION.md` on `feature/enzo-terrain-preparation-v2`) | — | unknown |
-| Native spacing (m) | | | unknown |
-| Footprint / bounds | | | unknown |
-| Coverage of the crop | Crop bounds (Equirectangular MARS, R = 3 396 190 m, centre lon 180°): xmin −2531487, ymin −287315.75, xmax −2530975, ymax −286803.75 m. Centre ≈ 4.84°S, 137.30°E | [CALIBRATED_CROP.json](../evidence/CALIBRATED_CROP.json) | target stated; overlap unknown |
-| Elevation units | | | unknown |
-| Vertical datum / reference | | | unknown |
-| Nodata value | | | unknown |
-| Stated vertical / horizontal accuracy | | | unknown |
-| Processing history | | | unknown |
-
-### Active image (for comparison; already in the repository)
+## Candidate 1 — HiRISE DTM `DTEEC_001488_1750_001752_1750_U02`
 
 | Field | Value | Evidence | Status |
 |---|---|---|---|
-| Product ID | PSP_001752_1750_RED | `PRODUCT_ID` in `data/imagery/calibrated-source/PSP_001752_1750_RED.label.txt` | stated |
-| Map projection | EQUIRECTANGULAR | `MAP_PROJECTION_TYPE`, same label | stated |
-| Centre latitude | 0.000° | `CENTER_LATITUDE`, same label | stated |
-| A-axis radius | 3396.19 km | `A_AXIS_RADIUS`, same label | stated |
-| Crop GeoTIFF | 2048 × 2048 at 0.25 m, SHA-256 `f2e6fda8…3123` | CALIBRATED_CROP.json; re-read with `tools/terrain/prepare_terrain.py inspect` on 20 Nov 2026 (transform and CRS match, no problems) | inspected |
+| Product ID / version | DTEEC_001488_1750_001752_1750_U02, `PRODUCT_VERSION_ID` 2.0, data set MRO-M-HIRISE-5-DTM-V1.0 | label `PRODUCT_ID`, `PRODUCT_VERSION_ID`, `DATA_SET_ID` | inspected |
+| Producer | University of Arizona (`PRODUCER_ID` UA). Technical contact USGS Astrogeology. ISIS + SOCET SET 5.5.0 (NGATE) | label `PRODUCER_*`, `SOFTWARE_NAME`; Extras README | stated |
+| Source stereo images | PSP_001488_1750 (left), PSP_001752_1750 (right) | label `SOURCE_PRODUCT_ID`; catalogue page | inspected |
+| Acquisition date | PSP_001752_1750: 2006-12-10 (active manifest). PSP_001488_1750: not stated in the files retrieved | manifest `observationDate` | partly stated |
+| Credit / terms | NASA/JPL-Caltech/UArizona (catalogue image credit). Usage policy: https://uahirise.org/media/usage.php (linked from the catalogue, not yet read) | catalogue page | stated; terms **to read** |
+| Final source URLs | see files.json (provider links followed from the catalogue page) | retrieval-log | inspected |
+| Sizes and SHA-256 | IMG 360 402 944 B, `9359ca71…80bb`; label portion 4 275 B, `fca0e7b9…de1e` | files.json | inspected |
+| Horizontal CRS | Equirectangular, planetocentric, east-positive, sphere R = 3396.19 km (local radius), `CENTER_LATITUDE` 0.0°, `CENTER_LONGITUDE` 137.3° | label `IMAGE_MAP_PROJECTION` | inspected |
+| Same CRS as the current crop? | **No:** centre longitude 137.3° vs 180°. On this sphere with standard parallel 0 that is an exact x-translation, so the frame difference itself is not the problem (see REGISTRATION.md) | label vs CALIBRATED_CROP.json | inspected |
+| Grid | 13 375 lines × 6 736 samples, PC_REAL 32-bit, `MAP_SCALE` 1.0117467945795 m, offsets line −276559.5 / sample 3577.5 px, no rotation | label | inspected |
+| Footprint | lat −4.9488° to −4.7206°, lon 137.2390°E to 137.3539°E | label `MIN/MAX_LATITUDE`, `WESTERN/EASTERNMOST_LONGITUDE` | stated |
+| Coverage of the study area | Full; no nodata in the study window | `prepare_terrain.py inspect` | inspected |
+| Elevation units / reference | "Pixel values … represent elevations in meters above the martian equipotential surface (Mars 2000 Datum) defined by Smith, et al. (2001)". `SCALING_FACTOR` 1.0, `OFFSET` 0.0. "Products are tied to MOLA elevations." | label `IMAGE.NOTE`; Extras README | stated |
+| Valid range | −4485.57 to −2977.08 m (whole DTM). Study window −4028.8 to −3809.6 m | label; inspect | inspected |
+| Nodata | `MISSING_CONSTANT` 16#FF7FFFFB# (float ≈ −3.4028e38) | label | inspected |
+| Vertical/horizontal accuracy | **Not stated** in the label or Extras README. Known artifacts listed: processing "boxes" (~0.5–1 m steps), CCD seams, faceted low-contrast areas | Extras README | unknown (accuracy); artifacts stated |
+| Processing history | SOCET SET NGATE extraction, 1 m post spacing, tied to MOLA; method per Kirk et al. (2008) | label NOTE; Extras README | stated |
+
+## Proposed display image — `PSP_001752_1750_RED_A_01_ORTHO`
+
+The provider's 0.2529 m orthoimage made from this DTM. Same projection and centre longitude as the DTM (label). 53 499 × 26 943 px, 8-bit. JP2 371 396 220 B. Proposed crop: 2048 × 2048 px from column 12 565, row 27 349; centre −4.8416°, 137.2969°E. See `data/terrain-v2/staging/ortho-pair-v1/image/IMAGE_EVIDENCE.json`.
+
+## Active image (current, for comparison)
+
+PSP_001752_1750_RED (RDR, map-projected onto MOLA, not orthorectified), centre longitude 180°, crop 2048² at 0.25 m. Label: `data/imagery/calibrated-source/PSP_001752_1750_RED.label.txt`.
 
 ## Geology context table
 
 | Source | Scale / resolution | CRS | Footprint | Units | Permitted use |
 |---|---|---|---|---|---|
-| USGS SIM 3292 Geologic Map of Mars (Tanaka et al., 2014) | Drafted 1:5 000 000, published 1:20 000 000. MOLA 463 m/px and THEMIS IR 100 m/px basemaps. 5 km vertex spacing | `GCS_Mars_2000_Sphere` (per evaluation) | Global. Gale study area falls 100 % inside unit `Htu` | Chronostratigraphic map units | **Regional context only.** Not a local obstacle or alignment layer. Per [USGS_SIM3292_GEOLOGY_EVALUATION.md](../USGS_SIM3292_GEOLOGY_EVALUATION.md): `usefulForLocalBoxworkFeatureMapping: false` |
+| USGS SIM 3292 Geologic Map of Mars (Tanaka et al., 2014) | 1:5 000 000 drafted, 1:20 000 000 published; 5 km vertex spacing | `GCS_Mars_2000_Sphere` | Global; study area 100 % in unit `Htu` | Chronostratigraphic units | **Regional context only** ([evaluation](../USGS_SIM3292_GEOLOGY_EVALUATION.md)) |
 
-Cross-check: that evaluation's study area (137.292–137.301°E, 4.839–4.847°S) agrees with the crop centre calculated from the image evidence (4.84°S, 137.30°E).
+## Still open (Gaddielle / Patrick)
 
-## To complete (Gaddielle)
-
-1. Local-download fallback (runbook §3): catalogue page → provider links → label first. Log each step in `retrieval-log.md`.
-2. Save original labels/metadata unchanged in `metadata/`. Add records to `files.json` (null where unknown, no hashes of HTML pages).
-3. Fill every `unknown` row with a cited value, or leave it unknown and list it for Patrick.
-4. If the footprint doesn't cover the crop, or the CRS can't be reconciled: propose **one** alternative official imagery–DTM pair with its evidence.
+1. Read and record the HiRISE usage terms (media/usage.php) before any public deployment.
+2. Acquisition date of PSP_001488_1750 (from its RDR label if needed).
+3. No stated accuracy: show "not stated by the provider" in the evidence view; never invent one.

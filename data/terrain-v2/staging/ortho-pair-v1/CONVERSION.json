@@ -1,0 +1,24 @@
+{
+  "source": "DTEEC_001488_1750_001752_1750_U02.IMG",
+  "sourceBytes": 360402944,
+  "sourceSha256": "9359ca71b31e2689d9e2f38dd56fa83b051a09e360f8566730092a0f4cbe80bb",
+  "label": {
+    "PRODUCT_ID": "DTEEC_001488_1750_001752_1750_U02",
+    "PRODUCT_VERSION_ID": "2.0",
+    "MAP_SCALE": "1.0117467945795",
+    "LINE_PROJECTION_OFFSET": "-276559.50000001",
+    "SAMPLE_PROJECTION_OFFSET": "3577.5000000001",
+    "CENTER_LONGITUDE": "137.3",
+    "MISSING_CONSTANT": "16#FF7FFFFB#"
+  },
+  "window": {
+    "row0": 6830,
+    "row1": 7359,
+    "col0": 3134,
+    "col1": 3663
+  },
+  "nodataFloat": -3.4028226550889045e+38,
+  "resampling": "none",
+  "pixelConvention": "upper-left corner of pixel (0,0) at (-SAMPLE_PROJECTION_OFFSET, LINE_PROJECTION_OFFSET) \u00d7 MAP_SCALE",
+  "tool": "tools/terrain/prepare_ortho_pair.py (in place of gdal_translate; numpy 2.5.3, tifffile 2026.11.16)"
+}

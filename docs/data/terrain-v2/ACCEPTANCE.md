@@ -4,11 +4,18 @@ Owner: Patrick (coordinator). Only entries in this file admit terrain for runtim
 
 ## Current decision
 
-| Candidate | Status | Decided | Reviewer |
-|---|---|---|---|
-| `DTEEC_001488_1750_001752_1750_U02` (lead only, unconfirmed identity/version) | **pending** | — | — |
+| Candidate | For image | Status | Decided | Reviewer |
+|---|---|---|---|---|
+| `DTEEC_001488_1750_001752_1750_U02` (v2.0, sha256 `9359ca71…80bb`) | current crop `hirise-psp001752-red-center-2048-025m-v2` | **rejected for this image**: about 79 m offset and about 6 m RMS non-rigid residual; fails the draft tolerance ([REGISTRATION.md §1](REGISTRATION.md)) | 2026-11-20 | coordinator agent (evidence only; Patrick to confirm) |
+| Same DTM + proposed ortho crop `hirise-psp001752-red-ortho-2048-0253m-v3` | proposed new image | **pending: awaiting Patrick's decision.** Source fields complete except accuracy (not stated by provider) and usage terms (to read); ortho registration 0.59 m RMS / 0.73 m max (within tolerance); shaded-relief check ~3 m E is open for Willy 2 ([REGISTRATION.md §2](REGISTRATION.md)) | — | — |
 
-No terrain product is accepted. The application still reports `terrainStatus: 'unavailable'`.
+Staged package (not deployed): `data/terrain-v2/staging/ortho-pair-v1/`. Accepting it means:
+
+1. New active image (new imageRef, new display JPEG, new manifest/evidence). Missions saved under the current imageRef stay untouched in storage and in exports but don't load on the new image (no coordinate migration).
+2. Science marker records get the new imageRef (their positions are unlocated, so nothing moves).
+3. Admission block set to accepted with reviewer/date/evidence. `data/terrain/index.json` points at the package. The offline pack then includes it.
+
+No terrain product is active in the app until then.
 
 ## Target image (fixed for this decision)
 
@@ -19,6 +26,8 @@ From [CALIBRATED_CROP.json](../evidence/CALIBRATED_CROP.json):
 - Display JPEG SHA-256 `c6cd79381c22c7ae5289ed236165b8f0047cd4489c6b0f2b7417371c5a9a8d23`; GeoTIFF crop SHA-256 `f2e6fda899f945b1cf315bc6f63389ee8098ef05c6a94bfeb1c503d3097b3123`.
 
 ## Source gate checklist — candidate 1
+
+**Filled on 20 Nov 2026 in [SOURCE_INVENTORY.md](SOURCE_INVENTORY.md)** with label citations. The empty table below is kept as the original template.
 
 Each row needs the exact label field or provider passage as evidence. Unknown stays unknown.
 
@@ -49,4 +58,5 @@ Decision rule: accept only when every row has evidence, coverage is full (or par
 
 | UTC | URL | Result | Note |
 |---|---|---|---|
-| 2026-11-20 | https://www.uahirise.org/dtm/PSP_001488_1750 | Blocked: proxy `CONNECT 403` from the cloud container | Not bypassed. Use runbook §3 local-download fallback (Gaddielle), or approve the host for the environment |
+| 2026-11-20 | https://www.uahirise.org/dtm/PSP_001488_1750 | Blocked: proxy `CONNECT 403` from the cloud container | Not bypassed |
+| 2026-11-20 | provider hosts | Allowlisted by Patrick; full retrieval done | See [retrieval-log.md](retrieval-log.md) and [files.json](files.json) |
