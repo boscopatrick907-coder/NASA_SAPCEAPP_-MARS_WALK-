@@ -1,0 +1,134 @@
+{
+  "runId": "2026-11-15T15-49-52-598Z-3u6xee",
+  "source": {
+    "sha": "3f93d267216d5ab125cffa420df1102ff333bf8f",
+    "dirty": true
+  },
+  "channel": "chrome",
+  "headless": true,
+  "steps": [
+    {
+      "name": "raster",
+      "w": 2048,
+      "h": 2048,
+      "src": "http://127.0.0.1:4310/data/imagery/PSP_001752_1750_RED_crop_2048.jpg",
+      "serviceWorker": {
+        "registered": true,
+        "scope": "http://127.0.0.1:4310/"
+      },
+      "manifestType": "application/manifest+json; charset=utf-8",
+      "icons": [
+        {
+          "src": "icons/marswalk-192.png",
+          "sizes": "192x192",
+          "status": 200,
+          "type": "image/png"
+        },
+        {
+          "src": "icons/marswalk-512.png",
+          "sizes": "512x512",
+          "status": 200,
+          "type": "image/png"
+        },
+        {
+          "src": "icons/marswalk-maskable-512.png",
+          "sizes": "512x512",
+          "status": 200,
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "science",
+      "count": 3,
+      "firstName": "Mount Sharp Boxwork Ridges and Hollows",
+      "secondName": "Vera Rubin Ridge ('Pettegrove Point' / 'Ailsa Craig' Target)",
+      "position1": "Record 1 of 3 matching records",
+      "position2": "Record 2 of 3 matching records",
+      "filteredTo": "measured",
+      "hiddenPosition": "Selected record is outside the current filter results."
+    },
+    {
+      "name": "route",
+      "rows": [
+        "1 | Start | 337.9 | 607.7",
+        "2 | Waypoint | 1022.7 | 1149.7",
+        "3 | Destination | 1707.5 | 902.5"
+      ]
+    },
+    {
+      "name": "note-and-export",
+      "note": "TAKOU-SMOKE-2026-11-15T15-49-52-598Z-3u6xee",
+      "draftRetained": true,
+      "exportedObservations": 1
+    },
+    {
+      "name": "import-guards",
+      "messages": {
+        "invalid-json": "The selected file is not valid mission JSON.",
+        "mismatched-image": "Invalid mission or a different image version. Current work is unchanged."
+      }
+    },
+    {
+      "name": "offline-pack",
+      "panel": [
+        "Install & offline · Connection available · Pack checking",
+        "",
+        "Offline pack verified. Save your route and notes before closing.",
+        ""
+      ],
+      "cacheEntries": {
+        "marswalk-pack:http://127.0.0.1:4310/:3653cf784ff40e1ccf62acefd591ad998b3978a458e51be1cd9087b6761e26e7:ea932263-4600-4df3-96d3-2faa4b852f6a": 20
+      }
+    },
+    {
+      "name": "offline-recovery",
+      "recoveryMessage": "Restored saved route and 1 observation(s) on this device.",
+      "startupCount": 1,
+      "startupRows": [
+        "1 | Start | 337.9 | 607.7",
+        "2 | Waypoint | 1022.7 | 1149.7",
+        "3 | Destination | 1707.5 | 902.5"
+      ],
+      "exportsEqual": true
+    },
+    {
+      "name": "viewer",
+      "opened": {
+        "canvases": 1,
+        "fallback": 0
+      },
+      "removedOnClose": true,
+      "removedOnTabChange": true
+    },
+    {
+      "name": "narrow",
+      "docScroll": 390,
+      "docClient": 390,
+      "bodyScroll": 390,
+      "mapElement": {
+        "x": 8.25,
+        "y": 666.25,
+        "width": 373.5,
+        "height": 487.515625
+      },
+      "visibleDefault": 178,
+      "visibleCollapsed": 178,
+      "visibleAfterScroll": 488,
+      "scrollY": 310
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "failedResponses": [],
+  "url": "http://127.0.0.1:4310/",
+  "pack": {
+    "version": "3653cf784ff40e1ccf62acefd591ad998b3978a458e51be1cd9087b6761e26e7",
+    "files": 19,
+    "totalBytes": 2611959
+  },
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/157.0.0.0 Safari/537.36",
+  "browserVersion": null,
+  "serverRequests404": [],
+  "finishedAt": "2026-11-15T15:50:13.196Z"
+}

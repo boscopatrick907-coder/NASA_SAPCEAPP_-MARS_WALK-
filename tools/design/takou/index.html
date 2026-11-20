@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MARSWALK layout prototype</title>
+<style>
+/* PROTOTYPE ONLY. Token values copied from src/styles.scss (dark theme), plus the two
+   contrast fixes proposed in docs/design/TAKOU_DESIGN_REVIEW.md (marked "proposed"). */
+:root {
+  --bg-space: #0b0e14; --bg-surface: #141a23; --bg-card: #1a222e; --border-subtle: #2a3749;
+  --border-focus: #3b82f6; --text-primary: #f1f5f9; --text-secondary: #94a3b8;
+  --text-muted: #8a9ab0; /* proposed (was #64748b) */
+  --mars-accent: #e05a47; --on-accent: #0b0e14; /* proposed dark text on accent */
+  --warning-bg: rgba(245,158,11,.12); --warning-border: rgba(245,158,11,.35); --warning-text: #fbbf24;
+  --error-bg: rgba(239,68,68,.15); --error-red: #ef4444; --map-bg: #07090d;
+  --touch: 44px; --font-sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg-space); color: var(--text-primary); font: 14px/1.45 var(--font-sans); }
+.proto-flag { background: #fde68a; color: #111; font-weight: 700; padding: 6px 16px; text-align: center; }
+.app { display: flex; flex-direction: column; height: calc(100dvh - 32px); }
+header { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle); }
+.brand { font-weight: 700; letter-spacing: .04em; margin-right: auto; }
+button, .chip { min-height: var(--touch); min-width: var(--touch); border-radius: 6px; font: inherit; }
+button { padding: 0 12px; background: transparent; color: var(--text-primary); border: 1px solid var(--border-subtle); cursor: pointer; }
+button:focus-visible { outline: 3px solid var(--border-focus); outline-offset: 2px; }
+button.primary { background: var(--mars-accent); color: var(--on-accent); border-color: var(--mars-accent); font-weight: 600; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 0 10px; border: 1px solid var(--warning-border); background: var(--warning-bg); color: var(--warning-text); }
+main { flex: 1; display: grid; grid-template-columns: 1fr 380px; min-height: 0; }
+.map { position: relative; background: var(--map-bg) repeating-linear-gradient(45deg, #10151d 0 12px, #0c1017 12px 24px); display: grid; place-items: center; color: var(--text-muted); }
+.map .legend { position: absolute; left: 12px; bottom: 12px; background: rgba(20,26,35,.85); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 8px 12px; font-size: 13px; }
+aside { display: flex; flex-direction: column; background: var(--bg-surface); border-left: 1px solid var(--border-subtle); min-height: 0; }
+.banner { margin: 12px; padding: 12px; border-radius: 8px; border: 1px solid var(--warning-border); background: var(--warning-bg); }
+.banner p { margin: 0 0 8px; }
+.banner .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+[role=tablist] { display: grid; grid-template-columns: repeat(3, 1fr) auto; border-bottom: 1px solid var(--border-subtle); }
+[role=tab] { border: 0; border-bottom: 2px solid transparent; border-radius: 0; color: var(--text-secondary); }
+[role=tab][aria-selected=true] { color: var(--text-primary); border-bottom-color: var(--mars-accent); }
+.panel { padding: 16px; overflow: auto; display: grid; gap: 12px; }
+.card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; }
+.card h3 { margin: 0 0 8px; font-size: .9rem; }
+.muted { color: var(--text-muted); font-size: .8rem; }
+.err { border-color: var(--error-red); background: var(--error-bg); display: flex; justify-content: space-between; gap: 8px; align-items: start; }
+.mono { font-family: var(--font-mono); }
+@media (max-width: 768px) {
+  main { grid-template-columns: 1fr; grid-template-rows: 58% 42%; }
+  aside { border-left: 0; border-top: 1px solid var(--border-subtle); }
+  header .wide { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="proto-flag" role="note">PROTOTYPE — layout and wording proposal only. Placeholder text; no app data, no real states.</div>
+<div class="app">
+  <header>
+    <span class="brand">MARSWALK</span>
+    <button class="chip" aria-haspopup="dialog" title="Proposed single offline readiness control">Offline: not prepared</button>
+    <button class="wide">Export</button>
+  </header>
+  <main>
+    <section class="map" aria-label="Map placeholder">
+      <span>Image map (placeholder)</span>
+      <div class="legend">Planar distance only (no terrain) · 0 science records located on this image</div>
+    </section>
+    <aside aria-label="Mission panel">
+      <div class="banner" role="status">
+        <p><strong>Saved mission on this device</strong><br />
+        <span class="muted">Route with N points and M notes (placeholder counts from the service)</span></p>
+        <div class="actions">
+          <button class="primary">Load saved mission (route + notes)</button>
+          <button>Export it first</button>
+        </div>
+      </div>
+      <div role="tablist" aria-label="Mission sections">
+        <button role="tab" aria-selected="false">Science</button>
+        <button role="tab" aria-selected="false">Route</button>
+        <button role="tab" aria-selected="true">Notes</button>
+        <button aria-label="More: Transfer, 3D">⋯</button>
+      </div>
+      <div class="panel" role="tabpanel">
+        <div class="card">
+          <h3>Record observation</h3>
+          <p class="muted">Text area placeholder</p>
+          <button class="primary">Save observation</button>
+        </div>
+        <div class="card err" role="alert">
+          <span><strong>Not saved.</strong> Your draft is kept. Export the mission or free space.</span>
+          <button aria-label="Dismiss message">×</button>
+        </div>
+        <div class="card">
+          <h3>Notes</h3>
+          <p class="muted">Notes from your saved mission are not loaded yet.</p>
+        </div>
+      </div>
+    </aside>
+  </main>
+</div>
+</body>
+</html>
