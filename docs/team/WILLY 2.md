@@ -2,6 +2,17 @@
 
 ## START HERE — your executable checklist
 
+> **ACTIVE — 21 Nov 2026: one job, and it can still revoke the terrain acceptance.** The app now uses the HiRISE orthoimage `hirise-psp001752-red-ortho-2048-0253m-v3` with DTM `DTEEC_001488_1750_001752_1750_U02` (merged via PR #8). Your earlier tests are on main in `tests/terrain-map/` (29 pass). What's still open is **R1b, independent control points**:
+>
+> 1. Pull `main`, then `npm ci && npm run build`. Open `public/data/imagery/PSP_001752_1750_RED_A_ortho_crop_2048.jpg` and the DTM window (rebuild it with `tools/terrain/prepare_ortho_pair.py`; inputs and URLs are in `docs/data/terrain-v2/files.json`).
+> 2. Make a shaded relief from the DTM with **your own tool** (QGIS or GDAL `gdaldem hillshade`, not our scripts).
+> 3. Pick **at least 8** sharp features you can see in both (ridge crests, crater rims, scarp corners), spread across the crop. Record image pixel (x, y bottom-left) and DTM cell (col, row) for each.
+> 4. Convert both to metres using `docs/data/evidence/ORTHO_CROP.json` and the package geotransform. Report the residual per point, RMS and max.
+> 5. **Pass:** RMS ≤ 1.01 m (1 cell) and max ≤ 2.02 m. Write it into `docs/qa/PLANNING_V2_ALIGNMENT.md` row R1b, with a screenshot of your points.
+> 6. **If it fails:** say so plainly in the doc and tell Patrick. He can switch terrain off by setting `activePackageId` to `null` in `public/data/terrain/index.json`.
+>
+> Background: our automated ortho check passed at 0.59 m RMS, but a shaded-relief comparison leaned about 3 m east. Your independent points decide which is right. Then do the device runs with Royce (D1).
+
 Read only this checklist and the active assignment immediately below it for current work. Everything under **Historical assignments** is reference, not another assignment. Do not wait for all teammates: complete the **Do now** item first.
 
 **Before editing:** preserve/commit your current work, report its branch/SHA, then use a separate clean checkout for this agent. Fetch `origin/main` and create your own feature branch from current main, unless Patrick specifies a newer reviewed development base. Never reset existing work or switch a teammate's checkout. Branch names below are suggestions only if you have not started this slice. These instructions are published on main; implementation stays on your feature branch.
