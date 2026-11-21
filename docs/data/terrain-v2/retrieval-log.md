@@ -19,5 +19,6 @@ Each attempt: UTC time, exact URL, HTTP outcome, saved filename. No HTML error p
 | 2026-11-20T18:58Z | https://www.uahirise.org/PDS/EXTRAS/DTM/…/README.TXT | 200, 1 427 B | metadata/EXTRAS_README.TXT | coordinator agent |
 | 2026-11-20T18:59:26Z | …/PSP_001752_1750_RED_C_01_ORTHO.LBL and .JP2 | 200, 5 341 B / 33 256 997 B | metadata/…RED_C…LBL; JP2 not in Git | coordinator agent |
 | 2026-11-20T19:02:43Z–19:03Z | …/PSP_001752_1750_RED_A_01_ORTHO.LBL and .JP2 | 200, 5 335 B / 371 396 220 B | metadata/…RED_A…LBL; JP2 not in Git | coordinator agent |
+| 2026-11-21T03:09:04Z | …/PSP_001488_1750_RED_C_01_ORTHO.LBL and .JP2 | 200, 5 341 B / 34 577 732 B | metadata/…1488…LBL; JP2 not in Git | coordinator agent (R1b) |
 
 The proxy was not bypassed and TLS checks were not disabled. Retrieval is complete for candidate 1 and both orthoimages. `…` stands for `https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750`.

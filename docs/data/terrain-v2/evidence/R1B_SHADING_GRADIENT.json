@@ -1,0 +1,610 @@
+{
+ "method": "Lambertian relief from DTM with label sun geometry vs orthoimage; gradient NCC per tile (64-cell tiles, 6x6 grid)",
+ "sun": {
+  "azimuthFromNorthDeg": 288.468,
+  "elevationDeg": 32.279,
+  "label": {
+   "INCIDENCE_ANGLE": 57.7212,
+   "SUB_SOLAR_AZIMUTH": 198.468362,
+   "NORTH_AZIMUTH": 270.0
+  }
+ },
+ "zeroShiftIntensityCorrelation": 0.463,
+ "tiles": 36,
+ "controlPoints": 7,
+ "acceptance": {
+  "minPeakNCC": 0.35,
+  "minUniqueness": 0.05
+ },
+ "residualRMS_m": 2.113,
+ "residualMax_m": 4.391,
+ "meanOffsetE_N_m": [
+  -0.062,
+  0.183
+ ],
+ "standardErrorOfMean_m": 0.799,
+ "toleranceCells": {
+  "rms": 1,
+  "max": 2,
+  "cellMeters": 1.0117467945795
+ },
+ "points": [
+  {
+   "tile": [
+    0,
+    0
+   ],
+   "centreProjectedM": [
+    -408.11,
+    -286759.27
+   ],
+   "offsetE_N_m": [
+    2.553,
+    -3.573
+   ],
+   "peakNCC": 0.42,
+   "uniqueness": 0.074
+  },
+  {
+   "tile": [
+    0,
+    1
+   ],
+   "centreProjectedM": [
+    -317.06,
+    -286759.27
+   ],
+   "offsetE_N_m": [
+    -6.07,
+    6.07
+   ],
+   "peakNCC": 0.113,
+   "uniqueness": 0.026
+  },
+  {
+   "tile": [
+    0,
+    2
+   ],
+   "centreProjectedM": [
+    -227.01,
+    -286759.27
+   ],
+   "offsetE_N_m": [
+    -0.789,
+    0.136
+   ],
+   "peakNCC": 0.108,
+   "uniqueness": 0.023
+  },
+  {
+   "tile": [
+    0,
+    3
+   ],
+   "centreProjectedM": [
+    -135.95,
+    -286759.27
+   ],
+   "offsetE_N_m": [
+    0.022,
+    0.931
+   ],
+   "peakNCC": 0.26,
+   "uniqueness": 0.062
+  },
+  {
+   "tile": [
+    0,
+    4
+   ],
+   "centreProjectedM": [
+    -45.91,
+    -286759.27
+   ],
+   "offsetE_N_m": [
+    -3.122,
+    6.07
+   ],
+   "peakNCC": 0.07,
+   "uniqueness": 0.041
+  },
+  {
+   "tile": [
+    0,
+    5
+   ],
+   "centreProjectedM": [
+    45.15,
+    -286759.27
+   ],
+   "offsetE_N_m": [
+    0.607,
+    1.382
+   ],
+   "peakNCC": 0.344,
+   "uniqueness": 0.07
+  },
+  {
+   "tile": [
+    1,
+    0
+   ],
+   "centreProjectedM": [
+    -408.11,
+    -286850.32
+   ],
+   "offsetE_N_m": [
+    -0.839,
+    -0.424
+   ],
+   "peakNCC": 0.305,
+   "uniqueness": 0.067
+  },
+  {
+   "tile": [
+    1,
+    1
+   ],
+   "centreProjectedM": [
+    -317.06,
+    -286850.32
+   ],
+   "offsetE_N_m": [
+    -2.949,
+    -5.177
+   ],
+   "peakNCC": 0.412,
+   "uniqueness": 0.012
+  },
+  {
+   "tile": [
+    1,
+    2
+   ],
+   "centreProjectedM": [
+    -227.01,
+    -286850.32
+   ],
+   "offsetE_N_m": [
+    -3.48,
+    6.07
+   ],
+   "peakNCC": 0.088,
+   "uniqueness": 0.003
+  },
+  {
+   "tile": [
+    1,
+    3
+   ],
+   "centreProjectedM": [
+    -135.95,
+    -286850.32
+   ],
+   "offsetE_N_m": [
+    -1.887,
+    -0.068
+   ],
+   "peakNCC": 0.286,
+   "uniqueness": 0.035
+  },
+  {
+   "tile": [
+    1,
+    4
+   ],
+   "centreProjectedM": [
+    -45.91,
+    -286850.32
+   ],
+   "offsetE_N_m": [
+    -2.061,
+    -0.883
+   ],
+   "peakNCC": 0.235,
+   "uniqueness": 0.013
+  },
+  {
+   "tile": [
+    1,
+    5
+   ],
+   "centreProjectedM": [
+    45.15,
+    -286850.32
+   ],
+   "offsetE_N_m": [
+    -1.177,
+    1.761
+   ],
+   "peakNCC": 0.132,
+   "uniqueness": 0.043
+  },
+  {
+   "tile": [
+    2,
+    0
+   ],
+   "centreProjectedM": [
+    -408.11,
+    -286940.37
+   ],
+   "offsetE_N_m": [
+    -1.053,
+    4.123
+   ],
+   "peakNCC": 0.24,
+   "uniqueness": 0.044
+  },
+  {
+   "tile": [
+    2,
+    1
+   ],
+   "centreProjectedM": [
+    -317.06,
+    -286940.37
+   ],
+   "offsetE_N_m": [
+    -3.944,
+    -3.195
+   ],
+   "peakNCC": 0.316,
+   "uniqueness": 0.052
+  },
+  {
+   "tile": [
+    2,
+    2
+   ],
+   "centreProjectedM": [
+    -227.01,
+    -286940.37
+   ],
+   "offsetE_N_m": [
+    -0.271,
+    6.07
+   ],
+   "peakNCC": -0.045,
+   "uniqueness": 0.0
+  },
+  {
+   "tile": [
+    2,
+    3
+   ],
+   "centreProjectedM": [
+    -135.95,
+    -286940.37
+   ],
+   "offsetE_N_m": [
+    4.163,
+    6.07
+   ],
+   "peakNCC": 0.334,
+   "uniqueness": 0.045
+  },
+  {
+   "tile": [
+    2,
+    4
+   ],
+   "centreProjectedM": [
+    -45.91,
+    -286940.37
+   ],
+   "offsetE_N_m": [
+    3.843,
+    -3.928
+   ],
+   "peakNCC": 0.202,
+   "uniqueness": 0.011
+  },
+  {
+   "tile": [
+    2,
+    5
+   ],
+   "centreProjectedM": [
+    45.15,
+    -286940.37
+   ],
+   "offsetE_N_m": [
+    -0.999,
+    -1.434
+   ],
+   "peakNCC": 0.117,
+   "uniqueness": 0.007
+  },
+  {
+   "tile": [
+    3,
+    0
+   ],
+   "centreProjectedM": [
+    -408.11,
+    -287031.43
+   ],
+   "offsetE_N_m": [
+    -1.168,
+    -0.576
+   ],
+   "peakNCC": 0.585,
+   "uniqueness": 0.045
+  },
+  {
+   "tile": [
+    3,
+    1
+   ],
+   "centreProjectedM": [
+    -317.06,
+    -287031.43
+   ],
+   "offsetE_N_m": [
+    -0.302,
+    6.07
+   ],
+   "peakNCC": 0.028,
+   "uniqueness": 0.003
+  },
+  {
+   "tile": [
+    3,
+    2
+   ],
+   "centreProjectedM": [
+    -227.01,
+    -287031.43
+   ],
+   "offsetE_N_m": [
+    6.07,
+    0.105
+   ],
+   "peakNCC": 0.084,
+   "uniqueness": 0.016
+  },
+  {
+   "tile": [
+    3,
+    3
+   ],
+   "centreProjectedM": [
+    -135.95,
+    -287031.43
+   ],
+   "offsetE_N_m": [
+    5.259,
+    -0.704
+   ],
+   "peakNCC": 0.098,
+   "uniqueness": 0.004
+  },
+  {
+   "tile": [
+    3,
+    4
+   ],
+   "centreProjectedM": [
+    -45.91,
+    -287031.43
+   ],
+   "offsetE_N_m": [
+    1.717,
+    6.07
+   ],
+   "peakNCC": 0.163,
+   "uniqueness": 0.042
+  },
+  {
+   "tile": [
+    3,
+    5
+   ],
+   "centreProjectedM": [
+    45.15,
+    -287031.43
+   ],
+   "offsetE_N_m": [
+    -3.76,
+    6.07
+   ],
+   "peakNCC": 0.214,
+   "uniqueness": 0.025
+  },
+  {
+   "tile": [
+    4,
+    0
+   ],
+   "centreProjectedM": [
+    -408.11,
+    -287121.47
+   ],
+   "offsetE_N_m": [
+    4.831,
+    6.07
+   ],
+   "peakNCC": 0.099,
+   "uniqueness": 0.008
+  },
+  {
+   "tile": [
+    4,
+    1
+   ],
+   "centreProjectedM": [
+    -317.06,
+    -287121.47
+   ],
+   "offsetE_N_m": [
+    -3.03,
+    -2.986
+   ],
+   "peakNCC": 0.315,
+   "uniqueness": 0.032
+  },
+  {
+   "tile": [
+    4,
+    2
+   ],
+   "centreProjectedM": [
+    -227.01,
+    -287121.47
+   ],
+   "offsetE_N_m": [
+    -0.099,
+    -0.336
+   ],
+   "peakNCC": 0.054,
+   "uniqueness": 0.006
+  },
+  {
+   "tile": [
+    4,
+    3
+   ],
+   "centreProjectedM": [
+    -135.95,
+    -287121.47
+   ],
+   "offsetE_N_m": [
+    -1.04,
+    -0.626
+   ],
+   "peakNCC": 0.275,
+   "uniqueness": 0.083
+  },
+  {
+   "tile": [
+    4,
+    4
+   ],
+   "centreProjectedM": [
+    -45.91,
+    -287121.47
+   ],
+   "offsetE_N_m": [
+    -0.339,
+    1.167
+   ],
+   "peakNCC": 0.42,
+   "uniqueness": 0.05
+  },
+  {
+   "tile": [
+    4,
+    5
+   ],
+   "centreProjectedM": [
+    45.15,
+    -287121.47
+   ],
+   "offsetE_N_m": [
+    -1.011,
+    -0.013
+   ],
+   "peakNCC": 0.359,
+   "uniqueness": 0.077
+  },
+  {
+   "tile": [
+    5,
+    0
+   ],
+   "centreProjectedM": [
+    -408.11,
+    -287212.53
+   ],
+   "offsetE_N_m": [
+    0.803,
+    2.269
+   ],
+   "peakNCC": 0.501,
+   "uniqueness": 0.053
+  },
+  {
+   "tile": [
+    5,
+    1
+   ],
+   "centreProjectedM": [
+    -317.06,
+    -287212.53
+   ],
+   "offsetE_N_m": [
+    -6.07,
+    -5.168
+   ],
+   "peakNCC": 0.186,
+   "uniqueness": 0.034
+  },
+  {
+   "tile": [
+    5,
+    2
+   ],
+   "centreProjectedM": [
+    -227.01,
+    -287212.53
+   ],
+   "offsetE_N_m": [
+    -2.765,
+    -6.07
+   ],
+   "peakNCC": 0.142,
+   "uniqueness": 0.037
+  },
+  {
+   "tile": [
+    5,
+    3
+   ],
+   "centreProjectedM": [
+    -135.95,
+    -287212.53
+   ],
+   "offsetE_N_m": [
+    -1.116,
+    0.139
+   ],
+   "peakNCC": 0.538,
+   "uniqueness": 0.063
+  },
+  {
+   "tile": [
+    5,
+    4
+   ],
+   "centreProjectedM": [
+    -45.91,
+    -287212.53
+   ],
+   "offsetE_N_m": [
+    -1.029,
+    0.183
+   ],
+   "peakNCC": 0.426,
+   "uniqueness": 0.075
+  },
+  {
+   "tile": [
+    5,
+    5
+   ],
+   "centreProjectedM": [
+    45.15,
+    -287212.53
+   ],
+   "offsetE_N_m": [
+    -0.297,
+    1.108
+   ],
+   "peakNCC": 0.497,
+   "uniqueness": 0.081
+  }
+ ],
+ "pass": false
+}

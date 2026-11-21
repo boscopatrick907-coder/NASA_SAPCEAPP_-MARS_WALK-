@@ -12,7 +12,7 @@ import {
 import { DOCUMENT } from '@angular/common';
 import * as L from 'leaflet';
 import { TerrainSuggestionStore } from '../core/terrain-suggestion.store';
-import { TerrainSamplerStore } from '../core/terrain-sampler.store';
+import { mineralValueAt, TerrainSamplerStore } from '../core/terrain-sampler.store';
 import { elevationAt, latLonAt, slopeAt } from '../core/terrain-profile';
 import { MissionService } from '../core/mission.service';
 import { routePoints } from '../core/route';
@@ -127,6 +127,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   readonly terrainStore = inject(TerrainSamplerStore);
   readonly showRelief = signal(false);
   readonly showSlope = signal(false);
+  readonly showMineral = signal(false);
   /** Last point under the cursor (desktop) or last inspect tap (touch). */
   readonly cursor = signal<Point | null>(null);
   readonly cursorInfo = computed(() => {
@@ -136,7 +137,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const z = elevationAt(s, p);
     const sl = slopeAt(s, p);
     const ll = latLonAt(s, p);
+    const mineral = this.terrainStore.mineral();
     return {
+      mineral: mineral ? mineralValueAt(mineral, p) : null,
       lat: ll.lat,
       lon: ll.lon,
       elevation: z,
@@ -156,9 +159,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   undo(): void {
     this.mission.undoRoute();
   }
-  toggleTerrainLayer(which: 'relief' | 'slope', event: Event): void {
+  toggleTerrainLayer(which: 'relief' | 'slope' | 'mineral', event: Event): void {
     const on = (event.target as HTMLInputElement).checked;
-    (which === 'relief' ? this.showRelief : this.showSlope).set(on);
+    (which === 'relief'
+      ? this.showRelief
+      : which === 'slope'
+        ? this.showSlope
+        : this.showMineral
+    ).set(on);
   }
   readonly activeModeLabel = computed(() => {
     switch (this.mission.mode()) {
@@ -273,6 +281,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private clickHandler?: (event: L.LeafletMouseEvent) => void;
   private reliefOverlay?: L.ImageOverlay;
   private slopeOverlay?: L.ImageOverlay;
+  private mineralOverlay?: L.ImageOverlay;
   private hoverMarker?: L.CircleMarker;
   private drag: { key: string; moved: boolean } | null = null;
   private suppressClick = false;
@@ -281,6 +290,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const relief = this.showRelief();
     const slope = this.showSlope();
     const hover = this.terrainStore.hover();
+    const mineral = this.terrainStore.mineral();
+    const showMineral = this.showMineral();
     const ready = this.imageDisplayState() === 'ready';
     if (!this.viewReady || !this.map) return;
     this.reliefOverlay = this.syncTerrainOverlay(
@@ -290,6 +301,20 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       layers,
       0.55,
     );
+    if ((!showMineral || !mineral || !ready) && this.mineralOverlay) {
+      this.map.removeLayer(this.mineralOverlay);
+      this.mineralOverlay = undefined;
+    } else if (showMineral && mineral && ready && !this.mineralOverlay) {
+      const b = mineral.bounds;
+      this.mineralOverlay = L.imageOverlay(
+        mineral.overlayUrl,
+        [
+          [b.y0, b.x0],
+          [b.y1, b.x1],
+        ],
+        { pane: 'terrainPane', opacity: 0.75, interactive: false, className: 'mw-mineral-layer' },
+      ).addTo(this.map);
+    }
     this.slopeOverlay = this.syncTerrainOverlay(
       this.slopeOverlay,
       layers?.slopeUrl,

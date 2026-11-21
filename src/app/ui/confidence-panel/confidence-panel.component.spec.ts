@@ -86,6 +86,8 @@ describe('ConfidencePanelComponent', () => {
   afterEach(() => {
     // The idle geology panel loads its context file; answer it so the panel stays quiet.
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json')))
+      r.flush({});
     http.verify();
   });
 

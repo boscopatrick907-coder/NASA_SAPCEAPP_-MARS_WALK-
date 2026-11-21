@@ -19,12 +19,12 @@
     {
       "title": "Fraeman et al. (2016), The stratigraphy and evolution of lower Mount Sharp from spectral, morphological and thermophysical orbital datasets, JGR Planets",
       "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5101845",
-      "use": "Refined unit map and CRISM mineralogy (clays, sulfates, hematite) of lower Mount Sharp; underlying data in the NASA PDS. Not yet integrated: needs product selection and registration."
+      "use": "Refined unit map and CRISM mineralogy (clays, sulfates, hematite) of lower Mount Sharp. The CRISM sulfate layer in this app uses two of the same kind of MTRDR products, processed independently."
     },
     {
       "title": "Fraeman et al. (2013), A hematite-bearing layer in Gale Crater, Mars: mapping and implications for past aqueous conditions, Geology",
       "url": "https://authors.library.caltech.edu/records/05bm4-2ke51",
-      "use": "CRISM hematite mapping on the northern flank of Mount Sharp. Not yet integrated."
+      "use": "CRISM hematite mapping on the northern flank of Mount Sharp. Our study area shows no crystalline-hematite signature in either observation."
     },
     {
       "title": "1:60,000 geologic map of western Aeolis Mons (GSA 2023 abstract, in progress)",

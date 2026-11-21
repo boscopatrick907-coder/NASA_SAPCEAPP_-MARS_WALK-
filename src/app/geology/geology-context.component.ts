@@ -10,6 +10,8 @@ import { https } from '../core/validation';
 import { slopeGrid, TerrainSampler } from '../core/terrain-profile';
 import { slopeAtCell } from '../core/terrain-profile';
 import { TerrainSamplerStore } from '../core/terrain-sampler.store';
+import { MineralogyDoc, validMineralogy } from '../core/mineralogy';
+import { MissionService } from '../core/mission.service';
 
 export interface GeologyContext {
   schemaVersion: 1;
@@ -145,7 +147,7 @@ export function landformStats(s: TerrainSampler): LandformStats | null {
           }
         </ul>
         <details>
-          <summary>Mineralogy and finer-scale maps (not yet in the app)</summary>
+          <summary>Further reading: mineralogy papers and finer-scale maps</summary>
           <ul>
             @for (f of g.furtherSources; track f.url) {
               <li>
@@ -157,6 +159,75 @@ export function landformStats(s: TerrainSampler): LandformStats | null {
         </details>
       } @else if (failed()) {
         <p class="note">Regional geology context could not be loaded.</p>
+      }
+      @if (mineralogy(); as m) {
+        <h3>Mineralogy from orbit (CRISM)</h3>
+        <p>
+          Two independent CRISM observations, each registered to the HiRISE image, agree on the
+          study area:
+        </p>
+        <table class="minerals">
+          <thead>
+            <tr>
+              <th scope="col">Signature</th>
+              <th scope="col">Result</th>
+              <th scope="col">Medians (two obs.)</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of mineralRows(); track row.index) {
+              <tr [class.present]="row.present">
+                <th scope="row">
+                  {{ row.meaning }} <span class="code">{{ row.index }}</span>
+                </th>
+                <td>{{ row.finding }}</td>
+                <td>{{ row.medians }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <figure class="context">
+          <img
+            [src]="contextUrl()"
+            alt="CRISM sulfate index over about 5 km of lower Mount Sharp; the study area is outlined in blue"
+            width="278"
+            height="278"
+          />
+          <figcaption>
+            Sulfate index around the study area (blue box, ~5 km wide); stronger magenta = stronger
+            signature. Toggle "Sulfate index (CRISM)" on the map for the study area itself.
+          </figcaption>
+        </figure>
+        <details>
+          <summary>Method, registration and limits</summary>
+          <p class="note">{{ m.method }}</p>
+          <ul class="note">
+            @for (r of registrationRows(); track r.id) {
+              <li>
+                {{ r.id }}: shifted {{ r.e }} m east, {{ r.n }} m north to match HiRISE (match
+                {{ r.peak }}).
+              </li>
+            }
+            <li>
+              Map layer: only the sulfate index reproduces between the two observations at
+              {{ m.smoothingMeters }} m (r = {{ m.reproducibility[m.mappedIndex]['162m'] }}); finer
+              patterns are noise and are not shown.
+            </li>
+            @for (l of m.limitations; track $index) {
+              <li>{{ l }}</li>
+            }
+          </ul>
+          <ul class="note">
+            @for (s of m.sources; track s.url) {
+              <li>
+                <a [href]="s.url" target="_blank" rel="noopener noreferrer">{{ s.product }}</a> ({{
+                  s.acquired
+                }})
+              </li>
+            }
+          </ul>
+          <p class="note">{{ m.credit }}</p>
+        </details>
       }
     </section>
   `,
@@ -194,6 +265,39 @@ export function landformStats(s: TerrainSampler): LandformStats | null {
       align-items: center;
       gap: 6px;
     }
+    .minerals {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+    .minerals th,
+    .minerals td {
+      text-align: left;
+      padding: 3px 4px;
+      border-bottom: 1px solid rgb(148 163 184 / 0.3);
+      vertical-align: top;
+    }
+    .minerals tr.present th {
+      color: #a21caf;
+    }
+    .code {
+      opacity: 0.6;
+      font-size: 0.75em;
+    }
+    .context {
+      margin: 4px 0;
+    }
+    .context img {
+      width: 100%;
+      max-width: 278px;
+      height: auto;
+      image-rendering: pixelated;
+      border-radius: 4px;
+    }
+    .context figcaption {
+      font-size: 0.75rem;
+      opacity: 0.8;
+    }
     .bar {
       height: 8px;
       border-radius: 4px;
@@ -223,7 +327,45 @@ export class GeologyContextComponent {
     return `Elevation ${st.minElevation.toFixed(0)} to ${st.maxElevation.toFixed(0)} m (${relief} m of relief); mean slope ${st.meanSlopeDeg.toFixed(1)}°${facing}.`;
   }
 
+  private readonly mission = inject(MissionService);
+  readonly mineralogy = signal<MineralogyDoc | null>(null);
+  readonly contextUrl = computed(() => {
+    const m = this.mineralogy();
+    return m ? new URL(m.context.path, this.baseUri).href : '';
+  });
+  readonly mineralRows = computed(() => {
+    const m = this.mineralogy();
+    if (!m) return [];
+    return Object.entries(m.indices).map(([index, v]) => ({
+      index,
+      meaning: v.meaning.split(',')[0],
+      finding: v.finding,
+      present: v.finding.startsWith('absorption above'),
+      medians: Object.values(v.observations)
+        .map((o) => o.median.toFixed(4))
+        .join(' / '),
+    }));
+  });
+  readonly registrationRows = computed(() => {
+    const m = this.mineralogy();
+    if (!m) return [];
+    return Object.entries(m.registration).map(([id, r]) => ({
+      id: id.toUpperCase(),
+      e: r.shiftE_N_m[0],
+      n: r.shiftE_N_m[1],
+      peak: r.peakNCC,
+    }));
+  });
+  private readonly baseUri = inject(DOCUMENT).baseURI;
+
   constructor() {
+    const http = inject(HttpClient);
+    http.get<unknown>(new URL('data/mineralogy/mineralogy.json', this.baseUri).href).subscribe({
+      next: (v) => {
+        if (validMineralogy(v, this.mission.image()?.imageRef ?? null)) this.mineralogy.set(v);
+      },
+      error: () => this.mineralogy.set(null),
+    });
     const url = new URL('data/geology.json', inject(DOCUMENT).baseURI).href;
     inject(HttpClient)
       .get<unknown>(url)

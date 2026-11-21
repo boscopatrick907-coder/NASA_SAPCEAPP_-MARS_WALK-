@@ -33,7 +33,18 @@
         />
         Slope
       </label>
-    } @else {
+    }
+    @if (terrainStore.mineral(); as mineral) {
+      <label [title]="mineral.title">
+        <input
+          type="checkbox"
+          [checked]="showMineral()"
+          (change)="toggleTerrainLayer('mineral', $event)"
+        />
+        Sulfate index (CRISM)
+      </label>
+    }
+    @if (!terrainStore.layers()) {
       <span class="unavailable-layer" title="Terrain layers appear once the DTM package is verified"
         >Terrain layers loading…</span
       >
@@ -140,6 +151,9 @@
         @if (info.elevation !== null) {
           <span>Elev {{ info.elevation.toFixed(1) }} m</span>
         }
+        @if (info.mineral !== null) {
+          <span>Sulfate idx {{ info.mineral.toFixed(4) }}</span>
+        }
         @if (info.slopeDeg !== null) {
           <span>Slope {{ info.slopeDeg.toFixed(1) }}° · faces {{ info.aspect }}</span>
         }
@@ -150,6 +164,12 @@
         <span><i style="background: rgb(250 204 21)"></i>10–20°</span>
         <span><i style="background: rgb(249 115 22)"></i>20–30°</span>
         <span><i style="background: rgb(220 38 38)"></i>≥ 30°</span>
+      </div>
+    }
+    @if (showMineral() && terrainStore.mineral(); as mineral) {
+      <div class="map-legend map-legend-mineral" aria-label="Sulfate index legend">
+        <span>CRISM sulfate index</span><i class="ramp"></i
+        ><span>0 → {{ mineral.stretchMax.toFixed(3) }}</span>
       </div>
     }
     <div class="map-zoom-controls" role="group" aria-label="Map zoom controls">

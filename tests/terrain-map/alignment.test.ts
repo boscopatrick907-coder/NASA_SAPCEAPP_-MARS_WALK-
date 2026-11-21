@@ -256,4 +256,14 @@ describe('A10 active image and the accepted DTM package', () => {
     expect(r.orthoCheck.tileRMS_m).toBeLessThanOrEqual(gt[1]);
     expect(r.orthoCheck.tileMax_m).toBeLessThanOrEqual(2 * gt[1]);
   });
+
+  it('R1b (from REGISTRATION.md §4): ≥ 8 independent stereo-parallax control points within tolerance', () => {
+    const r = JSON.parse(
+      readFileSync('docs/data/terrain-v2/evidence/R1B_STEREO_PARALLAX.json', 'utf8'),
+    );
+    expect(r.controlPoints).toBeGreaterThanOrEqual(8);
+    expect(r.residualRMS_m).toBeLessThanOrEqual(gt[1]);
+    expect(r.residualMax_m).toBeLessThanOrEqual(2 * gt[1]);
+    expect(pkg.registration.status).toBe('verified');
+  });
 });
