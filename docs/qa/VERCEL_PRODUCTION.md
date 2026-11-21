@@ -1,5 +1,16 @@
 # Vercel production
 
+## 21 Nov 2026 (latest) — CRISM mineralogy layer, R1b terrain check
+
+| Item | Value |
+|---|---|
+| Source | `main` @ `c0c8344` (PR #13), built by Vercel from GitHub |
+| Deployment | `dpl_D5zJrUvC7EjvaHTcS7RaMczaKSco`, https://marswalk-1myp2meo8-boys-band.vercel.app |
+| Aliases | https://marswalk-jet.vercel.app/, https://marswalk-boys-band.vercel.app/, https://marswalk-review-boys-band.vercel.app/ |
+| Offline pack | `f5a5b255d5de…`, 39 assets, 10 763 980 bytes. **Identical** to the locally tested build |
+| Checked on the live alias | `data/mineralogy/mineralogy.json` served (imageRef matches, SINDEX2 mapped) |
+| Rollback | `dpl_4zVDPdWhQxtvB2FyNz11ieyJLHdH` (`d737129`) |
+
 ## 21 Nov 2026 (later) — terrain-aware survival, interactive map, geology
 
 | Item | Value |
