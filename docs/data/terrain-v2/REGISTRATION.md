@@ -49,3 +49,24 @@ Start (200, 1850) → destination (1850, 200) image px:
 | 30° | preview-ready | 654.7 m | 29.9° | 69 ms |
 
 Node 22, 4-vCPU cloud container. These are sampled grid-segment grades, not safety ratings.
+
+## 4. R1b independent control points (21 Nov 2026, done for Willy 2)
+
+Two independent methods, protocol fixed before running. Both are reported.
+
+**A. Stereo parallax (decisive): pass.** `tools/terrain/ortho_parallax_check.py`. The provider orthorectified both stereo images (PSP_001752_1750 and PSP_001488_1750) with this DTM. A horizontally misplaced DTM would put terrain in different places in the two orthoimages, so tile matching between them tests the DTM against both source images, with no shading model.
+
+| Tiles | Control points (NCC ≥ 0.35, uniqueness ≥ 0.05) | Residual RMS | Max | Mean offset (E, N) | Tolerance |
+|---|---|---|---|---|---|
+| 36 (6×6 × 64 m over the crop) | **36** (NCC 0.77–0.97) | **0.20 m** | **0.36 m** | (+0.02, −0.17) m | 1.01 m RMS, 2.02 m max |
+
+**B. Shaded relief with the real sun geometry: inconclusive.** `tools/terrain/control_point_check.py`, Lambertian relief lit from the label's sun (azimuth 288.5° from north, elevation 32.3°; correlation at zero shift +0.46).
+
+| Configuration | Control points | RMS | Mean offset (E, N) | Verdict |
+|---|---|---|---|---|
+| Gradient, 6×6 × 64 cells | 7 (< 8 required) | 2.1 m | (−0.06, +0.18) m | Not enough points |
+| Intensity, 4×4 × 96 cells | 2 | 3.6 m | (−2.6, +1.5) m | Broad, non-unique peaks; several at the search edge |
+
+Comparing simulated shading with a photograph taken at 57.7° incidence is biased by shadows and albedo. The earlier "~3 m east" relief result (§2) came from this method with a *fitted* sun, and is not confirmed by the stereo test. Raw outputs are in `evidence/R1B_*.json`.
+
+**Conclusion:** R1b passes on the stereo-parallax evidence. What this shows: the DTM is consistent with both source images in the provider's frame, which is the frame the app's image and terrain package share. It does not test absolute position on Mars against other datasets; that remains about 79 m from the old RDR frame (§1).

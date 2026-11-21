@@ -31,7 +31,7 @@ Result on 20 Nov 2026 (evening, after the image switch): **29 passed**. Earlier:
 | A9 | Map chain: Leaflet `CRS.Simple` with `imageBounds` puts y = H at screen top; a click near the screen NW corner lands in grid row 0, col 0 | as stated | as stated | exact | alignment.test.ts | pass |
 | A10 | Active ortho image + accepted package: valid/accepted, corners from evidence, full coverage, every image corner/edge on a valid cell, spacing ≈ 4 px, margin < 10 m | as stated | as stated | 1e-6 | alignment.test.ts | pass |
 | R1a | Ortho-crop vs provider 1 m orthoimage (16 tiles) | RMS ≤ 1 cell, max ≤ 2 cells | 0.59 m / 0.73 m | draft §1.4 | REGISTRATION.md, evidence JSON | pass |
-| R1b | ≥ 8 independent control points on DTM features (crests, rims) vs the ortho crop | RMS ≤ 1 cell | — | — | — | **pending (Willy 2)**: shaded-relief check shows ~3 m E |
+| R1b | ≥ 8 independent control points | RMS ≤ 1 cell (1.01 m), max ≤ 2 cells | **36 points, 0.20 m RMS, 0.36 m max** (stereo parallax between the two provider orthoimages); shaded-relief method inconclusive (7 and 2 points) | draft §1.4 | REGISTRATION.md §4, evidence/R1B_*.json | **pass** (done by the coordinator's agent because Willy 2 was unavailable) |
 | D1 | Map pan/zoom/touch, endpoint selection, suggested vs accepted route on devices | — | — | — | — | **pending: no preview UI integrated** |
 
 ## Findings for Patrick / Willy 1

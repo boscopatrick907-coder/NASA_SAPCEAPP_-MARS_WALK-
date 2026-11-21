@@ -73,14 +73,14 @@
     "horizontalUncertaintyMeters": null,
     "limitations": [
       "Provider lists possible DTM artifacts: processing boxes (~0.5\u20131 m steps), CCD seams, faceted low-contrast areas.",
-      "Registration to the display image: 0.59 m RMS / 0.73 m max (orthoimage check); shaded-relief check ~3 m east, open for independent control points."
+      "Registration verified within the provider frame (stereo parallax 0.20 m RMS); absolute position versus other Mars datasets is not tested."
     ]
   },
   "registration": {
-    "status": "provisional",
+    "status": "verified",
     "method": "NCC of the display crop (averaged to 1.0117 m) against the provider 1 m orthoimage on the DTM grid; 16 independent tiles",
-    "residualSummary": "Global 0.66 m; tiles 0.59 m RMS, 0.73 m max",
-    "toleranceSummary": "Draft contract \u00a71.4: RMS \u2264 1 cell, max \u2264 2 cells. Shaded-relief check ~3 m east is open for independent control points.",
+    "residualSummary": "Ortho-to-ortho: 0.59 m RMS / 0.73 m max. Independent stereo parallax (R1b): 36 points, 0.20 m RMS / 0.36 m max.",
+    "toleranceSummary": "Draft contract \u00a71.4: RMS \u2264 1 cell, max \u2264 2 cells \u2014 both checks pass.",
     "evidenceRef": "docs/data/terrain-v2/REGISTRATION.md"
   },
   "acquisition": {

@@ -86,5 +86,27 @@
     "sha256": "6b871d5e74916999bd4d56171abeaede29216b4641e7e2eda2424574a5ff28da",
     "status": "inspected",
     "notes": ""
+  },
+  {
+    "productId": "PSP_001488_1750_RED_C_01_ORTHO",
+    "role": "imagery",
+    "url": "https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/PSP_001488_1750_RED_C_01_ORTHO.JP2",
+    "retrievedAtUtc": "2026-11-21T03:09:04Z",
+    "localPath": null,
+    "bytes": 34577732,
+    "sha256": "f19ad314a0e2663d6061d00b4899f5e6c1b7e7bc36d05815bb2ce154e81443cc",
+    "status": "inspected",
+    "notes": "Second stereo image orthorectified on the same DTM; used for the R1b stereo-parallax check. Not stored in Git."
+  },
+  {
+    "productId": "PSP_001488_1750_RED_C_01_ORTHO",
+    "role": "label",
+    "url": "https://www.uahirise.org/PDS/DTM/PSP/ORB_001400_001499/PSP_001488_1750_PSP_001752_1750/PSP_001488_1750_RED_C_01_ORTHO.LBL",
+    "retrievedAtUtc": "2026-11-21T03:09:04Z",
+    "localPath": "docs/data/terrain-v2/metadata/PSP_001488_1750_RED_C_01_ORTHO.LBL",
+    "bytes": 5341,
+    "sha256": "619181864ffa6aa80f3f3fa71b768f5191d0ce5b51c0d5a7a013fc8c93257db7",
+    "status": "inspected",
+    "notes": ""
   }
 ]

@@ -1,0 +1,455 @@
+{
+ "method": "gradient NCC between the two provider orthoimages (PSP_001752 vs PSP_001488, both on the DTM), 6x6 tiles of 64 cells over the crop",
+ "tiles": 36,
+ "controlPoints": 36,
+ "acceptance": {
+  "minPeakNCC": 0.35,
+  "minUniqueness": 0.05
+ },
+ "residualRMS_m": 0.201,
+ "residualMax_m": 0.355,
+ "meanOffsetE_N_m": [
+  0.016,
+  -0.173
+ ],
+ "toleranceCells": {
+  "rms": 1,
+  "max": 2,
+  "cellMeters": 1.0117467945795
+ },
+ "points": [
+  {
+   "tile": [
+    0,
+    0
+   ],
+   "offsetE_N_m": [
+    0.005,
+    -0.049
+   ],
+   "peakNCC": 0.972,
+   "uniqueness": 0.601
+  },
+  {
+   "tile": [
+    0,
+    1
+   ],
+   "offsetE_N_m": [
+    0.018,
+    -0.074
+   ],
+   "peakNCC": 0.977,
+   "uniqueness": 0.688
+  },
+  {
+   "tile": [
+    0,
+    2
+   ],
+   "offsetE_N_m": [
+    -0.011,
+    -0.062
+   ],
+   "peakNCC": 0.96,
+   "uniqueness": 0.637
+  },
+  {
+   "tile": [
+    0,
+    3
+   ],
+   "offsetE_N_m": [
+    -0.074,
+    -0.047
+   ],
+   "peakNCC": 0.953,
+   "uniqueness": 0.728
+  },
+  {
+   "tile": [
+    0,
+    4
+   ],
+   "offsetE_N_m": [
+    -0.006,
+    -0.056
+   ],
+   "peakNCC": 0.958,
+   "uniqueness": 0.713
+  },
+  {
+   "tile": [
+    0,
+    5
+   ],
+   "offsetE_N_m": [
+    -0.03,
+    -0.057
+   ],
+   "peakNCC": 0.965,
+   "uniqueness": 0.637
+  },
+  {
+   "tile": [
+    1,
+    0
+   ],
+   "offsetE_N_m": [
+    -0.005,
+    -0.076
+   ],
+   "peakNCC": 0.967,
+   "uniqueness": 0.604
+  },
+  {
+   "tile": [
+    1,
+    1
+   ],
+   "offsetE_N_m": [
+    -0.045,
+    -0.092
+   ],
+   "peakNCC": 0.965,
+   "uniqueness": 0.509
+  },
+  {
+   "tile": [
+    1,
+    2
+   ],
+   "offsetE_N_m": [
+    0.029,
+    -0.155
+   ],
+   "peakNCC": 0.945,
+   "uniqueness": 0.72
+  },
+  {
+   "tile": [
+    1,
+    3
+   ],
+   "offsetE_N_m": [
+    -0.024,
+    -0.031
+   ],
+   "peakNCC": 0.968,
+   "uniqueness": 0.695
+  },
+  {
+   "tile": [
+    1,
+    4
+   ],
+   "offsetE_N_m": [
+    -0.013,
+    -0.104
+   ],
+   "peakNCC": 0.953,
+   "uniqueness": 0.673
+  },
+  {
+   "tile": [
+    1,
+    5
+   ],
+   "offsetE_N_m": [
+    -0.019,
+    -0.073
+   ],
+   "peakNCC": 0.949,
+   "uniqueness": 0.794
+  },
+  {
+   "tile": [
+    2,
+    0
+   ],
+   "offsetE_N_m": [
+    -0.001,
+    -0.174
+   ],
+   "peakNCC": 0.943,
+   "uniqueness": 0.647
+  },
+  {
+   "tile": [
+    2,
+    1
+   ],
+   "offsetE_N_m": [
+    0.084,
+    -0.186
+   ],
+   "peakNCC": 0.952,
+   "uniqueness": 0.596
+  },
+  {
+   "tile": [
+    2,
+    2
+   ],
+   "offsetE_N_m": [
+    0.025,
+    -0.173
+   ],
+   "peakNCC": 0.9,
+   "uniqueness": 0.761
+  },
+  {
+   "tile": [
+    2,
+    3
+   ],
+   "offsetE_N_m": [
+    0.032,
+    -0.123
+   ],
+   "peakNCC": 0.933,
+   "uniqueness": 0.549
+  },
+  {
+   "tile": [
+    2,
+    4
+   ],
+   "offsetE_N_m": [
+    -0.021,
+    -0.067
+   ],
+   "peakNCC": 0.962,
+   "uniqueness": 0.609
+  },
+  {
+   "tile": [
+    2,
+    5
+   ],
+   "offsetE_N_m": [
+    0.031,
+    -0.139
+   ],
+   "peakNCC": 0.923,
+   "uniqueness": 0.713
+  },
+  {
+   "tile": [
+    3,
+    0
+   ],
+   "offsetE_N_m": [
+    0.037,
+    -0.175
+   ],
+   "peakNCC": 0.968,
+   "uniqueness": 0.335
+  },
+  {
+   "tile": [
+    3,
+    1
+   ],
+   "offsetE_N_m": [
+    0.033,
+    -0.274
+   ],
+   "peakNCC": 0.89,
+   "uniqueness": 0.727
+  },
+  {
+   "tile": [
+    3,
+    2
+   ],
+   "offsetE_N_m": [
+    0.015,
+    -0.315
+   ],
+   "peakNCC": 0.862,
+   "uniqueness": 0.656
+  },
+  {
+   "tile": [
+    3,
+    3
+   ],
+   "offsetE_N_m": [
+    -0.053,
+    -0.23
+   ],
+   "peakNCC": 0.895,
+   "uniqueness": 0.654
+  },
+  {
+   "tile": [
+    3,
+    4
+   ],
+   "offsetE_N_m": [
+    -0.037,
+    -0.181
+   ],
+   "peakNCC": 0.91,
+   "uniqueness": 0.629
+  },
+  {
+   "tile": [
+    3,
+    5
+   ],
+   "offsetE_N_m": [
+    0.009,
+    -0.163
+   ],
+   "peakNCC": 0.924,
+   "uniqueness": 0.77
+  },
+  {
+   "tile": [
+    4,
+    0
+   ],
+   "offsetE_N_m": [
+    0.045,
+    -0.297
+   ],
+   "peakNCC": 0.833,
+   "uniqueness": 0.729
+  },
+  {
+   "tile": [
+    4,
+    1
+   ],
+   "offsetE_N_m": [
+    0.044,
+    -0.237
+   ],
+   "peakNCC": 0.92,
+   "uniqueness": 0.429
+  },
+  {
+   "tile": [
+    4,
+    2
+   ],
+   "offsetE_N_m": [
+    -0.003,
+    -0.296
+   ],
+   "peakNCC": 0.768,
+   "uniqueness": 0.573
+  },
+  {
+   "tile": [
+    4,
+    3
+   ],
+   "offsetE_N_m": [
+    0.117,
+    -0.267
+   ],
+   "peakNCC": 0.932,
+   "uniqueness": 0.595
+  },
+  {
+   "tile": [
+    4,
+    4
+   ],
+   "offsetE_N_m": [
+    0.044,
+    -0.215
+   ],
+   "peakNCC": 0.954,
+   "uniqueness": 0.533
+  },
+  {
+   "tile": [
+    4,
+    5
+   ],
+   "offsetE_N_m": [
+    -0.059,
+    -0.256
+   ],
+   "peakNCC": 0.913,
+   "uniqueness": 0.505
+  },
+  {
+   "tile": [
+    5,
+    0
+   ],
+   "offsetE_N_m": [
+    0.108,
+    -0.224
+   ],
+   "peakNCC": 0.952,
+   "uniqueness": 0.388
+  },
+  {
+   "tile": [
+    5,
+    1
+   ],
+   "offsetE_N_m": [
+    0.049,
+    -0.253
+   ],
+   "peakNCC": 0.877,
+   "uniqueness": 0.704
+  },
+  {
+   "tile": [
+    5,
+    2
+   ],
+   "offsetE_N_m": [
+    0.049,
+    -0.257
+   ],
+   "peakNCC": 0.85,
+   "uniqueness": 0.494
+  },
+  {
+   "tile": [
+    5,
+    3
+   ],
+   "offsetE_N_m": [
+    0.103,
+    -0.236
+   ],
+   "peakNCC": 0.961,
+   "uniqueness": 0.352
+  },
+  {
+   "tile": [
+    5,
+    4
+   ],
+   "offsetE_N_m": [
+    0.099,
+    -0.258
+   ],
+   "peakNCC": 0.939,
+   "uniqueness": 0.437
+  },
+  {
+   "tile": [
+    5,
+    5
+   ],
+   "offsetE_N_m": [
+    -0.013,
+    -0.355
+   ],
+   "peakNCC": 0.907,
+   "uniqueness": 0.474
+  }
+ ],
+ "pass": true
+}
