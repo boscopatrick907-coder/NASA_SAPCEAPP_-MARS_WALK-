@@ -97,7 +97,8 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
-    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json')))
+      r.flush({});
     http.verify();
   });
 
@@ -120,7 +121,8 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
-    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json')))
+      r.flush({});
     http.verify();
   });
 
@@ -134,7 +136,7 @@ describe('App integration', () => {
     const tabs = Array.from(
       fixture.nativeElement.querySelectorAll('[role="tab"]') as NodeListOf<HTMLButtonElement>,
     );
-    const transferTab = tabs.find((tab) => tab.textContent?.includes('Mission Transfer'));
+    const transferTab = tabs.find((tab) => tab.textContent?.includes('Share'));
     expect(transferTab).toBeTruthy();
     transferTab!.click();
     fixture.detectChanges();
@@ -149,7 +151,8 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
-    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json')))
+      r.flush({});
     http.verify();
   });
 
@@ -179,7 +182,8 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
-    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json')))
+      r.flush({});
     http.verify();
   });
 
@@ -210,7 +214,8 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
-    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json')))
+      r.flush({});
     http.verify();
   });
 
@@ -239,7 +244,8 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
-    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json')))
+      r.flush({});
     http.verify();
   });
 
@@ -277,7 +283,8 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
-    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json')))
+      r.flush({});
     http.verify();
   });
 });

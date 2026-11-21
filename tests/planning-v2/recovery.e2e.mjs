@@ -78,8 +78,9 @@ async function open({ offline = false } = {}, track = []) {
   page.setDefaultTimeout(20_000);
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
+  await ctx.addInitScript(() => localStorage.setItem('marswalk:welcome-seen:v1', '1'));
   await page.goto(origin);
-  await page.getByRole('tab', { name: 'Route Planner' }).waitFor();
+  await page.getByRole('tab', { name: 'Plan route' }).waitFor();
   await page.waitForFunction(() => document.querySelector('.leaflet-container') !== null);
   return { ctx, page, errors };
 }
@@ -119,11 +120,12 @@ test(
   { timeout: 120_000 },
   guarded(async (track) => {
     let { ctx, page, errors } = await open({}, track);
-    await page.locator('summary', { hasText: 'Install & offline' }).click();
+    await page.locator('.status-menu > summary').click();
     await page.getByRole('button', { name: 'Prepare offline' }).click();
     await page.locator('summary .pack', { hasText: 'Pack verified' }).waitFor({ timeout: 60_000 });
+    await page.locator('.status-menu > summary').click();
 
-    await page.getByRole('tab', { name: 'Route Planner' }).click();
+    await page.getByRole('tab', { name: 'Plan route' }).click();
     await page.getByRole('button', { name: 'Set Start Point Mode' }).click();
     await mapClick(page, 0.35, 0.4);
     await page.getByRole('button', { name: 'Set Destination Point Mode' }).click();
@@ -144,7 +146,7 @@ test(
     await ctx.close(); // full browser process exit
 
     ({ ctx, page, errors } = await open({ offline: true }, track));
-    await page.locator('summary', { hasText: 'Disconnected' }).waitFor();
+    await page.locator('.status-menu > summary', { hasText: 'No connection' }).waitFor();
     await page.getByRole('tab', { name: 'Notebook (1)' }).waitFor({ timeout: 15_000 });
     const imageOk = await page
       .locator('img.mars-map-image')
@@ -165,7 +167,7 @@ test(
   guarded(async (track) => {
     const { ctx, page } = await open({ offline: true }, track);
     const before = await exportMission(page);
-    await page.getByRole('tab', { name: 'Mission Transfer' }).click();
+    await page.getByRole('tab', { name: 'Share' }).click();
     for (const [name, body] of [
       [
         'wrong-image.json',
@@ -212,7 +214,7 @@ test(
     await ctx.close();
 
     ({ ctx, page } = await open({ offline: true }, track));
-    await page.getByRole('tab', { name: 'Route Planner' }).click();
+    await page.getByRole('tab', { name: 'Plan route' }).click();
     const saveRoute = page.getByRole('button', { name: 'Save route to local browser storage' });
     if (await saveRoute.isEnabled()) await saveRoute.click();
     await page.getByRole('tab', { name: /Notebook/ }).click();

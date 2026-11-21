@@ -1,168 +1,167 @@
+/* Compact step rail: four numbered steps plus two disclosures that open as floating cards. */
 :host {
   display: block;
   min-width: 0;
-  overflow-wrap: anywhere;
-  --mr-accent: #f0ab7d;
-  --mr-cyan: var(--science-cyan, #67e8f9);
-}
-:host-context([data-theme='light']) {
-  --mr-accent: #9a3412;
-  --mr-cyan: #0369a1;
 }
 .mission-review {
-  display: grid;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-  background: var(--bg-surface);
-  border-bottom: 1px solid var(--border-subtle);
-  font-size: var(--text-sm);
-  color: var(--text-secondary);
-}
-.review-bar,
-.workflow-actions {
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px 10px;
+  gap: var(--space-2);
+  min-width: 0;
 }
-.review-bar {
-  justify-content: space-between;
-}
-.review-title-group {
+.review-bar,
+.review-title-group,
+.workflow-actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
+  align-items: center;
+  gap: var(--space-2);
   min-width: 0;
 }
 .review-heading {
   margin: 0;
-  font-size: var(--text-md);
-  font-weight: 700;
-  color: var(--text-primary);
-}
-.review-subtitle {
+  color: var(--text-muted);
   font-size: var(--text-xs);
-  color: var(--text-secondary);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 .workflow-actions {
-  gap: var(--space-2);
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  background: var(--bg-card);
 }
 .workflow-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  min-height: var(--control-h);
-  min-width: 44px;
-  padding: 0 var(--space-3);
-  border: 1px solid var(--border-control);
-  border-radius: 99px;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 12px 0 5px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  color: var(--text-secondary);
   background: transparent;
-  color: var(--text-primary);
   font: inherit;
   font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
   &:hover {
+    color: var(--text-primary);
     background: var(--bg-card-hover);
-    border-color: var(--border-focus);
   }
   &:focus-visible {
     outline: 2px solid var(--border-focus);
-    outline-offset: 2px;
+    outline-offset: 1px;
   }
 }
-.summary-grid {
+.n {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 6px;
-  margin: 0;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--mars-accent-bg);
+  color: var(--mars-accent-text);
+  font-family: var(--font-numeric);
+  font-size: 12px;
+  font-weight: 700;
 }
-.summary-cell {
-  padding: var(--space-2) var(--space-3);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  min-width: 0;
-}
-dt {
-  font-size: var(--text-xs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--text-secondary);
-}
-dd {
-  margin: 2px 0 0;
-  color: var(--text-primary);
-  font-weight: 500;
-}
-.cell-secondary {
-  color: var(--mr-cyan);
-  margin-left: 4px;
-}
-.font-mono {
-  font-family: var(--font-mono);
-}
-.state-summary {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 2px var(--space-3);
-  summary {
-    cursor: pointer;
-    font-weight: 600;
-    padding: 6px 0;
-  }
-}
+.state-summary,
 .boundary-disclosure {
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-left: 3px solid var(--warning-amber);
-  border-radius: var(--radius-md);
-  padding: 2px var(--space-3);
-  summary {
-    cursor: pointer;
+  > summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-pill);
+    color: var(--text-secondary);
+    background: var(--bg-card);
+    font-size: var(--text-xs);
     font-weight: 600;
-    color: var(--warning-text);
-    padding: 6px 0;
+    cursor: pointer;
+    list-style: none;
+    &::-webkit-details-marker {
+      display: none;
+    }
+    &::after {
+      content: '▾';
+      margin-left: 6px;
+      font-size: 10px;
+    }
     &:focus-visible {
       outline: 2px solid var(--border-focus);
       outline-offset: 2px;
     }
   }
 }
+.boundary-disclosure > summary {
+  border-color: var(--warning-border);
+  color: var(--warning-text);
+}
+.summary-grid,
 .boundary-content {
+  position: absolute;
+  z-index: 1000;
+  left: 0;
+  top: calc(100% + 8px);
+  width: min(560px, calc(100vw - 24px));
+  margin: 0;
+  padding: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-float);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+.summary-grid {
   display: grid;
-  gap: 6px;
-  padding: 6px 0 4px;
-  border-top: 1px solid var(--border-subtle);
-  p {
-    margin: 0;
-    line-height: 1.4;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+.summary-cell dt {
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.summary-cell dd {
+  margin: 2px 0 0;
+  color: var(--text-primary);
+}
+.cell-secondary {
+  color: var(--text-secondary);
+}
+.boundary-content p {
+  margin: 0 0 var(--space-2);
+  color: var(--text-secondary);
+}
+@media (max-width: 1100px) {
+  .review-heading {
+    display: none;
   }
 }
-/* Wide screens: the two disclosures share one row so the image starts higher. */
-@media (min-width: 1000px) {
-  .mission-review {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
+@media (max-width: 600px) {
+  .workflow-btn {
+    padding: 0 10px 0 4px;
   }
-  .review-bar {
-    grid-column: 1 / -1;
-  }
-}
-@media (max-width: 640px) {
   .summary-grid {
     grid-template-columns: 1fr;
-  }
-  /* Phones: the four steps stay on one swipeable row instead of a 2 x 2 grid. */
-  .workflow-actions {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-  .workflow-btn {
-    flex: 0 0 auto;
   }
 }

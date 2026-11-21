@@ -195,7 +195,7 @@ export function landformStats(s: TerrainSampler): LandformStats | null {
           />
           <figcaption>
             Sulfate index around the study area (blue box, ~5 km wide); stronger magenta = stronger
-            signature. Toggle "Sulfate index (CRISM)" on the map for the study area itself.
+            signature. Toggle "Sulfates (CRISM)" on the map for the study area itself.
           </figcaption>
         </figure>
         <details>

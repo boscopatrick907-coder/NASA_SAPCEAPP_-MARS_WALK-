@@ -1,12 +1,10 @@
-import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import { Component, effect, inject, signal, untracked } from '@angular/core';
 import { DOCUMENT, DecimalPipe } from '@angular/common';
 import { MissionService } from '../core/mission.service';
 import { SurvivalBriefComponent } from '../survival-brief/survival-brief.component';
 import { PreparationService } from '../survival-brief/preparation.service';
-import { BudgetInputs, calculateBudget, TerrainLegs, validInputs } from './budget';
-import { routePoints } from '../core/route';
-import { routeProfile } from '../core/terrain-profile';
-import { TerrainSamplerStore } from '../core/terrain-sampler.store';
+import { BudgetInputs, validInputs } from './budget';
+import { clock, MissionBriefStore } from '../core/mission-brief.store';
 import { ElevationProfileComponent } from '../terrain/elevation-profile.component';
 @Component({
   selector: 'app-survival-budget',
@@ -19,50 +17,25 @@ export class SurvivalBudgetComponent {
   readonly mission = inject(MissionService);
   readonly preparation = inject(PreparationService);
   private readonly document = inject(DOCUMENT);
-  readonly inputs = signal<BudgetInputs>({
-    speedKmh: null,
-    availableMinutes: null,
-    taskMinutes: null,
-    reserveMinutes: null,
-  });
-  private readonly terrainStore = inject(TerrainSamplerStore);
-  /** Ground profile of the drawn route along the accepted DTM (null without terrain/endpoints). */
-  readonly profile = computed(() => {
-    const s = this.terrainStore.sampler();
-    const route = this.mission.route();
-    if (!s || !route.start || !route.destination) return null;
-    return routeProfile(s, routePoints(route), s.geotransform[1], 0.1);
-  });
-  readonly terrainLegs = computed<TerrainLegs | null>(() => {
-    const p = this.profile();
-    return p
-      ? {
-          terrainMeters: p.terrainMeters,
-          ascentMeters: p.ascentMeters,
-          descentMeters: p.descentMeters,
-          maxGradeDeg: p.maxGradeDeg,
-          coverage: p.coverage,
-        }
-      : null;
-  });
-  readonly result = computed(() =>
-    calculateBudget(
-      this.mission.assessment().planarDistanceMeters,
-      this.inputs(),
-      this.terrainLegs(),
-    ),
-  );
-  /** "h:mm" for an elapsed-minutes value (negative shown with a minus sign). */
+  private readonly store = inject(MissionBriefStore);
+  /** Shared with the map HUD and the demo walk. */
+  readonly inputs = this.store.inputs;
+  readonly profile = this.store.profile;
+  readonly terrainLegs = this.store.terrainLegs;
+  readonly result = this.store.result;
   clock(minutes: number): string {
-    const sign = minutes < 0 ? '−' : '';
-    const m = Math.round(Math.abs(minutes));
-    return `${sign}${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`;
+    return clock(minutes);
   }
   readonly message = signal(
     'Enter your own assumptions. No suit endurance or walking speed is supplied by NASA data.',
   );
   private imageRef: string | null = null;
-  private dirty = false;
+  private get dirty(): boolean {
+    return this.store.dirty;
+  }
+  private set dirty(v: boolean) {
+    this.store.dirty = v;
+  }
   constructor() {
     effect(() => {
       const ref = this.mission.image()?.imageRef;
@@ -82,16 +55,7 @@ export class SurvivalBudgetComponent {
     );
   }
   example() {
-    this.dirty = true;
-    this.inputs.set({
-      speedKmh: 1,
-      availableMinutes: 120,
-      taskMinutes: 20,
-      reserveMinutes: 30,
-      climbMinutesPer100m: 10,
-      descentMinutesPer100m: 3,
-      gradeLimitDeg: 15,
-    });
+    this.store.useExample();
     this.message.set(
       'Illustrative example only: 1 km/h, 120 minutes available, 20 task minutes, 30 reserve minutes, +10 min per 100 m climbed, +3 min per 100 m descended, 15° grade limit. Replace these assumptions for your scenario.',
     );

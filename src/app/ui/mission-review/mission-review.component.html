@@ -1,8 +1,8 @@
 <section class="mission-review" aria-labelledby="mission-review-heading">
   <div class="review-bar">
     <div class="review-title-group">
-      <h2 id="mission-review-heading" class="review-heading">Mission Decision Summary</h2>
-      <span class="review-subtitle">
+      <h2 id="mission-review-heading" class="review-heading">Mission</h2>
+      <span class="review-subtitle sr-only">
         Rehearsal workflow: Inspect evidence → Plan route → Record observation → Save / export
       </span>
     </div>
@@ -14,7 +14,7 @@
         data-workflow-tab="confidence"
         (click)="requestTab('confidence')"
       >
-        1. Review evidence
+        <span class="n">1</span>Explore
       </button>
       <button
         type="button"
@@ -22,7 +22,7 @@
         data-workflow-tab="planner"
         (click)="requestTab('planner')"
       >
-        2. Edit route
+        <span class="n">2</span>Plan
       </button>
       <button
         type="button"
@@ -30,7 +30,7 @@
         data-workflow-tab="notebook"
         (click)="requestTab('notebook')"
       >
-        3. Record observation
+        <span class="n">3</span>Log
       </button>
       <button
         type="button"
@@ -38,13 +38,13 @@
         data-workflow-tab="transfer"
         (click)="requestTab('transfer')"
       >
-        4. Save / export
+        <span class="n">4</span>Share
       </button>
     </div>
   </div>
 
   <details class="state-summary">
-    <summary>Route, science and observation details</summary>
+    <summary>Details</summary>
     <dl class="summary-grid" aria-label="Current mission state">
       <div class="summary-cell">
         <dt>Endpoints &amp; Waypoints</dt>
@@ -72,7 +72,7 @@
   </details>
 
   <details class="boundary-disclosure">
-    <summary>Scientific boundaries, REMS context &amp; recovery rules</summary>
+    <summary>Data limits</summary>
     <div class="boundary-content">
       <p>
         <strong>Visual route sketch only:</strong> Unlocated science records provide regional
@@ -81,14 +81,14 @@
       </p>
       <p>
         <strong>Historical REMS excerpt:</strong> Environmental readings in
-        <em>Confidence &amp; Data</em> describe historical rover observations at Curiosity's site
-        and sol interval—not weather or hazard conditions along your drawn route.
+        <em>Evidence</em> describe historical rover observations at Curiosity's site and sol
+        interval—not weather or hazard conditions along your drawn route.
       </p>
       <p>
-        <strong>Persistence &amp; recovery:</strong> In <em>Route Planner</em>,
+        <strong>Persistence &amp; recovery:</strong> In <em>Plan route</em>,
         <strong>Load Route</strong> recovers both the saved route and saved observations for the
         active raster. Browser storage is origin-specific across preview URLs; export JSON in
-        <em>Mission Transfer</em> to carry work between origins or devices.
+        <em>Share</em> to carry work between origins or devices.
       </p>
     </div>
   </details>

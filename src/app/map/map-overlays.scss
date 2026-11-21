@@ -83,3 +83,198 @@
 :host ::ng-deep img.mw-mineral-layer {
   image-rendering: pixelated;
 }
+/* Redesign: chip toggles, glass on-map tools, compact footer, floating marker card. */
+.map-toolbar {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  backdrop-filter: none;
+  box-shadow: none;
+  label {
+    padding: 0 14px 0 10px;
+    border-color: var(--border-subtle);
+    background: var(--bg-card);
+    font-weight: 600;
+    transition:
+      background-color var(--dur-fast) var(--ease-out),
+      border-color var(--dur-fast) var(--ease-out);
+    &:hover {
+      border-color: var(--border-control);
+    }
+    &:has(input:checked) {
+      border-color: rgb(255 138 76 / 0.6);
+      background: var(--mars-accent-bg);
+      color: var(--text-primary);
+    }
+  }
+  input {
+    accent-color: var(--mars-accent);
+  }
+}
+.map-frame {
+  border-color: rgb(255 255 255 / 0.08);
+  border-radius: 18px;
+  box-shadow:
+    0 20px 50px rgb(0 0 0 / 0.45),
+    0 0 0 1px rgb(255 138 76 / 0.08);
+}
+.map-mode-bar {
+  top: 12px;
+  left: 12px;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-float);
+  button {
+    min-height: 38px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-primary);
+    font-weight: 600;
+    &.active {
+      color: #1a0f08;
+      background: linear-gradient(135deg, #ffb07c, #ff7a3d);
+    }
+    &:hover:not(.active):not(:disabled) {
+      background: rgb(255 255 255 / 0.08);
+    }
+  }
+}
+.map-zoom-controls button {
+  border-radius: 12px;
+}
+.map-readout,
+.map-legend {
+  border: 1px solid rgb(255 255 255 / 0.08);
+  background: rgb(12 10 9 / 0.78);
+  backdrop-filter: blur(8px);
+}
+.map-readout {
+  left: 12px;
+  bottom: 12px;
+}
+.map-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  .route-geometry-panel,
+  .image-provenance {
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: transparent;
+    font-size: var(--text-xs);
+  }
+  .route-geometry-panel[open],
+  .image-provenance[open] {
+    flex: 1 1 100%;
+    border-radius: 12px;
+    background: var(--bg-card);
+  }
+  .image-credit {
+    margin: 0;
+    align-self: center;
+  }
+  summary {
+    cursor: pointer;
+  }
+}
+.marker-details {
+  position: absolute;
+  z-index: 800;
+  top: 56px;
+  right: 12px;
+  width: min(380px, calc(100% - 24px));
+  max-height: calc(100% - 120px);
+  overflow: auto;
+  border-color: var(--glass-border);
+  border-radius: 16px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-float);
+}
+.map-mode-indicator {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+.map-frame .science-marker-empty-state {
+  top: 64px;
+  left: 12px;
+  right: auto;
+  max-width: min(340px, calc(100% - 80px));
+  padding: 8px 12px;
+  border-color: var(--glass-border);
+  border-radius: 12px;
+  background: rgb(12 10 9 / 0.78);
+  backdrop-filter: blur(8px);
+  font-size: var(--text-xs);
+}
+@media (max-width: 600px) {
+  .map-toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+    label {
+      flex: none;
+      min-height: 38px;
+      font-size: var(--text-sm);
+    }
+  }
+  .map-view-actions {
+    flex: none;
+  }
+  .map-mode-bar {
+    max-width: calc(100% - 24px);
+    button {
+      min-height: 34px;
+      padding: 0 9px;
+      font-size: 0.75rem;
+    }
+  }
+  .map-zoom-controls {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .map-frame .science-marker-empty-state {
+    top: 58px;
+    span {
+      display: none;
+    }
+  }
+}
+.map-frame .science-marker-empty-state {
+  color: #f5efe8;
+}
+@media (min-width: 601px) {
+  .map-toolbar {
+    flex-wrap: nowrap;
+    label {
+      flex: none;
+      min-height: 38px;
+      padding: 0 12px 0 8px;
+    }
+  }
+  .map-view-actions {
+    flex-wrap: nowrap;
+    button {
+      min-height: 38px;
+      white-space: nowrap;
+    }
+  }
+}
+@media (min-width: 601px) and (max-width: 1100px) {
+  .map-toolbar {
+    flex-wrap: wrap;
+  }
+}

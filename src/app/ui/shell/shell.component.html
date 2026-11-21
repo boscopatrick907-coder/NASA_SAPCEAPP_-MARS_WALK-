@@ -1,6 +1,7 @@
 <div class="shell-layout">
-  <app-header />
-  <ng-content select="[pwa-status]"></ng-content>
+  <app-header
+    ><ng-container ngProjectAs="[pwa-status]"><ng-content select="[pwa-status]" /></ng-container
+  ></app-header>
 
   <main
     class="main-workspace"
@@ -9,15 +10,31 @@
   >
     <!-- Map / Primary Workspace Area -->
     <section class="map-workspace" aria-label="Mars Surface Workspace">
-      <app-mission-review (navigateTab)="onWorkflowNavigate($event)" />
+      <div class="mission-bar">
+        <app-mission-review (navigateTab)="onWorkflowNavigate($event)" />
+        @if (hasRoute()) {
+          <button type="button" class="demo-btn" (click)="showWelcome.set(true)">
+            <span aria-hidden="true">▶</span> Demo walk
+          </button>
+        }
+      </div>
+      @defer (on immediate) {
+        <app-mission-hud (action)="onHudAction($event)" />
+      } @placeholder {
+        <div class="hud-placeholder" aria-hidden="true"></div>
+      }
       <div id="map-container" class="map-container">
         <app-map />
+        @if (showWelcome()) {
+          @defer (on immediate) {
+            <app-welcome (demoStarted)="onDemoStarted()" (closed)="showWelcome.set(false)" />
+          }
+        }
         @defer (on idle) {
           <app-terrain-bootstrap />
         }
       </div>
 
-      <!-- Quick status footer inside map workspace -->
       <footer class="workspace-footer">
         <div class="status-left">
           <span class="footer-label">Coordinate System:</span>
@@ -89,7 +106,7 @@
           [attr.tabindex]="activeTab() === 'confidence' ? 0 : -1"
           (click)="setActiveTab('confidence')"
         >
-          Confidence & Data
+          <span class="tab-ico" aria-hidden="true">◎</span>Evidence
         </button>
 
         <button
@@ -103,7 +120,7 @@
           [attr.tabindex]="activeTab() === 'planner' ? 0 : -1"
           (click)="setActiveTab('planner')"
         >
-          Route Planner
+          <span class="tab-ico" aria-hidden="true">⛰</span>Plan route
         </button>
 
         <button
@@ -117,7 +134,7 @@
           [attr.tabindex]="activeTab() === 'notebook' ? 0 : -1"
           (click)="setActiveTab('notebook')"
         >
-          Notebook ({{ observations().length }})
+          <span class="tab-ico" aria-hidden="true">✎</span>Notebook ({{ observations().length }})
         </button>
 
         <button
@@ -131,7 +148,7 @@
           [attr.tabindex]="activeTab() === 'transfer' ? 0 : -1"
           (click)="setActiveTab('transfer')"
         >
-          Mission Transfer
+          <span class="tab-ico" aria-hidden="true">⇄</span>Share
         </button>
 
         <button
@@ -145,7 +162,7 @@
           [attr.tabindex]="activeTab() === 'rehearsal' ? 0 : -1"
           (click)="setActiveTab('rehearsal')"
         >
-          3D Rehearsal
+          <span class="tab-ico" aria-hidden="true">◈</span>3D
         </button>
       </nav>
 

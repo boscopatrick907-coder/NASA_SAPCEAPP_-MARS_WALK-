@@ -26,7 +26,7 @@ $u: var(--text-secondary);
 .shell-layout {
   width: 100%;
   height: 100%;
-  background: var(--bg-space);
+  background: var(--app-backdrop, var(--bg-space));
 }
 .main-workspace {
   display: flex;
@@ -44,7 +44,42 @@ $u: var(--text-secondary);
   flex: 1;
   min-width: 0;
   height: 100%;
-  background: var(--bg-space);
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-3) 0;
+  background: transparent;
+}
+.mission-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  app-mission-review {
+    flex: 1;
+    min-width: 0;
+  }
+}
+.hud-placeholder {
+  min-height: 64px;
+}
+.demo-btn {
+  flex: none;
+  min-height: 40px;
+  padding: 0 var(--space-4);
+  border: 1px solid rgb(255 138 76 / 0.5);
+  border-radius: var(--radius-pill);
+  color: var(--mars-accent-text);
+  background: var(--mars-accent-bg);
+  font: inherit;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  cursor: pointer;
+  &:hover {
+    background: rgb(255 138 76 / 0.24);
+  }
+  &:focus-visible {
+    outline: 2px solid $f;
+    outline-offset: 2px;
+  }
 }
 .map-container,
 .tab-content {
@@ -52,11 +87,16 @@ $u: var(--text-secondary);
   min-height: 0;
 }
 .map-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   overflow: auto;
 }
 app-map {
-  display: block;
-  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   min-width: 0;
 }
 .tab-panel {
@@ -72,11 +112,10 @@ app-map {
 .workspace-footer {
   flex-wrap: nowrap !important;
   justify-content: space-between;
-  min-height: 40px;
-  padding: var(--space-1) var(--space-3);
+  min-height: 36px;
+  padding: 2px 0 var(--space-1);
   gap: var(--space-1) var(--space-3);
-  background: $s;
-  border-top: 1px solid $b;
+  background: transparent;
   font-size: 11px;
   color: $u;
 }
@@ -89,7 +128,7 @@ app-map {
   overflow-wrap: anywhere;
 }
 .footer-boundary {
-  color: var(--text-muted);
+  display: none;
 }
 .footer-val {
   color: $y;
@@ -155,7 +194,7 @@ app-map {
   background: $b;
 }
 .side-panel {
-  background: $s;
+  background: var(--panel-bg);
   border-left: 1px solid $b;
   transition: width 0.15s;
   overflow: hidden;
@@ -170,18 +209,26 @@ app-map {
 }
 .panel-tabs {
   display: flex;
+  gap: 4px;
+  margin: var(--space-3) var(--space-3) var(--space-2);
+  padding: 4px;
+  border: 1px solid $b;
+  border-radius: var(--radius-pill);
+  border-radius: 20px;
   background: $c;
-  border-bottom: 1px solid $b;
-  overflow-x: auto;
-  scrollbar-width: thin;
+  flex-wrap: wrap;
   flex-shrink: 0;
 }
 .tab-btn {
   flex: 1 0 auto;
-  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
   padding: 0 var(--space-3);
   border: 0;
-  border-bottom: 3px solid transparent;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   white-space: nowrap;
   font-size: var(--text-sm);
@@ -193,11 +240,15 @@ app-map {
     background: var(--bg-card-hover);
   }
   &.active {
-    color: $t;
+    color: var(--on-accent);
     font-weight: 700;
-    border-bottom-color: var(--tab-fg);
-    background: $s;
+    background: linear-gradient(135deg, #ffb07c, #ff7a3d);
+    box-shadow: 0 4px 14px rgb(255 122 61 / 0.3);
   }
+}
+.tab-ico {
+  font-size: 15px;
+  line-height: 1;
 }
 .tab-content {
   overflow-y: auto;
@@ -248,8 +299,17 @@ app-map {
     border-left: 0;
     border-top: 1px solid $b;
   }
-  app-map {
-    padding: var(--space-2);
+  .map-workspace {
+    padding: var(--space-2) var(--space-2) 0;
+  }
+  .mission-bar {
+    flex-wrap: wrap;
+    app-mission-review {
+      flex: 1 1 100%;
+    }
+  }
+  .map-container {
+    display: block;
   }
   .main-workspace.panel-collapsed .side-panel {
     height: 0 !important;

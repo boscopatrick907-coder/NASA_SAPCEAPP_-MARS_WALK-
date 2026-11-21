@@ -367,7 +367,9 @@ describe('ShellComponent', () => {
     const pwaProjected = layout.querySelector('[data-testid="projected-pwa"]') as HTMLElement;
     const header = layout.querySelector('app-header') as HTMLElement;
     expect(pwaProjected).toBeTruthy();
-    expect(header.nextElementSibling).toBe(pwaProjected);
+    // Install/offline controls live in the header's status dropdown.
+    expect(header.querySelector('.status-dropdown')?.contains(pwaProjected)).toBe(true);
+    expect(layout.querySelectorAll('[data-testid="projected-pwa"]')).toHaveLength(1);
 
     const confidencePanel = hostEl.querySelector('app-confidence-panel') as HTMLElement;
     const envProjected = confidencePanel.querySelector(

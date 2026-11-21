@@ -596,7 +596,7 @@ describe('MapComponent', () => {
 
     const emptyState = fixture.nativeElement.querySelector('.science-marker-empty-state');
     expect(emptyState?.textContent).toContain('No science records are positioned on this image.');
-    expect(emptyState?.textContent).toContain('Science Context panel under Confidence & Data.');
+    expect(emptyState?.textContent).toContain('Science Context panel under Evidence.');
     expect(state.markers()).toBe(markerSnapshot);
     expect(state.route()).toBe(routeSnapshot);
     expect(state.observations()).toBe(observationSnapshot);

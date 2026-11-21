@@ -115,7 +115,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       this.mission.dataStatus() !== 'ready' ||
       !image ||
       this.imageDisplayState() !== 'ready' ||
-      !this.mission.layers().markers
+      !this.mission.layers().markers ||
+      // Once a route is drawn the notice would cover it; the Evidence panel keeps the records.
+      this.mission.route().start !== null ||
+      this.mission.route().destination !== null
     ) {
       return false;
     }
@@ -125,9 +128,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   readonly activeMode = computed(() => this.mission.mode());
   /** Terrain (accepted DTM) for readouts and derived layers; null when unavailable. */
   readonly terrainStore = inject(TerrainSamplerStore);
-  readonly showRelief = signal(false);
-  readonly showSlope = signal(false);
-  readonly showMineral = signal(false);
+  readonly showRelief = this.terrainStore.showRelief;
+  readonly showSlope = this.terrainStore.showSlope;
+  readonly showMineral = this.terrainStore.showMineral;
   /** Last point under the cursor (desktop) or last inspect tap (touch). */
   readonly cursor = signal<Point | null>(null);
   readonly cursorInfo = computed(() => {
