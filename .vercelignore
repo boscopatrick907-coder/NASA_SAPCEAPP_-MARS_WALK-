@@ -6,7 +6,7 @@ node_modules
 dist
 docs
 public/data/imagery/PIA26306.jpg
-public/data/terrain
+public/data/terrain/README.md
 **/__pycache__
 **/*.pyc
 
@@ -15,3 +15,9 @@ data/imagery
 
 # Source archives are retained in Git for review, not deployed with the PWA.
 data/environment
+
+# Planning V2: staging copies and raw-data tooling are not deployed. The accepted package
+# in public/data/terrain/ IS deployed (build-pack.mjs requires it).
+data/terrain-v2
+tests
+tools/qa
