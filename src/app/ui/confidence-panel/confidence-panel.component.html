@@ -7,6 +7,9 @@
   } @placeholder {
     <p class="defer-status" role="status">Loading science context…</p>
   }
+  @defer (on idle) {
+    <app-geology-context />
+  }
   <details class="source-library">
     <summary>Sources, data &amp; methods</summary>
     <p>

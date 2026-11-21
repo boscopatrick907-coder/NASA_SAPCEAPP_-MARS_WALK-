@@ -1,0 +1,70 @@
+/* Planning V2 interactive map: on-map mode bar, terrain readout and slope legend. */
+.map-mode-bar {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 500;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: calc(100% - 72px);
+  button {
+    min-height: 36px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border, #94a3b8);
+    background: var(--surface, #fff);
+    color: var(--text, #0f172a);
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    &.active {
+      background: var(--accent, #ff8a4c);
+      color: #111;
+      border-color: transparent;
+      font-weight: 600;
+    }
+    &:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+  }
+}
+.map-readout {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  z-index: 500;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgb(15 23 42 / 0.82);
+  color: #f8fafc;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.map-legend {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 500;
+  display: flex;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: rgb(15 23 42 / 0.82);
+  color: #f8fafc;
+  font-size: 0.75rem;
+  i {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 4px;
+  }
+}
+/* Keep the "no positioned records" notice clear of the readout and slope legend (audit #5). */
+.map-frame .science-marker-empty-state { top: 52px; bottom: auto; }

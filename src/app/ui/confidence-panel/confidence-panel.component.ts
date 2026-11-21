@@ -1,3 +1,4 @@
+import { GeologyContextComponent } from '../../geology/geology-context.component';
 import { MissionBriefingComponent } from '../../mission-briefing/mission-briefing.component';
 import { MissionService } from '../../core/mission.service';
 import { EnvironmentService } from '../../core/environment.service';
@@ -11,6 +12,7 @@ import { ImagePassportComponent } from '../../evidence/image-passport.component'
   selector: 'app-confidence-panel',
   standalone: true,
   imports: [
+    GeologyContextComponent,
     MissionBriefingComponent,
     ScienceContextComponent,
     ExplorationConfidenceComponent,

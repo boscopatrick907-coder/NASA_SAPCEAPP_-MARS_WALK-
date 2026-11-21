@@ -75,7 +75,7 @@ function isDisplayable(
   selector: 'app-map',
   standalone: true,
   templateUrl: './map.component.html',
-  styleUrl: './map.component.scss',
+  styleUrls: ['./map.component.scss', './map-overlays.scss'],
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mapContainer', { static: true })

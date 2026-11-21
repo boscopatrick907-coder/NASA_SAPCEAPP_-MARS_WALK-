@@ -96,6 +96,7 @@ describe('App integration', () => {
     // The idle terrain bootstrap asks for the package index; answer "no package".
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -117,6 +118,7 @@ describe('App integration', () => {
     // The idle terrain bootstrap asks for the package index; answer "no package".
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -144,6 +146,7 @@ describe('App integration', () => {
     // The idle terrain bootstrap asks for the package index; answer "no package".
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -172,6 +175,7 @@ describe('App integration', () => {
     // The idle terrain bootstrap asks for the package index; answer "no package".
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -201,6 +205,7 @@ describe('App integration', () => {
     // The idle terrain bootstrap asks for the package index; answer "no package".
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -228,6 +233,7 @@ describe('App integration', () => {
     // The idle terrain bootstrap asks for the package index; answer "no package".
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -264,6 +270,7 @@ describe('App integration', () => {
     // The idle terrain bootstrap asks for the package index; answer "no package".
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 });

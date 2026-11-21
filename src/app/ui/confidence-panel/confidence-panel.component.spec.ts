@@ -83,7 +83,11 @@ describe('ConfidencePanelComponent', () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => http.verify());
+  afterEach(() => {
+    // The idle geology panel loads its context file; answer it so the panel stays quiet.
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
+    http.verify();
+  });
 
   it('displays Visual Review Only badge and never displays a SAFE badge', () => {
     const compiled = fixture.nativeElement as HTMLElement;

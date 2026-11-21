@@ -12,7 +12,7 @@ for (const file of index.files) {
   const bytes = await readFile(resolve(root, file.path));
   if (bytes.length !== file.bytes || hash(bytes) !== file.sha256) throw new Error(`Image pack mismatch: ${file.path}`);
 }
-const paths = new Set(['index.html', 'favicon.ico', 'manifest.webmanifest', 'icons/marswalk-192.png', 'icons/marswalk-512.png', 'icons/marswalk-maskable-512.png', 'data/manifest.json', manifest.assetPath, 'data/markers.json', 'data/image-pack.json', 'data/environment.json', 'data/models/marswalk-ai-relief.glb']);
+const paths = new Set(['index.html', 'favicon.ico', 'manifest.webmanifest', 'icons/marswalk-192.png', 'icons/marswalk-512.png', 'icons/marswalk-maskable-512.png', 'data/manifest.json', manifest.assetPath, 'data/markers.json', 'data/image-pack.json', 'data/environment.json', 'data/geology.json', 'data/models/marswalk-ai-relief.glb']);
 // Terrain (contract v1 §7): the pointer is always packed; a package only when accepted and hash-valid.
 paths.add('data/terrain/index.json');
 const terrainIndex = JSON.parse(await readFile(resolve(root, 'data/terrain/index.json'), 'utf8'));

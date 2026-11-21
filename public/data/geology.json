@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "regionalUnit": {
+    "code": "Htu",
+    "name": "Hesperian transition undivided unit",
+    "map": "Geologic Map of Mars, USGS Scientific Investigations Map 3292 (Tanaka et al., 2014)",
+    "url": "https://doi.org/10.3133/sim3292",
+    "credit": "U.S. Geological Survey",
+    "scale": "Drafted at 1:5,000,000, published at 1:20,000,000; about 5 km vertex spacing",
+    "context": "The whole study area lies inside unit Htu, which covers the Mount Sharp (Aeolis Mons) mound. The nearest mapped contact (with the Amazonian and Hesperian impact unit, AHi, of the Gale crater floor) is about 5.8 km to the north-west, downslope.",
+    "evidenceRef": "docs/data/USGS_SIM3292_GEOLOGY_EVALUATION.md",
+    "limitations": [
+      "Regional context only: the 518 m study area is about one tenth of a single map vertex interval and contains no internal contacts.",
+      "Not a local rock-type, obstacle or hazard map; it cannot identify individual layers, ridges or boxwork."
+    ]
+  },
+  "localDataNote": "Local landforms are summarised from the accepted 1 m HiRISE stereo terrain model (slopes and relief), which describes shape, not rock type.",
+  "furtherSources": [
+    {
+      "title": "Fraeman et al. (2016), The stratigraphy and evolution of lower Mount Sharp from spectral, morphological and thermophysical orbital datasets, JGR Planets",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5101845",
+      "use": "Refined unit map and CRISM mineralogy (clays, sulfates, hematite) of lower Mount Sharp; underlying data in the NASA PDS. Not yet integrated: needs product selection and registration."
+    },
+    {
+      "title": "Fraeman et al. (2013), A hematite-bearing layer in Gale Crater, Mars: mapping and implications for past aqueous conditions, Geology",
+      "url": "https://authors.library.caltech.edu/records/05bm4-2ke51",
+      "use": "CRISM hematite mapping on the northern flank of Mount Sharp. Not yet integrated."
+    },
+    {
+      "title": "1:60,000 geologic map of western Aeolis Mons (GSA 2023 abstract, in progress)",
+      "url": "https://gsa.confex.com/gsa/2023AM/webprogram/Paper394643.html",
+      "use": "Intermediate-scale unit map reported as in preparation for USGS review; publication not confirmed."
+    }
+  ]
+}
