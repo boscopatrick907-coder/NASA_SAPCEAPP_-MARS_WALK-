@@ -1,5 +1,16 @@
 # Vercel production
 
+## 21 Nov 2026 (later) — terrain-aware survival, interactive map, geology
+
+| Item | Value |
+|---|---|
+| Source | `main` @ `d737129` (PR #11), built by Vercel from GitHub |
+| Deployment | `dpl_4zVDPdWhQxtvB2FyNz11ieyJLHdH`, https://marswalk-8ozbvjk2j-boys-band.vercel.app |
+| Aliases | https://marswalk-jet.vercel.app/, https://marswalk-boys-band.vercel.app/, https://marswalk-review-boys-band.vercel.app/ (review alias moved too) |
+| Offline pack | `2a527b25144a…`, 35 files, 10 532 244 bytes. **Identical** to the locally tested build |
+| Checked on the live alias | `data/geology.json` served |
+| Rollback | `dpl_4GjSzRqkt6WZWXgRDTMYvSUsq7h3` (earlier on 21 Nov, `ab5c3c7`) |
+
 ## 21 Nov 2026 — Planning V2 terrain preview live
 
 | Item | Value |
