@@ -1,0 +1,48 @@
+{
+  "imageRef": "hirise-psp001752-red-ortho-2048-0253m-v3",
+  "sourceProduct": "PSP_001752_1750_RED_A_01_ORTHO",
+  "sourceSha256": "24b86b20f7bb3255c3d957aaa0f87ef41a2681bfa9e75b02b2927485d6a89436",
+  "sourceLabelSha256": "8abdda468a7769de6a221844af4d5bc1875d10cbaa28215979e04d65fdcebc2f",
+  "sourcePixelWindow": [
+    12565,
+    27349,
+    2048,
+    2048
+  ],
+  "dimensions": [
+    2048,
+    2048
+  ],
+  "pixelSizeMeters": [
+    0.2529366986449,
+    -0.2529366986449
+  ],
+  "upperLeftProjectedMeters": [
+    -440.4892606900935,
+    -286726.8916219201
+  ],
+  "boundsProjectedMeters": [
+    -440.4892606900935,
+    -287244.90598074486,
+    77.52509813466168,
+    -286726.8916219201
+  ],
+  "centerLatLonDeg": [
+    -4.841626,
+    137.296938
+  ],
+  "displaySha256": "f49ffa69b28693bb1774372a3137eb423005e2f354c4492734e1b04703953dbc",
+  "displayConversion": "Provider 8-bit orthoimage values unchanged; JPEG quality 90; no resampling",
+  "crs": {
+    "name": "Equirectangular MARS (HiRISE DTM frame)",
+    "radiusMeters": 3396190.0,
+    "centerLongitude": 137.3,
+    "centerLatitude": 0.0,
+    "standardParallel": 0.0,
+    "units": "meters"
+  },
+  "pixelConvention": "upper-left corner of pixel (0,0) at (-SAMPLE_PROJECTION_OFFSET, LINE_PROJECTION_OFFSET) \u00d7 MAP_SCALE",
+  "oldImageRef": "hirise-psp001752-red-center-2048-025m-v2",
+  "compatibility": "New storage key; old missions not transformed or deleted. Old-image imports rejected.",
+  "registration": "docs/data/terrain-v2/REGISTRATION.md"
+}

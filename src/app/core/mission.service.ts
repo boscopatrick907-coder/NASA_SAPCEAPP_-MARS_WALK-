@@ -14,6 +14,12 @@ import {
 } from './models';
 import { assessRoute, emptyRoute } from './route';
 import { validEnvelope, validManifest, validMarkers, validPoint } from './validation';
+import {
+  MAX_SUGGESTION_VERTICES,
+  TERRAIN_CONTRACT_VERSION,
+  TerrainSuggestionRecord,
+  validTerrainSuggestion,
+} from './terrain';
 
 export const MAX_MISSION_IMPORT_BYTES = 1024 * 1024;
 
@@ -42,6 +48,9 @@ export class MissionService {
   private readonly selectedState = signal<string | null>(null);
   private readonly observationState = signal<readonly Observation[]>([]);
   private readonly history = signal<Route[]>([]);
+  private readonly suggestionState = signal<TerrainSuggestionRecord | null>(null);
+  /** Provenance of the current route when it came from an accepted terrain suggestion (§8). */
+  readonly terrainSuggestion = this.suggestionState.asReadonly();
   private readonly statusState = signal<'loading' | 'ready' | 'unavailable' | 'error'>('loading');
   private readonly errorState = signal<string | null>(null);
   private initialization?: Promise<void>;
@@ -139,10 +148,51 @@ export class MissionService {
   selectMarker(id: string | null): void {
     if (id === null || this.markers().some((m) => m.id === id)) this.selectedState.set(id);
   }
-  private changeRoute(next: Route): void {
+  private changeRoute(next: Route, suggestion: TerrainSuggestionRecord | null = null): void {
     this.editRevision++;
     this.history.update((h) => [...h, clone(this.route())]);
     this.routeState.set(frozen(next));
+    // Any manual edit means the route is no longer the accepted suggestion.
+    this.suggestionState.set(suggestion ? frozen(clone(suggestion)) : null);
+  }
+  /**
+   * Contract §8 adapter: replace the route with an accepted, non-stale engine path.
+   * Pushes undo history and never saves; "Save Route" stays an explicit user action.
+   */
+  replaceRouteFromSuggestion(
+    path: readonly Point[],
+    provenance: Omit<TerrainSuggestionRecord, 'acceptedAtUtc' | 'contractVersion'>,
+  ): OperationResult {
+    const image = this.image();
+    if (!image) return { ok: false, error: 'Load image data before accepting a suggestion.' };
+    if (!Array.isArray(path) || path.length < 2 || path.length > MAX_SUGGESTION_VERTICES)
+      return {
+        ok: false,
+        error: 'Suggested path is empty or too long. Current route is unchanged.',
+      };
+    if (!path.every((p) => validPoint(p, image)))
+      return {
+        ok: false,
+        error: 'Suggested path leaves the active image. Current route is unchanged.',
+      };
+    const record: TerrainSuggestionRecord = {
+      contractVersion: TERRAIN_CONTRACT_VERSION,
+      packageId: provenance.packageId,
+      requestId: provenance.requestId,
+      maxSegmentGradeDeg: provenance.maxSegmentGradeDeg,
+      acceptedAtUtc: new Date().toISOString(),
+    };
+    if (!validTerrainSuggestion(record))
+      return {
+        ok: false,
+        error: 'Suggestion provenance is incomplete. Current route is unchanged.',
+      };
+    const points = path.map((p) => ({ x: p.x, y: p.y }));
+    this.changeRoute(
+      { start: points[0], destination: points.at(-1)!, waypoints: points.slice(1, -1) },
+      record,
+    );
+    return { ok: true };
   }
   applyMapPoint(point: Point): void {
     const image = this.image();
@@ -159,6 +209,7 @@ export class MissionService {
       this.editRevision++;
       this.routeState.set(frozen(clone(previous)));
       this.history.update((h) => h.slice(0, -1));
+      this.suggestionState.set(null);
     }
   }
   clearRoute(): void {
@@ -167,8 +218,27 @@ export class MissionService {
   private key(): string {
     return `marswalk:v1:${this.image()!.imageRef}`;
   }
-  private envelope(route = this.route(), observations = this.observations()) {
-    return { schemaVersion: 1, imageRef: this.image()!.imageRef, route, observations };
+  private envelope(
+    route = this.route(),
+    observations = this.observations(),
+    terrainSuggestion = this.terrainSuggestion(),
+  ) {
+    const base = { schemaVersion: 1, imageRef: this.image()!.imageRef, route, observations };
+    // Field omitted entirely for ordinary routes, so existing saved bytes are unchanged.
+    return terrainSuggestion ? { ...base, terrainSuggestion } : base;
+  }
+  /** Optional provenance from a stored/imported envelope; invalid provenance is dropped, not trusted. */
+  private readSuggestion(value: object): TerrainSuggestionRecord | null {
+    const s = (value as { terrainSuggestion?: unknown }).terrainSuggestion;
+    return validTerrainSuggestion(s)
+      ? frozen({
+          contractVersion: s.contractVersion,
+          packageId: s.packageId,
+          requestId: s.requestId,
+          maxSegmentGradeDeg: s.maxSegmentGradeDeg,
+          acceptedAtUtc: s.acceptedAtUtc,
+        })
+      : null;
   }
   /** Never overwrite an unreadable, un-restored or concurrently changed saved record. */
   private persistMission(raw: string): OperationResult {
@@ -240,6 +310,7 @@ export class MissionService {
       this.editRevision++;
       this.routeState.set(frozen(clone(value.route)));
       this.observationState.set(frozen(clone(value.observations)));
+      this.suggestionState.set(this.readSuggestion(value));
       this.history.set([]);
       return { ok: true };
     } catch {
@@ -300,12 +371,16 @@ export class MissionService {
       text: n.text,
       position: point(n.position),
     }));
+    const suggestion = this.readSuggestion(value);
     // Persist before publishing state; guard unreadable or concurrently changed records.
-    const saved = this.persistMission(JSON.stringify(this.envelope(route, observations)));
+    const saved = this.persistMission(
+      JSON.stringify(this.envelope(route, observations, suggestion)),
+    );
     if (!saved.ok) return saved;
     this.editRevision++;
     this.routeState.set(frozen(route));
     this.observationState.set(frozen(observations));
+    this.suggestionState.set(suggestion);
     this.history.set([]);
     return { ok: true };
   }

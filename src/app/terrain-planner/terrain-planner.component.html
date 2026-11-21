@@ -1,0 +1,205 @@
+<section class="tp-panel" aria-label="Experimental Terrain Path Planner">
+  @let gate = terrainGate();
+  @let ep = endpointStatus();
+  @let cfg = config();
+  @let gv = gradeValidation();
+
+  <header class="tp-header">
+    <div class="tp-title-row">
+      <h2>Experimental Terrain Path Planner</h2>
+      <span class="tp-badge" [class]="'tp-badge tp-tone-' + gate.tone">{{ gate.badgeLabel }}</span>
+    </div>
+    <p class="tp-text">{{ gate.message }}</p>
+    <p class="tp-muted">
+      Experimental preview only — never computes a safety rating or replaces manual inspection.
+      Manual routes and Notebook drafts stay untouched until you explicitly accept.
+    </p>
+  </header>
+
+  <article class="tp-card" aria-label="Route endpoints status">
+    <div class="tp-title-row">
+      <h3>Endpoints</h3>
+      <span
+        class="tp-badge"
+        [class.tp-tone-accepted]="ep.ready"
+        [class.tp-tone-caution]="!ep.ready"
+        >{{ ep.statusLabel }}</span
+      >
+    </div>
+    <dl class="tp-dl">
+      <div class="tp-row">
+        <dt>Start</dt>
+        <dd class="tp-mono">{{ ep.startLabel }}</dd>
+      </div>
+      <div class="tp-row">
+        <dt>Destination</dt>
+        <dd class="tp-mono">{{ ep.destinationLabel }}</dd>
+      </div>
+    </dl>
+    @if (ep.error; as epError) {
+      <p class="tp-muted" role="status">{{ epError }}</p>
+    }
+  </article>
+
+  <div class="tp-card">
+    <div class="tp-title-row">
+      <label class="tp-label" for="tp-grade-input"
+        >Experimental maximum segment grade ({{ unitLabel() }}, {{ unitSym() }})</label
+      >
+      <button type="button" class="tp-btn tp-btn-ghost" (click)="resetConstraint()">
+        Reset default
+      </button>
+    </div>
+    <input
+      id="tp-grade-input"
+      class="tp-input"
+      type="number"
+      inputmode="decimal"
+      [min]="cfg.min"
+      [max]="cfg.max"
+      [step]="cfg.step"
+      [value]="gradeRawValue()"
+      [attr.aria-invalid]="!gv.valid"
+      aria-describedby="tp-grade-help tp-grade-error"
+      (input)="onGradeInput($event)"
+    />
+    <p id="tp-grade-help" class="tp-muted">
+      Allowed range: {{ cfg.min }}–{{ cfg.max }}{{ unitSym() }}. Experimental grid-cell segment
+      grade cap only — not an established astronaut, suit, or rover capability.
+    </p>
+    @if (!gv.valid && gv.error) {
+      <p id="tp-grade-error" class="tp-alert" role="alert">{{ gv.error }}</p>
+    }
+  </div>
+
+  <div class="tp-actions">
+    <button
+      type="button"
+      class="tp-btn tp-btn-primary"
+      [disabled]="!canRequest()"
+      (click)="onRequestPreview()"
+    >
+      Request terrain preview
+    </button>
+    <button type="button" class="tp-btn" [disabled]="!isRunning()" (click)="onCancelPreview()">
+      Cancel preview
+    </button>
+  </div>
+
+  @if (isRunning()) {
+    <p class="tp-status-box" role="status">
+      Calculating experimental preview ({{ preview()?.requestId ?? lastRequestId() ?? 'pending' }})…
+      Manual routes and Notebook drafts stay preserved.
+    </p>
+  }
+
+  @if (previewMetrics(); as pm) {
+    @let stale = staleness();
+    <article class="tp-card tp-preview-card" aria-label="Terrain preview suggestion">
+      <div class="tp-title-row">
+        <h3>Preview result</h3>
+        @if (stale.isStale) {
+          <span class="tp-badge tp-tone-error">Stale preview — re-run required</span>
+        } @else {
+          <span class="tp-badge tp-tone-caution">Preview suggestion (not saved)</span>
+        }
+      </div>
+
+      @if (stale.isStale) {
+        <div class="tp-alert" role="alert">
+          <strong>Suggestion outdated:</strong>
+          <ul class="tp-list">
+            @for (reason of stale.reasons; track $index) {
+              <li>{{ reason }}</li>
+            }
+          </ul>
+        </div>
+      }
+
+      <dl class="tp-dl">
+        <div class="tp-row">
+          <dt>Objective</dt>
+          <dd>{{ pm.objectiveLabel }}</dd>
+        </div>
+        <div class="tp-row">
+          <dt>Sampled distance</dt>
+          <dd class="tp-mono">{{ pm.sampledDistance }}</dd>
+        </div>
+        <div class="tp-row">
+          <dt>Max sampled segment grade</dt>
+          <dd class="tp-mono">{{ pm.maxSampledGrade }}</dd>
+        </div>
+        <div class="tp-row">
+          <dt>Terrain resolution</dt>
+          <dd class="tp-mono">{{ pm.terrainResolution }}</dd>
+        </div>
+        <div class="tp-row">
+          <dt>Suggested waypoints</dt>
+          <dd class="tp-mono">{{ pm.waypointCount }}</dd>
+        </div>
+      </dl>
+
+      <div class="tp-missing">
+        <strong>Relevant missing information &amp; limits:</strong>
+        @if (pm.missingInformation.length > 0) {
+          <ul class="tp-list">
+            @for (item of pm.missingInformation; track $index) {
+              <li>{{ item }}</li>
+            }
+          </ul>
+        } @else {
+          <p class="tp-muted">
+            No extra engine omission list supplied; terrain resolution and local hazard limits still
+            apply.
+          </p>
+        }
+        @if (pm.caveatNote; as note) {
+          <p class="tp-muted">{{ note }}</p>
+        }
+      </div>
+
+      <div class="tp-actions">
+        <button
+          type="button"
+          class="tp-btn tp-btn-primary"
+          [disabled]="!canAccept()"
+          (click)="onAcceptPreview()"
+        >
+          Accept preview route
+        </button>
+        <button type="button" class="tp-btn" (click)="onRejectPreview()">Reject preview</button>
+      </div>
+      <p class="tp-muted">
+        Accepting delegates route replacement to Patrick’s coordinator adapter without saving
+        automatically.
+      </p>
+    </article>
+  }
+
+  @if (outcomeView(); as out) {
+    <article
+      class="tp-card"
+      [class.tp-error-card]="out.kind === 'error'"
+      [attr.role]="out.kind === 'error' ? 'alert' : 'status'"
+      aria-label="Terrain preview status details"
+    >
+      <div class="tp-title-row">
+        <h3>{{ out.headline }}</h3>
+        <code class="tp-mono tp-code">{{ out.reasonCode }}</code>
+      </div>
+      <p class="tp-text">{{ out.explanation }}</p>
+      @if (out.engineMessage; as msg) {
+        <p class="tp-muted">Engine note: {{ msg }}</p>
+      }
+      <p class="tp-disclaimer">{{ out.nonImpassableNote }}</p>
+      <p class="tp-muted">{{ out.preservationNote }}</p>
+      @if (out.provisionalNote; as prov) {
+        <p class="tp-small">{{ prov }}</p>
+      }
+    </article>
+  }
+
+  @if (actionFeedback(); as fb) {
+    <p class="tp-status-box" role="status">{{ fb }}</p>
+  }
+</section>

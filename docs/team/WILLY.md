@@ -2,6 +2,15 @@
 
 ## START HERE — your executable checklist
 
+> **ACTIVE — 21 Nov 2026.** Your map proposal is on main in reduced form: a dashed `mw-suggested-route` polyline on its own layer, fed by `core/terrain-suggestion.store.ts`, cleared on image change; plus an auto-fit that re-fits until the user pans or zooms. Next, in your files (`src/app/map/`):
+>
+> 1. **Review what landed** in `map.component.ts` and its spec. Keep it, or improve it with tests.
+> 2. **Usability audit #1 and #2** (`docs/design/PLANNING_V2_POLISH.md`), agreeing the layout with Charles and Emma first:
+>    - **#1:** on a 1280×800 laptop the map starts at y ≈ 419 px. Move the layer, mode and Reset/Focus controls into a compact toolbar on the map.
+>    - **#2:** on a phone the Start/Destination mode buttons are about 900 px away from the map. Add a Start / Destination / Waypoint control on the map.
+> 3. **Footprint overlay:** optional. Coverage is full, so the outline is low priority.
+> 4. **Map stylesheet budget:** bring `map.component.scss` back under its 4 kB budget (it's 7 kB).
+
 Read only this checklist and the active assignment immediately below it for current work. Everything under **Historical assignments** is reference, not another assignment. Do not wait for all teammates: complete the **Do now** item first.
 
 **Before editing:** preserve/commit your current work, report its branch/SHA, then use a separate clean checkout for this agent. Fetch `origin/main` and create your own feature branch from current main, unless Patrick specifies a newer reviewed development base. Never reset existing work or switch a teammate's checkout. Branch names below are suggestions only if you have not started this slice. These instructions are published on main; implementation stays on your feature branch.

@@ -13,6 +13,38 @@ for (const file of index.files) {
   if (bytes.length !== file.bytes || hash(bytes) !== file.sha256) throw new Error(`Image pack mismatch: ${file.path}`);
 }
 const paths = new Set(['index.html', 'favicon.ico', 'manifest.webmanifest', 'icons/marswalk-192.png', 'icons/marswalk-512.png', 'icons/marswalk-maskable-512.png', 'data/manifest.json', manifest.assetPath, 'data/markers.json', 'data/image-pack.json', 'data/environment.json', 'data/models/marswalk-ai-relief.glb']);
+// Terrain (contract v1 §7): the pointer is always packed; a package only when accepted and hash-valid.
+paths.add('data/terrain/index.json');
+const terrainIndex = JSON.parse(await readFile(resolve(root, 'data/terrain/index.json'), 'utf8'));
+if (terrainIndex.schemaVersion !== 1) throw new Error('Terrain index schema mismatch');
+if (terrainIndex.activePackageId !== null) {
+  const id = terrainIndex.activePackageId;
+  if (!/^terrain-[a-z0-9][a-z0-9._-]*$/.test(id)) throw new Error('Unsafe terrain package id');
+  const base = `data/terrain/${id}`;
+  const tm = JSON.parse(await readFile(resolve(root, base, 'terrain-manifest.json'), 'utf8'));
+  if (tm.packageId !== id) throw new Error('Terrain manifest/index package mismatch');
+  if (tm.imageRef !== manifest.imageRef) throw new Error('Terrain package is for a different image');
+  const a = tm.admission ?? {};
+  if (a.status !== 'accepted' || !a.reviewer || !a.decidedAtUtc || !a.evidenceRef)
+    throw new Error('Terrain package is not accepted with reviewer/date/evidence; set activePackageId to null');
+  paths.add(`${base}/terrain-manifest.json`);
+  for (const file of tm.files ?? []) {
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]*$/.test(file.path)) throw new Error('Unsafe terrain file path');
+    const bytes = await readFile(resolve(root, base, file.path));
+    if (bytes.length !== file.bytes || hash(bytes) !== file.sha256) throw new Error(`Terrain pack mismatch: ${file.path}`);
+    paths.add(`${base}/${file.path}`);
+  }
+}
+// Nothing else may be deployed under data/terrain: no staging, raw archives or unaccepted packages.
+for (const entry of await readdir(resolve(root, 'data/terrain'), { withFileTypes: true })) {
+  const ok = entry.name === 'index.json' || (entry.isDirectory() && entry.name === terrainIndex.activePackageId);
+  if (!ok) throw new Error(`Unexpected deployed terrain entry: data/terrain/${entry.name}`);
+}
+if (terrainIndex.activePackageId !== null) {
+  const base = `data/terrain/${terrainIndex.activePackageId}`;
+  for (const name of await readdir(resolve(root, base)))
+    if (!paths.has(`${base}/${name}`)) throw new Error(`Unlisted terrain file deployed: ${base}/${name}`);
+}
 // All generated application chunks (including deferred viewer) are deliberately
 // prepared. Raw/archive files and arbitrary public documents are excluded.
 for (const entry of await readdir(root)) if (/\.(?:js|css)$/.test(entry)) paths.add(entry);

@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import * as L from 'leaflet';
+import { TerrainSuggestionStore } from '../core/terrain-suggestion.store';
 import { MissionService } from '../core/mission.service';
 import { routePoints } from '../core/route';
 import type { ImageManifest, Point, ScienceMarker } from '../core/models';
@@ -79,6 +80,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private mapContainer!: ElementRef<HTMLDivElement>;
 
   readonly mission = inject(MissionService);
+  private readonly terrainSuggestion = inject(TerrainSuggestionStore);
   readonly imageDisplayState = signal<ImageDisplayState>('loading');
   readonly imageDisplayError = signal<string | null>(null);
   readonly canResetView = computed(
@@ -218,10 +220,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private routeLayer?: L.LayerGroup;
   private markerLayer?: L.LayerGroup;
   private routeLine?: L.Polyline;
+  /** Terrain suggestion (not saved), drawn under the manual route; Planning V2. */
+  private suggestionLine?: L.Polyline;
   private readonly routePoints = new Map<string, L.CircleMarker>();
   private readonly scienceMarkers = new Map<string, L.CircleMarker>();
   private resizeObserver?: ResizeObserver;
   private viewReady = false;
+  /** Keep the whole image fitted while the layout settles, until the user pans or zooms. */
+  private autoFit = true;
+  private fitting = false;
   private imageRequest = 0;
   private activeImageRef: string | null = null;
   private clickHandler?: (event: L.LeafletMouseEvent) => void;
@@ -232,11 +239,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const markers = this.mission.markers();
     const layers = this.mission.layers();
     const selectedMarkerId = this.mission.selectedMarkerId();
+    const suggestion = this.terrainSuggestion.path();
 
     if (!this.viewReady) return;
     this.syncImage(status, image);
     if (!this.map || !image) return;
     this.syncRoute(route);
+    this.suggestionLine?.setLatLngs(suggestion ? suggestion.map(toLeafletPoint) : []);
     this.syncMarkers(markers, image, selectedMarkerId);
     this.syncLayerVisibility(layers);
   });
@@ -300,6 +309,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  private refitIfAuto(): void {
+    const image = this.mission.image();
+    if (!this.autoFit || !this.map || !image || this.imageDisplayState() !== 'ready') return;
+    this.fitting = true;
+    try {
+      this.map.fitBounds(imageBounds(image), { padding: [8, 8], animate: false });
+    } finally {
+      this.fitting = false;
+    }
+  }
+
   resetView(): void {
     const image = this.mission.image();
     if (!this.canResetView() || !this.map || !image) return;
@@ -341,6 +361,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
     this.routeLayer = L.layerGroup().addTo(this.map);
     this.markerLayer = L.layerGroup().addTo(this.map);
+    // Added before the manual route so it renders underneath; dashed = not saved.
+    this.suggestionLine = L.polyline([], {
+      className: 'mw-suggested-route',
+      color: '#38bdf8',
+      weight: 3,
+      opacity: 0.95,
+      dashArray: '8 6',
+      interactive: false,
+    }).addTo(this.map); // own layer, outside the manual route group
     this.routeLine = L.polyline([], {
       className: 'mw-route-line',
       color: '#ff8a4c',
@@ -354,12 +383,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       this.mission.applyMapPoint({ x: event.latlng.lng, y: event.latlng.lat });
     };
     this.map.on('click', this.clickHandler);
+    // Any pan/zoom not started by our own fit ends automatic re-fitting.
+    this.map.on('dragstart zoomstart', () => {
+      if (!this.fitting) this.autoFit = false;
+    });
   }
 
   private installResizeObserver(): void {
     const ResizeObserverType = this.document.defaultView?.ResizeObserver;
     if (!ResizeObserverType || !this.mapContainer?.nativeElement) return;
-    this.resizeObserver = new ResizeObserverType(() => this.map?.invalidateSize({ pan: false }));
+    this.resizeObserver = new ResizeObserverType(() => {
+      this.map?.invalidateSize({ pan: false });
+      this.refitIfAuto();
+    });
     this.resizeObserver.observe(this.mapContainer.nativeElement);
   }
 
@@ -429,7 +465,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         return;
       }
       this.imageDisplayState.set('ready');
-      if (fitInitialView) map.fitBounds(imageBounds(image), { padding: [8, 8] });
+      if (fitInitialView) {
+        this.autoFit = true;
+        this.refitIfAuto();
+      }
       this.syncLayerVisibility(this.mission.layers());
       this.syncRoute(this.mission.route());
       this.syncMarkers(this.mission.markers(), image, this.mission.selectedMarkerId());
@@ -592,6 +631,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   private clearRoutePointLayers(): void {
     this.routeLine?.setLatLngs([]);
+    this.suggestionLine?.setLatLngs([]); // never keep a suggestion across an image change
     for (const layer of this.routePoints.values()) this.routeLayer?.removeLayer(layer);
     this.routePoints.clear();
   }

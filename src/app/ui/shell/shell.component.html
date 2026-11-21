@@ -169,6 +169,7 @@
           @if (plannerOpened()) {
             @defer (on immediate) {
               <app-route-planner />
+              <app-terrain-preview />
             } @loading {
               <p class="defer-status" role="status">Loading route planner…</p>
             } @error {

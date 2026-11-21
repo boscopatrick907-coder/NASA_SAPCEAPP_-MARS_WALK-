@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "imageRef": "hirise-psp001752-red-center-2048-025m-v2",
+  "imageRef": "hirise-psp001752-red-ortho-2048-0253m-v3",
   "files": [
     {
       "path": "data/manifest.json",
-      "bytes": 1694,
-      "sha256": "612479d699f982aae815cdf9ea44057ce1acc061d664b59105c0407c6c5e0a41"
+      "bytes": 2521,
+      "sha256": "471cadd746ef01479be3e65b4919de7d6c155c1a009ed544b0a926ac146c3139"
     },
     {
-      "path": "data/imagery/PSP_001752_1750_RED_crop_2048.jpg",
-      "bytes": 1431356,
-      "sha256": "c6cd79381c22c7ae5289ed236165b8f0047cd4489c6b0f2b7417371c5a9a8d23"
+      "path": "data/imagery/PSP_001752_1750_RED_A_ortho_crop_2048.jpg",
+      "bytes": 707363,
+      "sha256": "f49ffa69b28693bb1774372a3137eb423005e2f354c4492734e1b04703953dbc"
     }
   ],
-  "totalBytes": 1433050
+  "totalBytes": 709884
 }
