@@ -1,12 +1,19 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
   min-width: 0;
   color: var(--text-primary);
 }
 
 .map-panel {
-  display: grid;
-  gap: 0.75rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  gap: var(--space-2);
 }
 
 .map-toolbar {
@@ -240,8 +247,8 @@
 
 .map-frame {
   position: relative;
-  min-height: 420px;
-  height: min(74vh, 820px);
+  flex: 1 1 auto;
+  min-height: 380px;
   overflow: hidden;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
@@ -427,9 +434,10 @@ a:focus-visible {
   }
 
   .map-frame {
+    flex: none;
     min-height: 360px;
-    height: 58vh;
-    overflow: visible;
+    height: 64vh;
+    overflow: hidden;
   }
 
   .marker-details dl {

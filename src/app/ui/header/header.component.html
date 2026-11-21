@@ -7,10 +7,7 @@
         <circle class="mark-disc" cx="16" cy="16" r="14" />
         <ellipse class="mark-crater" cx="10.5" cy="10.5" rx="3.4" ry="2.4" />
         <circle class="mark-crater" cx="22.5" cy="21.5" r="2" />
-        <path
-          class="mark-route"
-          d="M8.5 22.5c3.4-3.6 5.6 0.2 8.4-4.3s4.4-6.1 6.6-7.6"
-        />
+        <path class="mark-route" d="M8.5 22.5c3.4-3.6 5.6 0.2 8.4-4.3s4.4-6.1 6.6-7.6" />
         <circle class="mark-start" cx="8.5" cy="22.5" r="2.1" />
         <circle class="mark-goal" cx="23.6" cy="10.4" r="2.3" />
       </svg>
@@ -21,65 +18,76 @@
     </div>
   </div>
 
-  <div class="mission-meta" role="group" aria-label="Mission and offline readiness states">
-    <div
-      [class]="'status-pill metadata-pill ' + metadataStatusClass()"
-      title="Mission manifest and marker metadata only. Separate from raster display, local persistence, connectivity, and offline pack verification."
-    >
-      <span class="status-dot" aria-hidden="true"></span>
-      <span class="status-text">{{ statusLabel() }}</span>
-    </div>
+  <details class="status-menu">
+    <summary [attr.aria-label]="'Data and offline status: ' + statusSummary()">
+      <span [class]="'summary-dot dot-' + offlinePackStatusClass()" aria-hidden="true"></span>
+      <span class="summary-text">{{ statusSummary() }}</span>
+      <span class="chev" aria-hidden="true">▾</span>
+    </summary>
+    <div class="status-dropdown">
+      <div class="mission-meta" role="group" aria-label="Mission and offline readiness states">
+        <div
+          [class]="'status-pill metadata-pill ' + metadataStatusClass()"
+          title="Mission manifest and marker metadata only. Separate from raster display, local persistence, connectivity, and offline pack verification."
+        >
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-text">{{ statusLabel() }}</span>
+        </div>
 
-    @if (image(); as img) {
-      <div class="dataset-tag" title="Active Raster Reference">
-        <span class="tag-label">Raster:</span>
-        <span class="tag-val">{{ img.imageRef }}</span>
+        @if (image(); as img) {
+          <div class="dataset-tag" title="Active Raster Reference">
+            <span class="tag-label">Raster:</span>
+            <span class="tag-val">{{ img.imageRef }}</span>
+          </div>
+        } @else {
+          <div class="dataset-tag tag-unloaded">
+            <span class="tag-label">Raster:</span>
+            <span class="tag-val">No raster loaded</span>
+          </div>
+        }
+
+        <div
+          class="status-pill network-pill"
+          [class.status-neutral]="online()"
+          [class.status-loading]="!online()"
+          title="Browser connectivity only. Being online does not mean the offline pack is verified."
+        >
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-text">{{ networkLabel() }}</span>
+        </div>
+
+        <div
+          [class]="'status-pill offline-pill ' + offlinePackStatusClass()"
+          [attr.title]="offlineMessage()"
+        >
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-text">{{ offlinePackLabel() }}</span>
+        </div>
+
+        @if (canInstall()) {
+          <span class="status-pill pwa-flag-pill status-info" role="status">Install Available</span>
+        }
+
+        @if (updateAvailable()) {
+          <span
+            class="status-pill pwa-flag-pill status-loading"
+            role="status"
+            title="Save or export routes and notes in every open tab before applying the waiting update."
+            >Update Waiting (save work first)</span
+          >
+        }
+
+        @if (offlineState() === 'error') {
+          <span class="status-pill pwa-flag-pill status-error" role="alert"
+            >{{ offlineMessage() }} — Save/export unsaved work first; retry preparation while
+            connected.</span
+          >
+        }
       </div>
-    } @else {
-      <div class="dataset-tag tag-unloaded">
-        <span class="tag-label">Raster:</span>
-        <span class="tag-val">No raster loaded</span>
-      </div>
-    }
 
-    <div
-      class="status-pill network-pill"
-      [class.status-neutral]="online()"
-      [class.status-loading]="!online()"
-      title="Browser connectivity only. Being online does not mean the offline pack is verified."
-    >
-      <span class="status-dot" aria-hidden="true"></span>
-      <span class="status-text">{{ networkLabel() }}</span>
+      <ng-content select="[pwa-status]" />
     </div>
-
-    <div
-      [class]="'status-pill offline-pill ' + offlinePackStatusClass()"
-      [attr.title]="offlineMessage()"
-    >
-      <span class="status-dot" aria-hidden="true"></span>
-      <span class="status-text">{{ offlinePackLabel() }}</span>
-    </div>
-
-    @if (canInstall()) {
-      <span class="status-pill pwa-flag-pill status-info" role="status">Install Available</span>
-    }
-
-    @if (updateAvailable()) {
-      <span
-        class="status-pill pwa-flag-pill status-loading"
-        role="status"
-        title="Save or export routes and notes in every open tab before applying the waiting update."
-        >Update Waiting (save work first)</span
-      >
-    }
-
-    @if (offlineState() === 'error') {
-      <span class="status-pill pwa-flag-pill status-error" role="alert"
-        >{{ offlineMessage() }} — Save/export unsaved work first; retry preparation while
-        connected.</span
-      >
-    }
-  </div>
+  </details>
 
   <div class="controls-section">
     <nav class="layer-toggles" aria-label="Map Layer Toggles">

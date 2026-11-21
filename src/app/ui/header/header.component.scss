@@ -26,6 +26,8 @@ $m: var(--mars-accent);
   align-items: center;
 }
 .mission-header {
+  position: relative;
+  z-index: 1100;
   justify-content: space-between;
   min-height: 60px;
   padding: max(var(--space-2), var(--safe-top)) var(--space-4) var(--space-2);
@@ -41,11 +43,77 @@ $m: var(--mars-accent);
   min-width: 0;
 }
 .mission-meta {
-  flex: 1 1 auto;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  scrollbar-width: none;
+  flex-wrap: wrap;
   padding: 2px;
+}
+.status-menu {
+  position: relative;
+  margin-left: auto;
+  > summary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: var(--control-h);
+    padding: 0 14px;
+    border: 1px solid $b;
+    border-radius: 99px;
+    background: $c;
+    color: $p;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    list-style: none;
+    white-space: nowrap;
+    &::-webkit-details-marker {
+      display: none;
+    }
+    &:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+  }
+  &[open] > summary .dot-status-ready {
+    --dot: #{$g};
+  }
+  .dot-status-loading {
+    --dot: var(--warning-amber);
+  }
+  .dot-status-error {
+    --dot: #{$e};
+  }
+  .chev {
+    transform: rotate(180deg);
+  }
+}
+.status-menu .summary-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--dot, #{$s});
+  border: 0;
+  padding: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dot, #{$s}) 25%, transparent);
+}
+.chev {
+  color: $s;
+  font-size: 11px;
+}
+.status-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  z-index: 1200;
+  display: grid;
+  gap: 10px;
+  width: min(440px, calc(100vw - 24px));
+  max-height: 70vh;
+  overflow: auto;
+  padding: 12px;
+  border: 1px solid $b;
+  border-radius: 16px;
+  background: var(--bg-surface);
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-float);
 }
 .controls-section {
   flex-wrap: nowrap;
@@ -62,6 +130,7 @@ $m: var(--mars-accent);
   width: 34px;
   height: 34px;
   flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgb(255 122 61 / 0.45));
   svg {
     display: block;
     width: 100%;
@@ -75,8 +144,11 @@ $m: var(--mars-accent);
 }
 .brand-title {
   font: 700 var(--text-lg) / 1.05 var(--font-heading);
-  letter-spacing: 0.06em;
-  color: $p;
+  letter-spacing: 0.14em;
+  background: linear-gradient(90deg, #{$p}, #ff9a63);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   line-height: 1.1;
 }
 .brand-subtitle {
@@ -186,26 +258,15 @@ $m: var(--mars-accent);
 }
 .action-btn {
   padding: 0 var(--space-4);
-  background: $m;
-  border: 1px solid $m;
+  border-radius: 99px;
+  background: linear-gradient(135deg, #ffb07c, #ff7a3d);
+  border: 0;
+  box-shadow: 0 6px 18px rgb(255 122 61 / 0.3);
   color: var(--on-accent);
   font-size: var(--text-sm);
   font-weight: 700;
   &:hover {
-    background: var(--mars-accent-hover);
-    border-color: var(--mars-accent-hover);
-  }
-}
-@media (max-width: 1180px) {
-  .mission-header {
-    flex-wrap: wrap;
-  }
-  .mission-meta {
-    order: 3;
-    flex: 1 1 100%;
-  }
-  .brand-section {
-    flex: 1 1 auto;
+    filter: brightness(1.06);
   }
 }
 @media (max-width: 900px) {
@@ -222,6 +283,15 @@ $m: var(--mars-accent);
   display: none;
 }
 @media (max-width: 600px) {
+  .summary-text {
+    display: none;
+  }
+  .status-menu > summary {
+    padding: 0 12px;
+  }
+  .brand-subtitle {
+    display: none;
+  }
   .brand-section {
     flex: 1 1 0;
   }

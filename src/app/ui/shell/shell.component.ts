@@ -8,6 +8,9 @@ import { TerrainPreviewComponent } from '../../terrain/terrain-preview.component
 import { TerrainBootstrapComponent } from '../../terrain/terrain-bootstrap.component';
 import { ConfidencePanelComponent } from '../confidence-panel/confidence-panel.component';
 import { HeaderComponent } from '../header/header.component';
+import { WelcomeComponent } from '../welcome/welcome.component';
+import { welcomeSeen } from '../welcome/welcome-seen';
+import { type HudAction, MissionHudComponent } from '../mission-hud/mission-hud.component';
 import {
   MissionReviewComponent,
   type MissionWorkflowTab,
@@ -28,6 +31,8 @@ export type ActiveTab = 'confidence' | 'planner' | 'notebook' | 'transfer' | 're
     TerrainPreviewComponent,
     TerrainBootstrapComponent,
     NotebookComponent,
+    WelcomeComponent,
+    MissionHudComponent,
   ],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
@@ -37,12 +42,16 @@ export class ShellComponent implements OnDestroy {
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
   readonly observations = this.missionService.observations;
+  readonly hasRoute = () =>
+    !!this.missionService.route().start || !!this.missionService.route().destination;
 
   readonly activeTab = signal<ActiveTab>('confidence');
   readonly viewerOpen = signal(false);
   readonly plannerOpened = signal(false);
   readonly notebookOpened = signal(false);
   readonly isPanelCollapsed = signal<boolean>(false);
+  /** First-run welcome over the map (also reopened by the Demo walk buttons). */
+  readonly showWelcome = signal(!welcomeSeen());
 
   private readonly tabOrder: readonly ActiveTab[] = [
     'confidence',
@@ -107,6 +116,16 @@ export class ShellComponent implements OnDestroy {
     if (this.isPanelCollapsed()) {
       this.isPanelCollapsed.set(false);
     }
+  }
+
+  onDemoStarted(): void {
+    this.showWelcome.set(false);
+    this.setActiveTab('planner');
+  }
+
+  onHudAction(action: HudAction): void {
+    if (action === 'demo') this.showWelcome.set(true);
+    else this.setActiveTab('planner');
   }
 
   onWorkflowNavigate(tab: MissionWorkflowTab): void {

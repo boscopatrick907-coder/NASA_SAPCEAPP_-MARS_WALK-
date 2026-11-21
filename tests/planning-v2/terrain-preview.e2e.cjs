@@ -9,13 +9,14 @@ async function open(offline) {
   const ctx = await chromium.launchPersistentContext(PROFILE, { viewport: { width: 1280, height: 900 }, offline, acceptDownloads: true, deviceScaleFactor: 1 });
   const page = ctx.pages()[0] ?? await ctx.newPage(); page.setDefaultTimeout(30000);
   const errors = []; page.on('pageerror', e => errors.push(String(e))); page.on('console', m => m.type() === 'error' && errors.push(m.text()));
+  await ctx.addInitScript(() => localStorage.setItem('marswalk:welcome-seen:v1', '1'));
   await page.goto('' + (process.env.ORIGIN || 'http://localhost:8125/') + '');
   await page.waitForFunction(() => document.querySelector('img.mars-map-image')?.complete);
   return { ctx, page, errors };
 }
 async function mapClick(page, fx, fy) { const m = page.locator('.leaflet-container'); const b = await m.boundingBox(); await m.click({ position: { x: b.width * fx, y: b.height * fy } }); }
 async function preview(page, label) {
-  await page.getByRole('tab', { name: 'Route Planner' }).click();
+  await page.getByRole('tab', { name: 'Plan route' }).click();
   const req = page.getByRole('button', { name: 'Request terrain preview' });
   await req.scrollIntoViewIfNeeded();
   await page.waitForFunction(() => [...document.querySelectorAll('button')].some(b => b.textContent.includes('Request terrain preview') && !b.disabled), null, { timeout: 30000 });
@@ -28,11 +29,12 @@ async function preview(page, label) {
 }
 (async () => {
   let { ctx, page, errors } = await open(false);
-  await page.locator('summary', { hasText: 'Install & offline' }).click();
+  await page.locator('.status-menu > summary').click();
   await page.getByRole('button', { name: 'Prepare offline' }).click();
   await page.locator('summary .pack', { hasText: 'Pack verified' }).waitFor({ timeout: 60000 });
+  await page.locator('.status-menu > summary').click();
   log('offline pack verified');
-  await page.getByRole('tab', { name: 'Route Planner' }).click();
+  await page.getByRole('tab', { name: 'Plan route' }).click();
   await page.getByRole('button', { name: 'Set Start Point Mode' }).click(); await mapClick(page, 0.3, 0.7);
   await page.getByRole('button', { name: 'Set Destination Point Mode' }).click(); await mapClick(page, 0.7, 0.3);
   await preview(page, 'online');
@@ -51,7 +53,7 @@ async function preview(page, label) {
   log('offline restart: status', await page.locator('summary').first().innerText());
   const restored = await page.evaluate(() => { const k = Object.keys(localStorage).find(k => k.startsWith('marswalk:v1:')); return JSON.parse(localStorage.getItem(k)).route.waypoints.length; });
   log('offline: saved waypoints still', restored);
-  await page.getByRole('tab', { name: 'Route Planner' }).click();
+  await page.getByRole('tab', { name: 'Plan route' }).click();
   // move destination slightly to request a fresh preview offline
   await page.getByRole('button', { name: 'Set Destination Point Mode' }).click(); await mapClick(page, 0.65, 0.35);
   await preview(page, 'offline');

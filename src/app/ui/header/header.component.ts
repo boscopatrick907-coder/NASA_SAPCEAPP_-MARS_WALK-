@@ -51,6 +51,25 @@ export class HeaderComponent {
     }
   });
 
+  /** One short, plain-language label for the header status button. */
+  readonly statusSummary = computed(() => {
+    const net = this.online() ? '' : 'No connection · ';
+    switch (this.offlineState()) {
+      case 'ready':
+        return `${net}Offline ready`;
+      case 'preparing':
+        return `${net}Saving for offline…`;
+      case 'checking':
+        return `${net}Checking offline pack…`;
+      case 'not-prepared':
+        return `${net}Save for offline`;
+      case 'error':
+        return `${net}Offline pack needs repair`;
+      case 'unsupported':
+        return this.online() ? 'Online' : 'No connection';
+    }
+  });
+
   readonly networkLabel = computed(() => (this.online() ? 'Network: Online' : 'Network: Offline'));
 
   readonly offlinePackLabel = computed(() => {

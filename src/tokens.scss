@@ -124,6 +124,11 @@
   --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.45);
   --route-glow: rgba(255, 138, 76, 0.75);
+  --panel-bg: rgba(20, 16, 14, 0.88);
+  --hud-panel-bg: linear-gradient(135deg, rgba(42, 30, 24, 0.9), rgba(22, 18, 16, 0.9));
+  --app-backdrop:
+    radial-gradient(1200px 600px at 85% -10%, rgba(255, 110, 50, 0.16), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(120, 60, 200, 0.1), transparent 60%), #0b0908;
 }
 
 /* ---------- Light: cool slate surfaces, muted rust accent ---------- */
@@ -172,6 +177,10 @@
   --shadow-panel: 0 1px 2px rgba(31, 26, 23, 0.06), 0 1px 1px rgba(31, 26, 23, 0.04);
   --shadow-float: 0 10px 30px rgba(31, 26, 23, 0.14);
   --route-glow: rgba(255, 138, 76, 0.85);
+  --panel-bg: #ffffff;
+  --hud-panel-bg: linear-gradient(135deg, #fff7f1, #ffffff);
+  --app-backdrop:
+    radial-gradient(1200px 600px at 85% -10%, rgba(255, 138, 76, 0.12), transparent 60%), #eef2f6;
 }
 
 @media (prefers-reduced-motion: reduce) {

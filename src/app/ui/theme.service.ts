@@ -25,9 +25,8 @@ export class ThemeService {
         return;
       }
 
-      // Check system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      this.applyTheme(prefersDark ? 'dark' : 'light');
+      // Mission-control dark is the default look; light stays one click away.
+      this.applyTheme('dark');
     } catch {
       this.applyTheme('dark');
     }

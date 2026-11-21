@@ -55,6 +55,10 @@ export class TerrainSamplerStore {
   private readonly hoverState = signal<Point | null>(null);
   private readonly mineralState = signal<MineralLayer | null>(null);
   readonly mineral = this.mineralState.asReadonly();
+  /** Which terrain/mineral overlays are drawn on the map (shared with the demo walk). */
+  readonly showRelief = signal(false);
+  readonly showSlope = signal(false);
+  readonly showMineral = signal(false);
   publishMineral(layer: MineralLayer | null): void {
     this.mineralState.set(layer);
   }
