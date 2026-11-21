@@ -1,5 +1,15 @@
 # Vercel production
 
+## 21 Nov 2026 (redesign) — mission-control layout, demo walk, mission HUD
+
+| Item | Value |
+|---|---|
+| Source | `main` @ `acfa752` (PR #15), built by Vercel from GitHub |
+| Deployment | `dpl_FKnQifatpMB2c8DWwdb2b2DDRDq7`, https://marswalk-ki7zmhztc-boys-band.vercel.app |
+| Aliases | https://marswalk-jet.vercel.app/, https://marswalk-boys-band.vercel.app/, https://marswalk-review-boys-band.vercel.app/ |
+| Offline pack | `6402a884b955…`, 42 assets, 10 789 657 bytes. **Identical** to the locally tested build; served `offline-pack.json` checked on the live alias |
+| Rollback | `dpl_D5zJrUvC7EjvaHTcS7RaMczaKSco` (`c0c8344`) |
+
 ## 21 Nov 2026 (latest) — CRISM mineralogy layer, R1b terrain check
 
 | Item | Value |
