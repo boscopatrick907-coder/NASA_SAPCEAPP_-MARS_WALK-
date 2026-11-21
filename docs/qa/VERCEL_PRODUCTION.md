@@ -1,4 +1,24 @@
-# Public production acceptance — Vercel
+# Vercel production
+
+## 21 Nov 2026 — Planning V2 terrain preview live
+
+| Item | Value |
+|---|---|
+| Source | `main` @ `ab5c3c7` (PR #8 + PR #9), built by Vercel from GitHub through the Vercel connector |
+| Deployment | `dpl_4GjSzRqkt6WZWXgRDTMYvSUsq7h3`, https://marswalk-l6vd8wklu-boys-band.vercel.app |
+| Aliases | https://marswalk-jet.vercel.app/ (assigned explicitly), https://marswalk-boys-band.vercel.app/ |
+| Offline pack | `16c6b0d7998edac5127ebdd4f5618efe6405673d310d0addcf77f57b92b1c2ad`, 31 files, 10 497 180 bytes. **Identical** to the locally tested build and to preview `dpl_GKNTRsJyzj61aZG7TJRjo1QgGuDU` |
+| Checked on the live alias | `offline-pack.json`, `data/terrain/index.json`, accepted `terrain-manifest.json`, new `data/manifest.json` (imageRef `hirise-psp001752-red-ortho-2048-0253m-v3`), 404 for unlisted paths |
+| Rollback | Previous production `dpl_3dGqArmwGYzMkxMQHwWuvaj7BVWU` (source `b6669fb`, 15 Nov); reassign the two aliases to it |
+
+Notes:
+- Promoting a preview directly returned 422 on this Hobby team, so production was rebuilt from the identical `main` commit and the pack hash compared.
+- The project is still not Git-linked; deployments are created on request.
+- The `headers` in `vercel.json` are not applied (Vercel ignores `headers` when `routes` is used). This was already the case before this deploy. The served `cache-control` is Vercel's default `public, max-age=0, must-revalidate`, and `X-Content-Type-Options: nosniff` is missing. Follow-up: move the 404 rule to a form that allows `headers`.
+- Not checked here: a full browser session against the live origin (this container can't open `*.vercel.app` in a browser), or installation on physical phones.
+- `marswalk-review-boys-band.vercel.app` still points to the 15 Nov review build.
+
+## Earlier record
 
 Date **15 November 2026**. Source **`b6669fb`**. Public app **https://marswalk-jet.vercel.app/**, deployment `dpl_3dGqArmwGYzMkxMQHwWuvaj7BVWU`. [Setup/runbook](../VERCEL_SETUP.md), [prior PWA implementation checks](PWA_FOUNDATION.md).
 
