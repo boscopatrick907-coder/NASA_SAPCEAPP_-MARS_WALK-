@@ -5,6 +5,8 @@
  */
 import { Component, DestroyRef, effect, inject, untracked } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { mineralLayerFrom, validMineralogy } from '../core/mineralogy';
 import { MissionService } from '../core/mission.service';
 import { imageGeoref } from '../core/terrain';
 import { hillshade, slopeGrid, gridImageBounds, TerrainSampler } from '../core/terrain-profile';
@@ -29,9 +31,30 @@ export class TerrainBootstrapComponent {
   private readonly store = inject(TerrainSamplerStore);
   private readonly document = inject(DOCUMENT);
   private publishedFor: string | null = null;
+  private readonly http = inject(HttpClient);
+  private mineralFor: string | null = null;
 
   constructor() {
     void this.terrain.initialize();
+    // CRISM mineral layer: independent of the terrain gate; validated against the active image.
+    const minRef = effect(() => {
+      const ref = this.mission.image()?.imageRef ?? null;
+      untracked(() => {
+        if (ref === this.mineralFor) return;
+        this.mineralFor = ref;
+        this.store.publishMineral(null);
+        if (!ref) return;
+        const base = this.document.baseURI;
+        this.http.get<unknown>(new URL('data/mineralogy/mineralogy.json', base).href).subscribe({
+          next: (doc) => {
+            if (this.mineralFor === ref && validMineralogy(doc, ref))
+              this.store.publishMineral(mineralLayerFrom(doc, base));
+          },
+          error: () => this.store.publishMineral(null),
+        });
+      });
+    });
+    inject(DestroyRef).onDestroy(() => minRef.destroy());
     const ref = effect(() => {
       const gate = this.terrain.gate();
       const manifest = this.terrain.manifest();

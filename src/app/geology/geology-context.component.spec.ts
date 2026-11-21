@@ -54,3 +54,39 @@ describe('geology context', () => {
     expect(st.dominantFacing).toBeNull();
   });
 });
+
+import mineralogy from '../../../public/data/mineralogy/mineralogy.json';
+import manifest from '../../../public/data/manifest.json';
+import { mineralLayerFrom, validMineralogy } from '../core/mineralogy';
+import { mineralValueAt } from '../core/terrain-sampler.store';
+
+describe('CRISM mineralogy data', () => {
+  it('the shipped layer is valid for the active image and only maps the reproducible index', () => {
+    expect(validMineralogy(mineralogy, manifest.imageRef)).toBe(true);
+    expect(validMineralogy(mineralogy, 'other-image')).toBe(false);
+    expect(mineralogy.mappedIndex).toBe('SINDEX2');
+    expect(mineralogy.reproducibility.SINDEX2['162m']).toBeGreaterThanOrEqual(0.5);
+    for (const [k, v] of Object.entries(mineralogy.indices)) expect(v.mapped).toBe(k === 'SINDEX2');
+    for (const r of Object.values(mineralogy.registration))
+      expect(r.peakNCC).toBeGreaterThanOrEqual(0.7);
+  });
+  it('reads index values inside the overlay and nothing outside it', () => {
+    const layer = mineralLayerFrom(mineralogy as never, 'http://x/');
+    expect(mineralValueAt(layer, { x: 1024, y: 1024 })).not.toBeNull();
+    expect(mineralValueAt(layer, { x: -500, y: 1024 })).toBeNull();
+  });
+  it('rejects unsafe paths and wrong grid sizes', () => {
+    expect(
+      validMineralogy(
+        { ...mineralogy, overlay: { ...mineralogy.overlay, path: '../x.png' } },
+        manifest.imageRef,
+      ),
+    ).toBe(false);
+    expect(
+      validMineralogy(
+        { ...mineralogy, cropGrid: { ...mineralogy.cropGrid, cols: 3 } },
+        manifest.imageRef,
+      ),
+    ).toBe(false);
+  });
+});

@@ -97,6 +97,7 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
     http.verify();
   });
 
@@ -119,6 +120,7 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
     http.verify();
   });
 
@@ -147,6 +149,7 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
     http.verify();
   });
 
@@ -176,6 +179,7 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
     http.verify();
   });
 
@@ -206,6 +210,7 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
     http.verify();
   });
 
@@ -234,6 +239,7 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
     http.verify();
   });
 
@@ -271,6 +277,7 @@ describe('App integration', () => {
     for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
       r.flush({ schemaVersion: 1, activePackageId: null });
     for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
+    for (const r of http.match((q) => q.url.endsWith('/data/mineralogy/mineralogy.json'))) r.flush({});
     http.verify();
   });
 });

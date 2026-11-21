@@ -67,4 +67,19 @@
   }
 }
 /* Keep the "no positioned records" notice clear of the readout and slope legend (audit #5). */
-.map-frame .science-marker-empty-state { top: 52px; bottom: auto; }
+.map-frame .science-marker-empty-state {
+  top: 52px;
+  bottom: auto;
+}
+.map-legend-mineral {
+  bottom: 40px;
+  align-items: center;
+  .ramp {
+    width: 70px;
+    height: 10px;
+    background: linear-gradient(90deg, rgb(250 220 120 / 0.5), rgb(190 20 200));
+  }
+}
+:host ::ng-deep img.mw-mineral-layer {
+  image-rendering: pixelated;
+}
