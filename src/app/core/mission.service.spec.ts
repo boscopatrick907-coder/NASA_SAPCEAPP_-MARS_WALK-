@@ -346,4 +346,48 @@ describe('MissionService', () => {
       expect(service.terrainSuggestion()).toBeNull();
     });
   });
+
+  describe('map editing (drag and remove)', () => {
+    it('drag moves a point with one undo step and clears suggestion provenance', async () => {
+      await load();
+      service.setMode('start');
+      service.applyMapPoint({ x: 1, y: 1 });
+      service.setMode('waypoint');
+      service.applyMapPoint({ x: 5, y: 5 });
+      service.replaceRouteFromSuggestion(
+        [
+          { x: 1, y: 1 },
+          { x: 5, y: 5 },
+          { x: 9, y: 9 },
+        ],
+        { packageId: 'terrain-x-v1', requestId: 'r', maxSegmentGradeDeg: 15 },
+      );
+      expect(service.moveRoutePoint('waypoint-0', { x: 6, y: 6 }, true)).toBe(true);
+      expect(service.moveRoutePoint('waypoint-0', { x: 7, y: 7 }, false)).toBe(true);
+      expect(service.route().waypoints[0]).toEqual({ x: 7, y: 7 });
+      expect(service.terrainSuggestion()).toBeNull();
+      service.undoRoute();
+      expect(service.route().waypoints[0]).toEqual({ x: 5, y: 5 });
+    });
+    it('rejects unknown keys, missing endpoints and points outside the image', async () => {
+      await load();
+      expect(service.moveRoutePoint('start', { x: 1, y: 1 }, true)).toBe(false);
+      service.setMode('start');
+      service.applyMapPoint({ x: 1, y: 1 });
+      expect(service.moveRoutePoint('start', { x: 1000, y: 1 }, true)).toBe(false);
+      expect(service.moveRoutePoint('waypoint-3', { x: 2, y: 2 }, true)).toBe(false);
+      expect(service.moveRoutePoint('bogus', { x: 2, y: 2 }, true)).toBe(false);
+    });
+    it('removes a waypoint with undo', async () => {
+      await load();
+      service.setMode('waypoint');
+      service.applyMapPoint({ x: 3, y: 3 });
+      service.applyMapPoint({ x: 4, y: 4 });
+      expect(service.removeWaypoint(0)).toBe(true);
+      expect(service.route().waypoints).toEqual([{ x: 4, y: 4 }]);
+      expect(service.removeWaypoint(5)).toBe(false);
+      service.undoRoute();
+      expect(service.route().waypoints).toHaveLength(2);
+    });
+  });
 });

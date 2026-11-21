@@ -203,6 +203,36 @@ export class MissionService {
     else next.waypoints.push(clone(point));
     this.changeRoute(next);
   }
+  /**
+   * Moves an existing route point (map drag). The first move of a drag pushes undo history;
+   * later moves of the same drag update in place. Any move ends terrain-suggestion provenance.
+   */
+  moveRoutePoint(key: string, point: Point, firstMoveOfDrag: boolean): boolean {
+    const image = this.image();
+    if (!image || !validPoint(point, image)) return false;
+    const next = clone(this.route());
+    const p = { x: point.x, y: point.y };
+    const m = /^waypoint-(\d+)$/.exec(key);
+    if (key === 'start' && next.start) next.start = p;
+    else if (key === 'destination' && next.destination) next.destination = p;
+    else if (m && Number(m[1]) < next.waypoints.length) next.waypoints[Number(m[1])] = p;
+    else return false;
+    if (firstMoveOfDrag) this.changeRoute(next);
+    else {
+      this.editRevision++;
+      this.routeState.set(frozen(next));
+      this.suggestionState.set(null);
+    }
+    return true;
+  }
+  /** Removes one waypoint (undo-able). */
+  removeWaypoint(index: number): boolean {
+    const next = clone(this.route());
+    if (!Number.isInteger(index) || index < 0 || index >= next.waypoints.length) return false;
+    next.waypoints.splice(index, 1);
+    this.changeRoute(next);
+    return true;
+  }
   undoRoute(): void {
     const previous = this.history().at(-1);
     if (previous) {

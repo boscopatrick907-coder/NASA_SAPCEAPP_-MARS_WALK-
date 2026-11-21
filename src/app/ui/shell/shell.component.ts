@@ -5,6 +5,7 @@ import { MapComponent } from '../../map/map.component';
 import { NotebookComponent } from '../../notebook/notebook.component';
 import { RoutePlannerComponent } from '../../planner/route-planner.component';
 import { TerrainPreviewComponent } from '../../terrain/terrain-preview.component';
+import { TerrainBootstrapComponent } from '../../terrain/terrain-bootstrap.component';
 import { ConfidencePanelComponent } from '../confidence-panel/confidence-panel.component';
 import { HeaderComponent } from '../header/header.component';
 import {
@@ -25,6 +26,7 @@ export type ActiveTab = 'confidence' | 'planner' | 'notebook' | 'transfer' | 're
     ConfidencePanelComponent,
     RoutePlannerComponent,
     TerrainPreviewComponent,
+    TerrainBootstrapComponent,
     NotebookComponent,
   ],
   templateUrl: './shell.component.html',

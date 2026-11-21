@@ -10,7 +10,12 @@
     <!-- Map / Primary Workspace Area -->
     <section class="map-workspace" aria-label="Mars Surface Workspace">
       <app-mission-review (navigateTab)="onWorkflowNavigate($event)" />
-      <div id="map-container" class="map-container"><app-map /></div>
+      <div id="map-container" class="map-container">
+        <app-map />
+        @defer (on idle) {
+          <app-terrain-bootstrap />
+        }
+      </div>
 
       <!-- Quick status footer inside map workspace -->
       <footer class="workspace-footer">
@@ -221,7 +226,11 @@
           tabindex="0"
         >
           <h2 id="viewer-title">Optional 3D rehearsal</h2>
-          <p>Your uploaded 3D model opens first. You can switch to the flat mission map. Relief measurements describe the AI-generated model; verified terrain and immersive VR are unavailable.</p>
+          <p>
+            Your uploaded 3D model opens first. You can switch to the flat mission map. Relief
+            measurements describe the AI-generated model; verified terrain and immersive VR are
+            unavailable.
+          </p>
           <button
             type="button"
             class="viewer-toggle"

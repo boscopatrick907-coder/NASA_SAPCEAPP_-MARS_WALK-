@@ -12,9 +12,11 @@ import {
 import { DOCUMENT } from '@angular/common';
 import * as L from 'leaflet';
 import { TerrainSuggestionStore } from '../core/terrain-suggestion.store';
+import { TerrainSamplerStore } from '../core/terrain-sampler.store';
+import { elevationAt, latLonAt, slopeAt } from '../core/terrain-profile';
 import { MissionService } from '../core/mission.service';
 import { routePoints } from '../core/route';
-import type { ImageManifest, Point, ScienceMarker } from '../core/models';
+import type { ImageManifest, Mode, Point, ScienceMarker } from '../core/models';
 
 export interface DisplayRoutePoint {
   id: string;
@@ -73,7 +75,7 @@ function isDisplayable(
   selector: 'app-map',
   standalone: true,
   templateUrl: './map.component.html',
-  styleUrl: './map.component.scss',
+  styleUrls: ['./map.component.scss', './map-overlays.scss'],
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
   @ViewChild('mapContainer', { static: true })
@@ -121,6 +123,43 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   });
 
   readonly activeMode = computed(() => this.mission.mode());
+  /** Terrain (accepted DTM) for readouts and derived layers; null when unavailable. */
+  readonly terrainStore = inject(TerrainSamplerStore);
+  readonly showRelief = signal(false);
+  readonly showSlope = signal(false);
+  /** Last point under the cursor (desktop) or last inspect tap (touch). */
+  readonly cursor = signal<Point | null>(null);
+  readonly cursorInfo = computed(() => {
+    const s = this.terrainStore.sampler();
+    const p = this.cursor();
+    if (!s || !p) return null;
+    const z = elevationAt(s, p);
+    const sl = slopeAt(s, p);
+    const ll = latLonAt(s, p);
+    return {
+      lat: ll.lat,
+      lon: ll.lon,
+      elevation: z,
+      slopeDeg: sl?.slopeDeg ?? null,
+      aspect: sl ? compass(sl.aspectDeg) : null,
+    };
+  });
+  readonly modes: readonly { mode: Mode; label: string }[] = [
+    { mode: 'inspect', label: 'Inspect' },
+    { mode: 'start', label: 'Start' },
+    { mode: 'destination', label: 'Destination' },
+    { mode: 'waypoint', label: 'Waypoint' },
+  ];
+  setMode(mode: Mode): void {
+    this.mission.setMode(mode);
+  }
+  undo(): void {
+    this.mission.undoRoute();
+  }
+  toggleTerrainLayer(which: 'relief' | 'slope', event: Event): void {
+    const on = (event.target as HTMLInputElement).checked;
+    (which === 'relief' ? this.showRelief : this.showSlope).set(on);
+  }
   readonly activeModeLabel = computed(() => {
     switch (this.mission.mode()) {
       case 'inspect':
@@ -232,6 +271,49 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private imageRequest = 0;
   private activeImageRef: string | null = null;
   private clickHandler?: (event: L.LeafletMouseEvent) => void;
+  private reliefOverlay?: L.ImageOverlay;
+  private slopeOverlay?: L.ImageOverlay;
+  private hoverMarker?: L.CircleMarker;
+  private drag: { key: string; moved: boolean } | null = null;
+  private suppressClick = false;
+  private readonly terrainEffect = effect(() => {
+    const layers = this.terrainStore.layers();
+    const relief = this.showRelief();
+    const slope = this.showSlope();
+    const hover = this.terrainStore.hover();
+    const ready = this.imageDisplayState() === 'ready';
+    if (!this.viewReady || !this.map) return;
+    this.reliefOverlay = this.syncTerrainOverlay(
+      this.reliefOverlay,
+      layers?.reliefUrl,
+      relief && ready,
+      layers,
+      0.55,
+    );
+    this.slopeOverlay = this.syncTerrainOverlay(
+      this.slopeOverlay,
+      layers?.slopeUrl,
+      slope && ready,
+      layers,
+      0.8,
+    );
+    if (hover && ready) {
+      if (!this.hoverMarker)
+        this.hoverMarker = L.circleMarker(toLeafletPoint(hover), {
+          className: 'mw-profile-hover',
+          radius: 6,
+          color: '#ffffff',
+          weight: 2,
+          fillColor: '#38bdf8',
+          fillOpacity: 1,
+          interactive: false,
+        }).addTo(this.map);
+      else this.hoverMarker.setLatLng(toLeafletPoint(hover));
+    } else if (this.hoverMarker) {
+      this.map.removeLayer(this.hoverMarker);
+      this.hoverMarker = undefined;
+    }
+  });
   private readonly renderEffect = effect(() => {
     const status = this.mission.dataStatus();
     const image = this.mission.image();
@@ -266,6 +348,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     if (this.map && this.clickHandler) this.map.off('click', this.clickHandler);
     this.clickHandler = undefined;
     this.renderEffect.destroy();
+    this.terrainEffect.destroy();
     this.map?.remove();
     this.map = undefined;
     this.imageOverlay = undefined;
@@ -307,6 +390,48 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       x: Math.min(image.width, Math.max(0, center.lng)),
       y: Math.min(image.height, Math.max(0, center.lat)),
     });
+  }
+
+  private dragTo(point: Point): void {
+    const drag = this.drag;
+    const image = this.mission.image();
+    if (!drag || !image) return;
+    const clamped = {
+      x: Math.min(image.width, Math.max(0, point.x)),
+      y: Math.min(image.height, Math.max(0, point.y)),
+    };
+    if (this.mission.moveRoutePoint(drag.key, clamped, !drag.moved)) drag.moved = true;
+  }
+
+  private endDrag(): void {
+    if (!this.drag) return;
+    if (this.drag.moved) this.suppressClick = true;
+    this.drag = null;
+    this.map?.dragging?.enable();
+  }
+
+  private syncTerrainOverlay(
+    current: L.ImageOverlay | undefined,
+    url: string | undefined,
+    visible: boolean,
+    layers: ReturnType<TerrainSamplerStore['layers']>,
+    opacity: number,
+  ): L.ImageOverlay | undefined {
+    if (!this.map) return current;
+    if (!visible || !url || !layers) {
+      if (current) this.map.removeLayer(current);
+      return undefined;
+    }
+    if (current) return current;
+    const b = layers.bounds;
+    return L.imageOverlay(
+      url,
+      [
+        [b.y0, b.x0],
+        [b.y1, b.x1],
+      ],
+      { pane: 'terrainPane', opacity, interactive: false, className: 'mw-terrain-layer' },
+    ).addTo(this.map);
   }
 
   private refitIfAuto(): void {
@@ -379,10 +504,34 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       lineJoin: 'round',
     }).addTo(this.routeLayer);
     this.clickHandler = (event) => {
+      if (this.suppressClick) {
+        this.suppressClick = false; // the click that ends a point drag
+        return;
+      }
       if (this.mission.dataStatus() !== 'ready' || this.imageDisplayState() !== 'ready') return;
-      this.mission.applyMapPoint({ x: event.latlng.lng, y: event.latlng.lat });
+      const point = { x: event.latlng.lng, y: event.latlng.lat };
+      if (this.mission.mode() === 'inspect') this.cursor.set(point); // pin readout (touch)
+      this.mission.applyMapPoint(point);
     };
     this.map.on('click', this.clickHandler);
+    this.map.on('mousemove', (event: L.LeafletMouseEvent) => {
+      const point = { x: event.latlng.lng, y: event.latlng.lat };
+      if (this.drag) return this.dragTo(point);
+      const image = this.mission.image();
+      if (
+        image &&
+        point.x >= 0 &&
+        point.y >= 0 &&
+        point.x <= image.width &&
+        point.y <= image.height
+      )
+        this.cursor.set(point);
+    });
+    this.map.on('mouseup', () => this.endDrag());
+    // Terrain layers sit between the image (tilePane) and route vectors (overlayPane).
+    this.map.createPane?.('terrainPane');
+    const pane = this.map.getPane?.('terrainPane');
+    if (pane) pane.style.zIndex = '350';
     // Any pan/zoom not started by our own fit ends automatic re-fitting.
     this.map.on('dragstart zoomstart', () => {
       if (!this.fitting) this.autoFit = false;
@@ -617,6 +766,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         current.setStyle(style);
       } else {
         const layer = L.circleMarker(toLeafletPoint(value.point), style);
+        if (existing === this.routePoints) {
+          // Drag any route point to move it; right-click (long-press) a waypoint to remove it.
+          layer.on('mousedown', (event: L.LeafletMouseEvent) => {
+            L.DomEvent.stopPropagation(event.originalEvent);
+            this.drag = { key, moved: false };
+            this.map?.dragging?.disable();
+          });
+          layer.on('contextmenu', (event: L.LeafletMouseEvent) => {
+            L.DomEvent.stopPropagation(event.originalEvent);
+            const m = /^waypoint-(\d+)$/.exec(key);
+            if (m) this.mission.removeWaypoint(Number(m[1]));
+          });
+        }
         if (existing === this.scienceMarkers) {
           layer.on('click', (event: L.LeafletMouseEvent) => {
             L.DomEvent.stopPropagation(event.originalEvent);
@@ -640,4 +802,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     for (const layer of this.scienceMarkers.values()) this.markerLayer?.removeLayer(layer);
     this.scienceMarkers.clear();
   }
+}
+
+/** Eight-point compass name for a downslope azimuth (degrees clockwise from north). */
+function compass(deg: number): string {
+  return ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(deg / 45) % 8];
 }

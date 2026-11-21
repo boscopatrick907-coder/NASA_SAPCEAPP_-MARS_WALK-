@@ -93,6 +93,10 @@ describe('App integration', () => {
       expect(mission.observations()).toBe(notes);
       expect(mission.image()).toBe(image);
     });
+    // The idle terrain bootstrap asks for the package index; answer "no package".
+    for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
+      r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -111,6 +115,10 @@ describe('App integration', () => {
     expect(fixture.nativeElement.querySelectorAll('app-map')).toHaveLength(1);
     expect(fixture.nativeElement.textContent).toContain('unavailable');
     expect(fixture.nativeElement.textContent).toContain('Waiting for a verified local image');
+    // The idle terrain bootstrap asks for the package index; answer "no package".
+    for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
+      r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -135,6 +143,10 @@ describe('App integration', () => {
     expect(fixture.nativeElement.querySelector('#mission-file')).toBeTruthy();
     expect(fixture.nativeElement.textContent).toContain('Export mission');
     expect(fixture.nativeElement.textContent).toContain('Import selected mission');
+    // The idle terrain bootstrap asks for the package index; answer "no package".
+    for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
+      r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -160,6 +172,10 @@ describe('App integration', () => {
       'Mission imported and saved on this device.',
     );
     expect(TestBed.inject(MissionService).route().start).toEqual({ x: 30, y: 40 });
+    // The idle terrain bootstrap asks for the package index; answer "no package".
+    for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
+      r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -186,6 +202,10 @@ describe('App integration', () => {
 
     expect(fixture.componentInstance.transferMessage()).toContain('image');
     expect(mission.route()).toBe(routeBefore);
+    // The idle terrain bootstrap asks for the package index; answer "no package".
+    for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
+      r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -210,6 +230,10 @@ describe('App integration', () => {
       'Mission files must be 1 MiB or smaller.',
     );
     expect(fixture.componentInstance.readingMission()).toBe(false);
+    // The idle terrain bootstrap asks for the package index; answer "no package".
+    for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
+      r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 
@@ -243,6 +267,10 @@ describe('App integration', () => {
 
     expect(app.missionFileName()).toBe('new.json');
     expect(app.readingMission()).toBe(false);
+    // The idle terrain bootstrap asks for the package index; answer "no package".
+    for (const r of http.match((q) => q.url.endsWith('/data/terrain/index.json')))
+      r.flush({ schemaVersion: 1, activePackageId: null });
+    for (const r of http.match((q) => q.url.endsWith('/data/geology.json'))) r.flush({});
     http.verify();
   });
 });
