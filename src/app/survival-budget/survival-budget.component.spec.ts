@@ -4,6 +4,7 @@ import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { SurvivalBudgetComponent } from './survival-budget.component';
 import { MissionService } from '../core/mission.service';
 import { testImage } from '../core/fixtures.spec-helper';
+import { TerrainSamplerStore } from '../core/terrain-sampler.store';
 describe('survival time scenario', () => {
   const assessment = signal({ planarDistanceMeters: 500 });
   const key = `marswalk:survival-budget:v1:${testImage().imageRef}`;
@@ -108,5 +109,43 @@ describe('survival time scenario', () => {
       (b as HTMLButtonElement).textContent?.includes('Download survival brief'),
     ) as HTMLButtonElement;
     expect(button.disabled).toBe(false);
+  });
+
+  it('switches to terrain distance, climb-aware legs and a profile when terrain is published', () => {
+    const f = mount();
+    // Synthetic 10×10 grid at 1 m (1 m/px test georef); z rises 0.5 m per metre east.
+    const N = 10;
+    const elevation = new Float32Array(N * N);
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) elevation[r * N + c] = 0.5 * (c + 0.5);
+    TestBed.inject(TerrainSamplerStore).publish(
+      {
+        georef: {
+          imageRef: 'synthetic-test-only',
+          width: 100,
+          height: 80,
+          pixelSizeMeters: 1,
+          xminMeters: 0,
+          yminMeters: 0,
+        },
+        geotransform: [0, 1, 0, 8, 0, -1],
+        cols: N,
+        rows: N,
+        elevation,
+        mask: new Uint8Array(N * N).fill(1),
+        centerLongitudeDeg: 137.3,
+        radiusMeters: 3396190,
+      },
+      null,
+    );
+    f.componentInstance.example();
+    f.detectChanges();
+    const r = f.componentInstance.result();
+    expect(r.ok && r.usesTerrain).toBe(true);
+    expect(r.ok && r.ascentMeters).toBeGreaterThan(0);
+    expect(r.ok && r.outboundMinutes).toBeGreaterThan(r.ok ? r.returnMinutes : 0); // uphill outbound
+    expect(f.nativeElement.querySelector('app-elevation-profile svg')).toBeTruthy();
+    expect(f.nativeElement.textContent).toContain('Turn back by');
+    expect(f.componentInstance.brief()).toContain('Distance basis: terrain-following');
+    expect(f.componentInstance.brief()).toContain('Turn back no later than');
   });
 });

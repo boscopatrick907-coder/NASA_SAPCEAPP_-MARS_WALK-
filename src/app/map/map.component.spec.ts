@@ -269,6 +269,10 @@ describe('MapComponent', () => {
       applyMapPoint,
       selectMarker,
       initialize: initializeMission,
+      canUndo: () => false,
+      undoRoute: vi.fn(),
+      moveRoutePoint: vi.fn(() => true),
+      removeWaypoint: vi.fn(() => true),
       setLayer: vi.fn((id: string, visible: boolean) =>
         state.layers.update((layers) => ({ ...layers, [id]: visible })),
       ),

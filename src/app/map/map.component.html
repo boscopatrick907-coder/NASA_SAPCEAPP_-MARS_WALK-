@@ -16,10 +16,28 @@
       />
       Science markers
     </label>
-    <span class="unavailable-layer" title="No grid product is supplied">Grid unavailable</span>
-    <span class="unavailable-layer" title="No coverage product is supplied"
-      >Coverage unavailable</span
-    >
+    @if (terrainStore.layers()) {
+      <label title="Shaded relief rendered from the accepted 1 m HiRISE DTM">
+        <input
+          type="checkbox"
+          [checked]="showRelief()"
+          (change)="toggleTerrainLayer('relief', $event)"
+        />
+        Shaded relief
+      </label>
+      <label title="Local slope classes from the DTM (Horn 3×3), not a safety rating">
+        <input
+          type="checkbox"
+          [checked]="showSlope()"
+          (change)="toggleTerrainLayer('slope', $event)"
+        />
+        Slope
+      </label>
+    } @else {
+      <span class="unavailable-layer" title="Terrain layers appear once the DTM package is verified"
+        >Terrain layers loading…</span
+      >
+    }
     <div class="map-mode-indicator" role="status" aria-label="Active route mode">
       <span class="mode-label">Mode:</span>
       <span class="mode-value" [attr.data-mode]="mission.mode()">{{ activeModeLabel() }}</span>
@@ -86,7 +104,7 @@
       #mapContainer
       class="map-container"
       role="application"
-      aria-label="Mars image map. Drag or use arrow keys to pan; pinch or use plus and minus to zoom. In route mode, tap or use the map-center button to place a point."
+      aria-label="Mars image map. Drag or use arrow keys to pan; pinch or use plus and minus to zoom. In route mode, tap or use the map-center button to place a point. Drag a route point to move it; right-click a waypoint to remove it."
     ></div>
     @if (showScienceMarkerEmptyState()) {
       <aside class="science-marker-empty-state" role="status">
@@ -95,6 +113,44 @@
           The records are still available in the Science Context panel under Confidence &amp; Data.
         </span>
       </aside>
+    }
+    <div class="map-mode-bar" role="group" aria-label="Route mode">
+      @for (m of modes; track m.mode) {
+        <button
+          type="button"
+          [attr.aria-pressed]="mission.mode() === m.mode"
+          [class.active]="mission.mode() === m.mode"
+          (click)="setMode(m.mode)"
+        >
+          {{ m.label }}
+        </button>
+      }
+      <button
+        type="button"
+        [disabled]="!mission.canUndo()"
+        (click)="undo()"
+        aria-label="Undo last route change"
+      >
+        Undo
+      </button>
+    </div>
+    @if (cursorInfo(); as info) {
+      <div class="map-readout" role="status" aria-live="off">
+        <span>{{ info.lat.toFixed(5) }}°, {{ info.lon.toFixed(5) }}°E</span>
+        @if (info.elevation !== null) {
+          <span>Elev {{ info.elevation.toFixed(1) }} m</span>
+        }
+        @if (info.slopeDeg !== null) {
+          <span>Slope {{ info.slopeDeg.toFixed(1) }}° · faces {{ info.aspect }}</span>
+        }
+      </div>
+    }
+    @if (showSlope() && terrainStore.layers()) {
+      <div class="map-legend" aria-label="Slope legend">
+        <span><i style="background: rgb(250 204 21)"></i>10–20°</span>
+        <span><i style="background: rgb(249 115 22)"></i>20–30°</span>
+        <span><i style="background: rgb(220 38 38)"></i>≥ 30°</span>
+      </div>
     }
     <div class="map-zoom-controls" role="group" aria-label="Map zoom controls">
       <button type="button" aria-label="Zoom in" (click)="zoomIn()">+</button>

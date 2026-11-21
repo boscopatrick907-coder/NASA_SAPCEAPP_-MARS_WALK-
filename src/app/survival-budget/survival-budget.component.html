@@ -45,6 +45,34 @@
           [value]="inputs().reserveMinutes ?? ''"
           (input)="set('reserveMinutes', $event)"
       /></label>
+      <label for="survival-climb"
+        >Extra minutes per 100 m climbed (optional)<input
+          id="survival-climb"
+          type="number"
+          min="0"
+          step="any"
+          [value]="inputs().climbMinutesPer100m ?? ''"
+          (input)="set('climbMinutesPer100m', $event)"
+      /></label>
+      <label for="survival-descent"
+        >Extra minutes per 100 m descended (optional)<input
+          id="survival-descent"
+          type="number"
+          min="0"
+          step="any"
+          [value]="inputs().descentMinutesPer100m ?? ''"
+          (input)="set('descentMinutesPer100m', $event)"
+      /></label>
+      <label for="survival-grade"
+        >Your grade limit, degrees (optional)<input
+          id="survival-grade"
+          type="number"
+          min="0.1"
+          max="89.9"
+          step="any"
+          [value]="inputs().gradeLimitDeg ?? ''"
+          (input)="set('gradeLimitDeg', $event)"
+      /></label>
     </div>
     <button type="button" (click)="example()">Use illustrative example</button>
   </fieldset>
@@ -57,9 +85,49 @@
           rating.
         </p>
       </div>
+      @if (r.gradeExceeded) {
+        <p class="grade-warning" role="alert">
+          The route reaches a sampled grade of {{ r.maxGradeDeg | number: '1.0-1' }}°, steeper than
+          your {{ r.gradeLimitDeg }}° limit (red on the profile). Reroute, or use the terrain
+          preview to search for a path under your limit.
+        </p>
+      }
+      <p class="turnaround">
+        <strong>Turn back by {{ clock(r.turnaroundMinute) }}</strong> (h:mm after departure) to keep
+        your {{ inputs().reserveMinutes }} min reserve. Return leg:
+        {{ r.returnMinutes | number: '1.0-0' }} min.
+      </p>
       <dl>
-        <dt>One-way planar route</dt>
-        <dd>{{ r.oneWayMeters | number: '1.1-1' }} m</dd>
+        <dt>Distance basis</dt>
+        <dd>
+          @if (r.usesTerrain) {
+            Over the ground (accepted DTM{{
+              r.terrainCoverage < 1 ? ', partly flat where terrain is missing' : ''
+            }})
+          } @else {
+            Flat map distance (no terrain model for this route)
+          }
+        </dd>
+        <dt>One-way route</dt>
+        <dd>
+          {{ r.oneWayMeters | number: '1.1-1' }} m
+          @if (r.usesTerrain) {
+            <span class="aside">({{ r.planarMeters | number: '1.1-1' }} m on the map)</span>
+          }
+        </dd>
+        @if (r.usesTerrain) {
+          <dt>Outbound climb / descent</dt>
+          <dd>
+            {{ r.ascentMeters | number: '1.0-0' }} m up / {{ r.descentMeters | number: '1.0-0' }} m
+            down
+          </dd>
+          <dt>Steepest sampled grade</dt>
+          <dd [class.over-limit]="r.gradeExceeded">{{ r.maxGradeDeg | number: '1.0-1' }}°</dd>
+        }
+        <dt>Outbound / return travel</dt>
+        <dd>
+          {{ r.outboundMinutes | number: '1.1-1' }} / {{ r.returnMinutes | number: '1.1-1' }} min
+        </dd>
         <dt>Same-path round trip</dt>
         <dd>{{ r.roundTripMeters | number: '1.1-1' }} m</dd>
         <dt>Round-trip travel</dt>
@@ -68,7 +136,7 @@
         <dd>{{ r.plannedMinutes | number: '1.1-1' }} min</dd>
         <dt>Margin after protected reserve</dt>
         <dd>{{ r.marginMinutes | number: '1.1-1' }} min</dd>
-        <dt>Maximum one-way distance under entered assumptions</dt>
+        <dt>Maximum one-way distance on flat ground (ignores climb)</dt>
         <dd>{{ r.maxOutwardMeters | number: '1.1-1' }} m</dd>
       </dl>
       @if (!r.fits) {
@@ -80,6 +148,11 @@
     } @else {
       <p class="unavailable" role="status">{{ r.reason }}</p>
     }
+  }
+  @if (profile(); as p) {
+    <app-elevation-profile [profile]="p" [gradeLimitDeg]="inputs().gradeLimitDeg ?? null" />
+  } @else if (mission.route().start && mission.route().destination) {
+    <p class="aside">Elevation profile appears once the terrain model has loaded.</p>
   }
   <div class="actions">
     <button type="button" (click)="save()" [disabled]="!mission.image()">
@@ -93,12 +166,16 @@
   <details>
     <summary>Calculation and pre-departure checks</summary>
     <p>
-      Round-trip travel = 2 × planar route meters ÷ (assumed speed × 1,000) × 60. Margin = available
-      minutes − task minutes − reserve minutes − travel minutes.
+      Each leg = route meters ÷ (assumed speed × 1,000) × 60 + (metres climbed ÷ 100 × your climb
+      minutes) + (metres descended ÷ 100 × your descent minutes). Route meters follow the ground
+      when the accepted terrain model covers the route; otherwise the flat map distance is used. The
+      return leg climbs what the outbound descended. Margin = available − reserve − tasks − both
+      legs. Turn-back time = available − reserve − return leg.
     </p>
     <p>
       Constant speed and the same outward/return path are assumed. This is a planning estimate, not
-      a live countdown. Slopes, obstacles, delays and real surface distance are unknown.
+      a live countdown. Elevations come from a 1 m stereo terrain model with no stated accuracy;
+      rocks, soil, obstacles and delays are unknown.
     </p>
     <ul>
       <li>Independently verify suit/life support, supplies and operating limits.</li>
